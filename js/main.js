@@ -3,10 +3,14 @@
 require.config({
     baseUrl: './js/wae-modules',
     paths: {
-        'testmodule': 'testmodule'
-    }
+        'WAESpriteSheet': 'wae-spritesheet'
+    },
+    
+    // Use it in dev to bust cache
+    urlArgs: 'bust=' +  (new Date()).getTime()
+    
 });
 
-require(['testmodule'], function (testmodule) {
-    alert(testmodule.test());
+require(['WAESpriteSheet'], function (testmodule) {
+    alert(1);
 })
