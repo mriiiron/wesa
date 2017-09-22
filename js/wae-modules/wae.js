@@ -1,3 +1,4 @@
+// Vertex shader program
 const vsSource = `
     attribute vec4 aVertexPosition;
     attribute vec2 aTextureCoord;
@@ -18,9 +19,6 @@ const fsSource = `
         gl_FragColor = texture2D(uSampler, vTextureCoord);
     }
 `;
-
-var colorVal = 1.0;
-var isColorValDecreasing = true;
 
 function loadShader(gl, type, source) {
     const shader = gl.createShader(type);

@@ -7,7 +7,9 @@ require.config({
         'WAESpriteSheet': 'wae-spritesheet',
         'WAEFrame': 'wae-animation-frame',
         'WAEAnimation': 'wae-animation',
-        'WAEObject': 'wae-object'
+        'WAEObject': 'wae-object',
+		'WAESprite': 'wae-sprite',
+		'WAEScene': 'wae-scene'
     },
     
     // Use it in dev to bust cache
@@ -21,9 +23,61 @@ require(
     // Load all modules
     ['WAESpriteSheet', 'WAEFrame', 'WAEAnimation', 'WAEObject', 'WAESprite', 'WAEScene'],
     
-    // Run program
+    // main()
     function (WAESpriteSheet, WAEFrame, WAEAnimation, WAEObject, WAESprite, WAEScene) {
 
+		// Vertex shader program
+		const vsSource = `
+			attribute vec4 aVertexPosition;
+			attribute vec2 aTextureCoord;
+			uniform mat4 uModelViewMatrix;
+			uniform mat4 uProjectionMatrix;
+			varying highp vec2 vTextureCoord;
+			void main() {
+				gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+				vTextureCoord = aTextureCoord;
+			}
+		`;
+
+		// Fragment shader program
+		const fsSource = `
+			varying highp vec2 vTextureCoord;
+			uniform sampler2D uSampler;
+			void main(void) {
+				gl_FragColor = texture2D(uSampler, vTextureCoord);
+			}
+		`;
+		
+		function loadShader(gl, type, source) {
+			const shader = gl.createShader(type);
+			gl.shaderSource(shader, source);
+			gl.compileShader(shader);
+			if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+				alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
+				gl.deleteShader(shader);
+				return null;
+			}
+			return shader;
+		}
+
+		function initShaderProgram(gl, vsSource, fsSource) {
+			const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
+			const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+			const shaderProgram = gl.createProgram();
+			gl.attachShader(shaderProgram, vertexShader);
+			gl.attachShader(shaderProgram, fragmentShader);
+			gl.linkProgram(shaderProgram);
+			if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+				alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
+				return null;
+			}
+			return shaderProgram;
+		}
+		
+		function initOthers() {
+			
+		}
+	
         var ss = new WAESpriteSheet({
             ssid: 0,
             rowCount: 2,
@@ -76,20 +130,29 @@ require(
         
         console.log(obj);
         
-        
-        // Start main loop
+
+		function updateScene() {
+			
+		}
+		
+		function drawScene() {
+			
+		}
+		
         var start = null;
         
         function mainLoop(now) {
             if (!start) start = now;
-            var colorOffset = (now - start) / 1000.0;
+            var delta = (now - start) / 1000.0;
+			var fps = 1.0 / delta;
+			// console.log(fps);
             start = now;
-            var buffers = updateBuffers(gl, colorOffset);
-            drawScene(gl, programInfo, buffers, texture);
-            window.requestAnimationFrame(render);
+            updateScene();
+            drawScene();
+            window.requestAnimationFrame(mainLoop);
         }
         
-        window.requestAnimationFrame(render);
+        window.requestAnimationFrame(mainLoop);
         
     }
 
