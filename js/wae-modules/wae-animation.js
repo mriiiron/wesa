@@ -7,16 +7,6 @@ define(
     
     // Module Definition
     function () {
-    
-        function WAEFrame(desc) {
-            this.spriteSheet = desc.spriteSheet;
-            this.cellIndex = desc.cellIndex;
-            this.cellCount = desc.cellCount;
-            this.center.x = desc.center.x;
-            this.center.y = desc.center.y;
-            this.width = desc.spriteSheet.cellWidth * desc.cellCount;
-            this.height = desc.spriteSheet.cellHeight;
-        }
         
         function WAEAnimation(desc) {
             this.name = desc.name;
@@ -27,8 +17,13 @@ define(
             this.frameList = [];
             this.endTimeList = [];
         }
-        
-        WAEAnimation.prototype.
+   
+        WAEAnimation.prototype.addFrame = function (index, frame, endTime) {
+            this.frameList[index] = frame;
+            this.endTimeList[index] = endTime;
+        };
+
+        return WAEAnimation;
     
     }
 
