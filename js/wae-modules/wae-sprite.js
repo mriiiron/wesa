@@ -14,6 +14,8 @@ define(
             this.team = desc.team;
             this.position = { x: desc.position.x, y: desc.position.y };
             this.zDepth = desc.zDepth;
+            this.index = null;
+            this.scene = null;
         }
        
         WAESprite.prototype.update = function () {
