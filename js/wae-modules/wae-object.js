@@ -15,8 +15,8 @@ define(
             this.animList = [];
         }
         
-        WAEObject.prototype.addAnimationAt = function(slot, anim) {
-            animList[slot] = anim;
+        WAEObject.prototype.addAnimationAt = function (slot, anim) {
+            this.animList[slot] = anim;
         };
 
         return WAEObject;

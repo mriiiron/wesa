@@ -18,9 +18,11 @@ require.config({
 // Main
 require(
     
-    ['WAESpriteSheet', 'WAEFrame', 'WAEAnimation', 'WAEObject'],
+    // Load all modules
+    ['WAESpriteSheet', 'WAEFrame', 'WAEAnimation', 'WAEObject', 'WAESprite', 'WAEScene'],
     
-    function (WAESpriteSheet, WAEFrame, WAEAnimation, WAEObject) {
+    // Run program
+    function (WAESpriteSheet, WAEFrame, WAEAnimation, WAEObject, WAESprite, WAEScene) {
 
         var ss = new WAESpriteSheet({
             ssid: 0,
@@ -63,8 +65,31 @@ require(
         anim.addFrame(1, f2, 20);
         anim.addFrame(2, f3, 30);
         anim.addFrame(3, f2, 40);
-                
-        console.log(anim);
+        
+        var obj = new WAEObject({
+            oid: 0,
+            type: 0,
+            name: 'Balloon'
+        });
+        
+        obj.addAnimationAt(0, anim);
+        
+        console.log(obj);
+        
+        
+        // Start main loop
+        var start = null;
+        
+        function mainLoop(now) {
+            if (!start) start = now;
+            var colorOffset = (now - start) / 1000.0;
+            start = now;
+            var buffers = updateBuffers(gl, colorOffset);
+            drawScene(gl, programInfo, buffers, texture);
+            window.requestAnimationFrame(render);
+        }
+        
+        window.requestAnimationFrame(render);
         
     }
 
