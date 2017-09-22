@@ -2,19 +2,11 @@
 
 define(
     
-    // Module Name
-    'WAESpriteSheet',
-    
     // Module Dependencies
     [],
 
     // Module Definition
     function () {
-
-        var ssid;
-        var texture;
-        var rowCount, colCount;
-        var cellWidth, cellHeight;
         
         function WAESpriteSheet(desc) {
             this.ssid = desc.ssid;
@@ -25,11 +17,11 @@ define(
             this.cellHeight = desc.cellHeight;
         }
         
-        var getCellCount = function () {
-            return rowCount * colCount;
+        WAESpriteSheet.prototype.getCellCount = function () {
+            return this.rowCount * this.colCount;
         };
         
-        var getTextureClip = function (cellIndex, cellCount = 1, inverse = false) {
+        WAESpriteSheet.prototype.getTextureClip = function (cellIndex, cellCount = 1, inverse = false) {
             
         };  
 
