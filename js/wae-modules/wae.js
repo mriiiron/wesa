@@ -74,7 +74,7 @@ function loadTexture(gl, url) {
     return texture;
 }
 
-function updateBuffers(gl, colorOffset) {
+function updateBuffers(gl) {
     
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);

@@ -10,7 +10,8 @@ require.config({
         'WAEAnimation': 'wae-animation',
         'WAEObject': 'wae-object',
 		'WAESprite': 'wae-sprite',
-		'WAEScene': 'wae-scene'
+		'WAEScene': 'wae-scene',
+		'WAESpriteBatcher': 'wae-spritebatcher'
     },
     
     // Use it in dev to bust cache
@@ -137,11 +138,14 @@ require(
             }));
         }
 
-        function updateScene() {
+        function update() {
             wae_Scene.update();
+			
+			
+			
         }
 
-        function renderScene() {
+        function render(gl, programInfo, buffers) {
             
             // Clear scene
             gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -262,8 +266,8 @@ require(
 			var fps = 1.0 / delta;
 			// console.log(fps);
             start = now;
-            updateScene();
-            // renderScene();
+			var buffers = update();
+            render(gl, programInfo, buffers);
             window.requestAnimationFrame(mainLoop);
         }
         
