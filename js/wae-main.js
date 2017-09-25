@@ -2,17 +2,23 @@
 
 
 // RequireJS Configuration
-require.config({
+requirejs.config({
     baseUrl: './js/wae-modules',
     paths: {
-        'WAESpriteSheet': 'wae-spritesheet',
-        'WAEFrame': 'wae-animation-frame',
-        'WAEAnimation': 'wae-animation',
-        'WAEObject': 'wae-object',
-		'WAESprite': 'wae-sprite',
-		'WAEScene': 'wae-scene',
-		'WAESpriteBatcher': 'wae-spritebatcher'
+        'WAESpriteSheet': './wae-spritesheet',
+        'WAEFrame': './wae-animation-frame',
+        'WAEAnimation': './wae-animation',
+        'WAEObject': './wae-object',
+		'WAESprite': './wae-sprite',
+		'WAEScene': './wae-scene',
+		'WAESpriteBatcher': './wae-spritebatcher',
+        'glMatrix': './external/gl-matrix-min'
     },
+    // shim: {
+        // 'matrix': {
+
+        // }
+    // },
     
     // Use it in dev to bust cache
     urlArgs: 'bust=' +  (new Date()).getTime()
@@ -21,13 +27,13 @@ require.config({
 
 
 // RequireJS Main
-require(
+requirejs(
     
     // Load all modules
-    ['WAESpriteSheet', 'WAEFrame', 'WAEAnimation', 'WAEObject', 'WAESprite', 'WAEScene'],
+    ['WAESpriteSheet', 'WAEFrame', 'WAEAnimation', 'WAEObject', 'WAESprite', 'WAEScene', 'glMatrix'],
     
     // main()
-    function (WAESpriteSheet, WAEFrame, WAEAnimation, WAEObject, WAESprite, WAEScene) {
+    function (WAESpriteSheet, WAEFrame, WAEAnimation, WAEObject, WAESprite, WAEScene, glMatrix) {
         
         // Global WAE objects
         var wae_ObjectList = [];
@@ -163,13 +169,13 @@ require(
             const top = 240;
             const zNear = 0.1;
             const zFar = 100.0;
-            const projectionMatrix = mat4.create();
-            mat4.ortho(projectionMatrix, left, right, bottom, top, zNear, zFar);
+            const projectionMatrix = glMatrix.mat4.create();
+            glMatrix.mat4.ortho(projectionMatrix, left, right, bottom, top, zNear, zFar);
             
             // Set the model view matrix:
             // Under change based on camera (TODO)
-            const modelViewMatrix = mat4.create();
-            mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -6.0]);
+            const modelViewMatrix = glMatrix.mat4.create();
+            glMatrix.mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -6.0]);
             
             // Pull positions from the position buffer and put into the vertexPosition attribute.
             {

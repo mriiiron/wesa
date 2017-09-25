@@ -20,6 +20,10 @@ define(
 				// Create new batch
 			}
 		};
+        
+        var clear() {
+            // Clear sprite batch
+        }
 	
     }
 
