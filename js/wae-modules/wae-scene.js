@@ -36,10 +36,10 @@ define(
             }
         };
         
-        WAEScene.prototype.render = function () {
+        WAEScene.prototype.addToRenderBatch = function () {
             for (var i = 0; i < this.spriteList.length; i++) {
                 if (this.spriteList[i]) {
-                    this.spriteList[i].render();
+                    this.spriteList[i].addToRenderBatch();
                 }
             }
         };

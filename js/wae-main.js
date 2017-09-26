@@ -30,12 +30,13 @@ requirejs.config({
 requirejs(
     
     // Load all modules
-    ['WAESpriteSheet', 'WAEFrame', 'WAEAnimation', 'WAEObject', 'WAESprite', 'WAEScene', 'glMatrix'],
+    ['glMatrix', 'WAESpriteSheet', 'WAEFrame', 'WAEAnimation', 'WAEObject', 'WAESprite', 'WAEScene', 'WAESpriteBatcher'],
     
     // main()
-    function (WAESpriteSheet, WAEFrame, WAEAnimation, WAEObject, WAESprite, WAEScene, glMatrix) {
+    function (glMatrix, WAESpriteSheet, WAEFrame, WAEAnimation, WAEObject, WAESprite, WAEScene, WAESpriteBatcher) {
         
         // Global WAE objects
+        var wae_SpriteSheetList = [];
         var wae_ObjectList = [];
         var wae_Scene = null;       // TODO: WAESceneManager
 
@@ -81,88 +82,16 @@ requirejs(
             gl.attachShader(shaderProgram, fragmentShader);
             gl.linkProgram(shaderProgram);
             if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-                alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
+                alert('Unable to initialize the shader program: ' + gl.getshaderProgramInfoLog(shaderProgram));
                 return null;
             }
             return shaderProgram;
         }
-
-        function loadGameResources() {
-            var ss = new WAESpriteSheet({
-                ssid: 0,
-                rowCount: 2,
-                colCount: 5,
-                cellWidth: 20,
-                cellHeight: 20
-            });
-            var f1 = new WAEFrame({
-                spriteSheet: ss,
-                cellIndex: 0,
-                cellCount: 1,
-                center: { x: 10, y: 10 }
-            });
-            var f2 = new WAEFrame({
-                spriteSheet: ss,
-                cellIndex: 1,
-                cellCount: 1,
-                center: { x: 10, y: 10 }
-            });
-            var f3 = new WAEFrame({
-                spriteSheet: ss,
-                cellIndex: 2,
-                cellCount: 1,
-                center: { x: 10, y: 10 }
-            });
-            var anim = new WAEAnimation({
-                name: 'Idle',
-                frameCount: 4,
-                isLoop: true,
-                next: 0,
-                ttl: 0
-            });
-            anim.addFrame(0, f1, 10);
-            anim.addFrame(1, f2, 20);
-            anim.addFrame(2, f3, 30);
-            anim.addFrame(3, f2, 40);
-            var obj = new WAEObject({
-                oid: 0,
-                type: 0,
-                name: 'Balloon'
-            });
-            obj.addAnimationAt(0, anim);
-            wae_ObjectList[0] = obj;
-        }
-
-        function initGameplay() {
-            wae_Scene = new WAEScene();
-            wae_Scene.addSprite(new WAESprite({
-                object: wae_ObjectList[0],
-                action: 0,
-                team: 0,
-                position: { x: 0, y: 0 },
-                zDepth: 0
-            }));
-        }
-
-        function update() {
-            wae_Scene.update();
-			
-			
-			
-        }
-
-        function render(gl, programInfo, buffers) {
+        
+        function initGLConfig(gl, shaderProgramInfo) {
             
-            // Clear scene
-            gl.clearColor(0.0, 0.0, 0.0, 1.0);
-            gl.clearDepth(1.0);
-            gl.enable(gl.DEPTH_TEST);
-            gl.depthFunc(gl.LEQUAL);
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
             // Set the projection matrix:
             // Create a orthogonal projection matrix for 640x480 viewport
-            
             const left = -320;
             const right = 320;
             const bottom = -240;
@@ -185,8 +114,8 @@ requirejs(
                 const stride = 0;
                 const offset = 0;
                 gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-                gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, numComponents, type, normalize, stride, offset);
-                gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
+                gl.vertexAttribPointer(shaderProgramInfo.attribLocations.vertexPosition, numComponents, type, normalize, stride, offset);
+                gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.vertexPosition);
             }
             
             // Pull texture coordinates from the texture coordinate buffer
@@ -197,18 +126,97 @@ requirejs(
                 const stride = 0;
                 const offset = 0;
                 gl.bindBuffer(gl.ARRAY_BUFFER, buffers.textureCoord);
-                gl.vertexAttribPointer(programInfo.attribLocations.textureCoord, numComponents, type, normalize, stride, offset);
-                gl.enableVertexAttribArray( programInfo.attribLocations.textureCoord);
+                gl.vertexAttribPointer(shaderProgramInfo.attribLocations.textureCoord, numComponents, type, normalize, stride, offset);
+                gl.enableVertexAttribArray( shaderProgramInfo.attribLocations.textureCoord);
             }
             
             // Tell WebGL to use our program when drawing
-            gl.useProgram(programInfo.program);
+            gl.useProgram(shaderProgramInfo.program);
 
             // Set the shader uniforms
             // In this example, projection and model view matrices are passed as uniforms.
-            gl.uniformMatrix4fv(programInfo.uniformLocations.projectionMatrix, false, projectionMatrix);
-            gl.uniformMatrix4fv(programInfo.uniformLocations.modelViewMatrix, false, modelViewMatrix);
+            gl.uniformMatrix4fv(shaderProgramInfo.uniformLocations.projectionMatrix, false, projectionMatrix);
+            gl.uniformMatrix4fv(shaderProgramInfo.uniformLocations.modelViewMatrix, false, modelViewMatrix);
+            
+        }
 
+        function loadGameResources(ssList, objList) {
+            var ss = new WAESpriteSheet({
+                ssid: 0,
+                rowCount: 2,
+                colCount: 5,
+                cellWidth: 20,
+                cellHeight: 20
+            });
+            ssList[0] = ss;
+            var f1 = new WAEFrame({
+                spriteSheet: ssList[0],
+                cellIndex: 0,
+                cellCount: 1,
+                center: { x: 10, y: 10 }
+            });
+            var f2 = new WAEFrame({
+                spriteSheet: ssList[0],
+                cellIndex: 1,
+                cellCount: 1,
+                center: { x: 10, y: 10 }
+            });
+            var f3 = new WAEFrame({
+                spriteSheet: ssList[0],
+                cellIndex: 2,
+                cellCount: 1,
+                center: { x: 10, y: 10 }
+            });
+            var anim = new WAEAnimation({
+                name: 'Idle',
+                frameCount: 4,
+                isLoop: true,
+                next: 0,
+                ttl: 0
+            });
+            anim.addFrame(0, f1, 10);
+            anim.addFrame(1, f2, 20);
+            anim.addFrame(2, f3, 30);
+            anim.addFrame(3, f2, 40);
+            var obj = new WAEObject({
+                oid: 0,
+                type: 0,
+                name: 'Balloon'
+            });
+            obj.addAnimationAt(0, anim);
+            objList[0] = obj;
+        }
+
+        function initGameplay() {
+            wae_Scene = new WAEScene();
+            wae_Scene.addSprite(new WAESprite({
+                object: wae_ObjectList[0],
+                action: 0,
+                team: 0,
+                position: { x: 0, y: 0 },
+                zDepth: 0
+            }));
+        }
+
+        function update() {
+            wae_Scene.update();
+        }
+
+        function render(gl, shaderProgramInfo, buffers, texture) {
+            
+            // Clear scene
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+            gl.clearDepth(1.0);
+            gl.enable(gl.DEPTH_TEST);
+            gl.depthFunc(gl.LEQUAL);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+            WAESpriteBatcher.clear();
+            wae_Scene.addToRenderBatch();
+            WAESpriteBatcher.render(gl, shaderProgramInfo);
+            
+            
+            
             // Use indice index to draw
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
             
@@ -219,7 +227,7 @@ requirejs(
             gl.bindTexture(gl.TEXTURE_2D, texture);
 
             // Tell the shader we bound the texture to texture unit 0
-            gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
+            gl.uniform1i(shaderProgramInfo.uniformLocations.uSampler, 0);
             
             // Draw a rectangle
             {
@@ -247,7 +255,7 @@ requirejs(
         const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
 
         // Setup shader input locations
-        const programInfo = {
+        const shaderProgramInfo = {
             program: shaderProgram,
             attribLocations: {
                 vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
@@ -260,7 +268,9 @@ requirejs(
             }
         };
         
-        loadGameResources()
+        initGLConfig(gl, shaderProgramInfo);
+        
+        loadGameResources(wae_SpriteSheetList, wae_ObjectList);
         
         initGameplay();
         
@@ -273,7 +283,7 @@ requirejs(
 			// console.log(fps);
             start = now;
 			var buffers = update();
-            render(gl, programInfo, buffers);
+            render(gl, shaderProgramInfo, buffers);
             window.requestAnimationFrame(mainLoop);
         }
         

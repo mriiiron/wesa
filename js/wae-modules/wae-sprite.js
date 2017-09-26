@@ -47,8 +47,8 @@ define(
 			}
         };
         
-        WAESprite.prototype.render = function () {
-            WAESpriteBatcher.addToBatch(sprite);
+        WAESprite.prototype.addToRenderBatch = function () {
+            WAESpriteBatcher.addSpriteToBatch(sprite);
         };
 
         return WAESprite;
