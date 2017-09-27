@@ -14,11 +14,6 @@ requirejs.config({
 		'WAESpriteBatcher': './wae-spritebatcher',
         'glMatrix': './external/gl-matrix-min'
     },
-    // shim: {
-        // 'matrix': {
-
-        // }
-    // },
     
     // Use it in dev to bust cache
     urlArgs: 'bust=' +  (new Date()).getTime()

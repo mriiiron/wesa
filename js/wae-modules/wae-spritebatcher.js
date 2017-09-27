@@ -26,7 +26,7 @@ define(
             }
             else {
                 batchList[ssid] = {
-                    spriteCount = 1;
+                    spriteCount = 1,
                     positions = [x1, y1, x2, y1, x1, y2, x2, y2],
                     texCoords = [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0],
                     indices = [0, 1, 2, 1, 2, 3]
