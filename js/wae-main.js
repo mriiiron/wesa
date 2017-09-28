@@ -3,14 +3,9 @@
 
 // RequireJS Configuration
 requirejs.config({
-    baseUrl: './js/wae-modules',
+    baseUrl: './js/wae',
     paths: {
-        'WAESpriteSheet': './wae-spritesheet',
-        'WAEFrame': './wae-animation-frame',
-        'WAEAnimation': './wae-animation',
-        'WAEObject': './wae-object',
-		'WAESprite': './wae-sprite',
-		'WAEScene': './wae-scene',
+        'WAECore': './wae-core',
 		'WAESpriteBatcher': './wae-spritebatcher',
         'glMatrix': './external/gl-matrix-min'
     },
@@ -25,10 +20,10 @@ requirejs.config({
 requirejs(
     
     // Load all modules
-    ['glMatrix', 'WAESpriteSheet', 'WAEFrame', 'WAEAnimation', 'WAEObject', 'WAESprite', 'WAEScene', 'WAESpriteBatcher'],
+    ['glMatrix', 'WAECore', 'WAESpriteBatcher'],
     
     // main()
-    function (glMatrix, WAESpriteSheet, WAEFrame, WAEAnimation, WAEObject, WAESprite, WAEScene, WAESpriteBatcher) {
+    function (glMatrix, WAECore, WAESpriteBatcher) {
         
         // Global WAE objects
         var wae_SpriteSheetList = [];
@@ -101,30 +96,6 @@ requirejs(
             const modelViewMatrix = glMatrix.mat4.create();
             glMatrix.mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -6.0]);
             
-            // Pull positions from the position buffer and put into the vertexPosition attribute.
-            {
-                const numComponents = 2;
-                const type = gl.FLOAT;
-                const normalize = false;
-                const stride = 0;
-                const offset = 0;
-                gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-                gl.vertexAttribPointer(shaderProgramInfo.attribLocations.vertexPosition, numComponents, type, normalize, stride, offset);
-                gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.vertexPosition);
-            }
-            
-            // Pull texture coordinates from the texture coordinate buffer
-            {
-                const numComponents = 2;
-                const type = gl.FLOAT;
-                const normalize = false;
-                const stride = 0;
-                const offset = 0;
-                gl.bindBuffer(gl.ARRAY_BUFFER, buffers.textureCoord);
-                gl.vertexAttribPointer(shaderProgramInfo.attribLocations.textureCoord, numComponents, type, normalize, stride, offset);
-                gl.enableVertexAttribArray( shaderProgramInfo.attribLocations.textureCoord);
-            }
-            
             // Tell WebGL to use our program when drawing
             gl.useProgram(shaderProgramInfo.program);
 
@@ -136,7 +107,7 @@ requirejs(
         }
 
         function loadGameResources(ssList, objList) {
-            var ss = new WAESpriteSheet({
+            var ss = new WAECore.SpriteSheet({
                 ssid: 0,
                 rowCount: 2,
                 colCount: 5,
@@ -144,25 +115,25 @@ requirejs(
                 cellHeight: 20
             });
             ssList[0] = ss;
-            var f1 = new WAEFrame({
+            var f1 = new WAECore.Frame({
                 spriteSheet: ssList[0],
                 cellIndex: 0,
                 cellCount: 1,
                 center: { x: 10, y: 10 }
             });
-            var f2 = new WAEFrame({
+            var f2 = new WAECore.Frame({
                 spriteSheet: ssList[0],
                 cellIndex: 1,
                 cellCount: 1,
                 center: { x: 10, y: 10 }
             });
-            var f3 = new WAEFrame({
+            var f3 = new WAECore.Frame({
                 spriteSheet: ssList[0],
                 cellIndex: 2,
                 cellCount: 1,
                 center: { x: 10, y: 10 }
             });
-            var anim = new WAEAnimation({
+            var anim = new WAECore.Animation({
                 name: 'Idle',
                 frameCount: 4,
                 isLoop: true,
@@ -173,7 +144,7 @@ requirejs(
             anim.addFrame(1, f2, 20);
             anim.addFrame(2, f3, 30);
             anim.addFrame(3, f2, 40);
-            var obj = new WAEObject({
+            var obj = new WAECore.StoredObject({
                 oid: 0,
                 type: 0,
                 name: 'Balloon'
@@ -183,8 +154,8 @@ requirejs(
         }
 
         function initGameplay() {
-            wae_Scene = new WAEScene();
-            wae_Scene.addSprite(new WAESprite({
+            wae_Scene = new WAECore.Scene();
+            wae_Scene.addSprite(new WAECore.Sprite({
                 object: wae_ObjectList[0],
                 action: 0,
                 team: 0,
@@ -210,7 +181,29 @@ requirejs(
             wae_Scene.addToRenderBatch();
             WAESpriteBatcher.render(gl, shaderProgramInfo);
             
+            // Pull positions from the position buffer and put into the vertexPosition attribute.
+            {
+                const numComponents = 2;
+                const type = gl.FLOAT;
+                const normalize = false;
+                const stride = 0;
+                const offset = 0;
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+                gl.vertexAttribPointer(shaderProgramInfo.attribLocations.vertexPosition, numComponents, type, normalize, stride, offset);
+                gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.vertexPosition);
+            }
             
+            // Pull texture coordinates from the texture coordinate buffer
+            {
+                const numComponents = 2;
+                const type = gl.FLOAT;
+                const normalize = false;
+                const stride = 0;
+                const offset = 0;
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffers.textureCoord);
+                gl.vertexAttribPointer(shaderProgramInfo.attribLocations.textureCoord, numComponents, type, normalize, stride, offset);
+                gl.enableVertexAttribArray( shaderProgramInfo.attribLocations.textureCoord);
+            }
             
             // Use indice index to draw
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
