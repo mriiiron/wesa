@@ -8,6 +8,112 @@ define(
     // Module Definition
     function () {
         
+        var waeSpriteSheetList = [];
+        var waeObjectList = [];
+        
+        var waeSpriteBatcher = {
+            
+            batchData: [],
+            
+            buffers: {
+                positions: null,
+                texCoords: null,
+                indices: null
+            },
+            
+            init: function (gl) {
+                buffers.positions = gl.createBuffer();
+                buffers.texCoords = gl.createBuffer();
+                buffers.indices = gl.createBuffer();
+            }
+            
+            addSpriteToBatch: function (sprite) {
+                var frame = sprite.getCurrentFrame();
+                var x1 = sprite.position.x - frame.center.x;
+                var x2 = x1 + frame.width;
+                var y1 = sprite.position.y - frame.center.y;
+                var y2 = y1 + frame.height;
+                var ssid = frame.spriteSheet.ssid;
+                if (this.batchData[ssid]) {
+                    this.batchData[ssid].spriteCount++;
+                    var indicesBase = 4 * (this.batchData[ssid].spriteCount - 1);
+                    this.batchData[ssid].positions.push(x1, y1, x2, y1, x1, y2, x2, y2);
+                    this.batchData[ssid].texCoords.push(0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+                    this.batchData[ssid].indices.push(indicesBase, indicesBase + 1, indicesBase + 2, indicesBase + 1, indicesBase + 2, indicesBase + 3);
+                }
+                else {
+                    this.batchData[ssid] = {
+                        spriteCount: 1,
+                        positions: [x1, y1, x2, y1, x1, y2, x2, y2],
+                        texCoords: [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                        indices: [0, 1, 2, 1, 2, 3]
+                    }
+                }
+            },
+            
+            clear: function () {
+                this.batchData = [];
+            },
+            
+            render: function (gl, shaderProgramInfo) {
+                
+                for (var ssid = 0; ssid < this.batchData.length; ssid++) {
+                    if (this.batchData[ssid]) {
+                        
+                        {
+                            const numComponents = 2;
+                            const type = gl.FLOAT;
+                            const normalize = false;
+                            const stride = 0;
+                            const offset = 0;
+                            gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.positions);
+                            gl.bufferData(gl.ARRAY_BUFFER, this.batchData[ssid].positions, gl.STATIC_DRAW);
+                            gl.vertexAttribPointer(shaderProgramInfo.attribLocations.vertexPosition, numComponents, type, normalize, stride, offset);
+                            gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.vertexPosition);
+                        }
+                        
+                        // TODO
+                        
+                        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.texCoords);
+                        gl.bufferData(gl.ARRAY_BUFFER, this.batchData[ssid].texCoords, gl.STATIC_DRAW);
+                        
+                        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
+                        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.batchData[ssid].indices, gl.STATIC_DRAW);
+                        
+                        gl.activeTexture(gl.TEXTURE0);
+                        gl.bindTexture(gl.TEXTURE_2D, waeSpriteSheetList[ssid].texture);
+                        
+                        
+                    }
+                }
+                
+                
+                
+                // Use indice index to draw
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
+                
+                // Tell WebGL we want to affect texture unit 0
+                gl.activeTexture(gl.TEXTURE0);
+
+                // Bind the texture to texture unit 0
+                gl.bindTexture(gl.TEXTURE_2D, texture);
+
+                // Tell the shader we bound the texture to texture unit 0
+                gl.uniform1i(shaderProgramInfo.uniformLocations.uSampler, 0);
+                
+                // Draw a rectangle
+                {
+                    const vertexCount = 6;
+                    const type = gl.UNSIGNED_SHORT;
+                    const offset = 0;
+                    gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
+                }
+                
+                
+            }
+            
+        }
+        
 
         function WAESpriteSheet(desc) {
             this.ssid = desc.ssid;
@@ -138,7 +244,7 @@ define(
         };
         
         WAESprite.prototype.addToRenderBatch = function () {
-            WAESpriteBatcher.addSpriteToBatch(sprite);
+            waeSpriteBatcher.addSpriteToBatch(this);
         };
         
         
@@ -185,7 +291,10 @@ define(
             Animation: WAEAnimation,
             StoredObject: WAEObject,
             Sprite: WAESprite,
-            Scene: WAEScene
+            Scene: WAEScene,
+            spriteBatcher: waeSpriteBatcher,
+            spriteSheetList: waeSpriteSheetList,
+            objectList: waeObjectList
         };
         
     

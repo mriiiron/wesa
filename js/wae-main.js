@@ -6,7 +6,6 @@ requirejs.config({
     baseUrl: './js/wae',
     paths: {
         'WAECore': './wae-core',
-		'WAESpriteBatcher': './wae-spritebatcher',
         'glMatrix': './external/gl-matrix-min'
     },
     
@@ -20,14 +19,12 @@ requirejs.config({
 requirejs(
     
     // Load all modules
-    ['glMatrix', 'WAECore', 'WAESpriteBatcher'],
+    ['glMatrix', 'WAECore'],
     
     // main()
-    function (glMatrix, WAECore, WAESpriteBatcher) {
+    function (glMatrix, WAECore) {
         
         // Global WAE objects
-        var wae_SpriteSheetList = [];
-        var wae_ObjectList = [];
         var wae_Scene = null;       // TODO: WAESceneManager
 
         // Vertex shader program
@@ -104,6 +101,8 @@ requirejs(
             gl.uniformMatrix4fv(shaderProgramInfo.uniformLocations.projectionMatrix, false, projectionMatrix);
             gl.uniformMatrix4fv(shaderProgramInfo.uniformLocations.modelViewMatrix, false, modelViewMatrix);
             
+            WESCore.spriteBatcher.init();
+            
         }
 
         function loadGameResources(ssList, objList) {
@@ -153,10 +152,10 @@ requirejs(
             objList[0] = obj;
         }
 
-        function initGameplay() {
+        function initGameplay(objList) {
             wae_Scene = new WAECore.Scene();
             wae_Scene.addSprite(new WAECore.Sprite({
-                object: wae_ObjectList[0],
+                object: objList[0],
                 action: 0,
                 team: 0,
                 position: { x: 0, y: 0 },
@@ -177,9 +176,9 @@ requirejs(
             gl.depthFunc(gl.LEQUAL);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-            WAESpriteBatcher.clear();
+            WAECore.spriteBatcher.clear();
             wae_Scene.addToRenderBatch();
-            WAESpriteBatcher.render(gl, shaderProgramInfo);
+            WAECore.spriteBatcher.render(gl, shaderProgramInfo);
             
             // Pull positions from the position buffer and put into the vertexPosition attribute.
             {
@@ -205,6 +204,8 @@ requirejs(
                 gl.enableVertexAttribArray( shaderProgramInfo.attribLocations.textureCoord);
             }
             
+            /*
+            
             // Use indice index to draw
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
             
@@ -224,6 +225,8 @@ requirejs(
                 const offset = 0;
                 gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
             }
+            
+            */
             
         }
 
@@ -258,19 +261,19 @@ requirejs(
         
         initGLConfig(gl, shaderProgramInfo);
         
-        loadGameResources(wae_SpriteSheetList, wae_ObjectList);
+        loadGameResources(WAECore.spriteSheetList, WAECore.objectList);
         
-        initGameplay();
+        initGameplay(WAECore.objectList);
         
         var start = null;
         
         function mainLoop(now) {
             if (!start) start = now;
             var delta = (now - start) / 1000.0;
-			var fps = 1.0 / delta;
-			// console.log(fps);
+            var fps = 1.0 / delta;
+            // console.log(fps);
             start = now;
-			var buffers = update();
+            var buffers = update();
             render(gl, shaderProgramInfo, buffers);
             window.requestAnimationFrame(mainLoop);
         }
