@@ -67,7 +67,7 @@ define(
                             const stride = 0;
                             const offset = 0;
                             gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.positions);
-                            gl.bufferData(gl.ARRAY_BUFFER, this.batchData[ssid].positions, gl.STATIC_DRAW);
+                            gl.bufferData(gl.ARRAY_BUFFER, this.batchData[ssid].positions, gl.DYNAMIC_DRAW);
                             gl.vertexAttribPointer(shaderProgramInfo.attribLocations.vertexPosition, numComponents, type, normalize, stride, offset);
                             gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.vertexPosition);
                         }
@@ -79,13 +79,13 @@ define(
                             const stride = 0;
                             const offset = 0;
                             gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.texCoords);
-                            gl.bufferData(gl.ARRAY_BUFFER, this.batchData[ssid].texCoords, gl.STATIC_DRAW);
+                            gl.bufferData(gl.ARRAY_BUFFER, this.batchData[ssid].texCoords, gl.DYNAMIC_DRAW);
                             gl.vertexAttribPointer(shaderProgramInfo.attribLocations.textureCoord, numComponents, type, normalize, stride, offset);
                             gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.textureCoord);
                         } 
                         
                         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
-                        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.batchData[ssid].indices, gl.STATIC_DRAW);
+                        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.batchData[ssid].indices, gl.DYNAMIC_DRAW);
 
                         gl.activeTexture(gl.TEXTURE0);
                         gl.bindTexture(gl.TEXTURE_2D, waeSpriteSheetList[ssid].texture);
