@@ -101,7 +101,7 @@ requirejs(
             gl.uniformMatrix4fv(shaderProgramInfo.uniformLocations.projectionMatrix, false, projectionMatrix);
             gl.uniformMatrix4fv(shaderProgramInfo.uniformLocations.modelViewMatrix, false, modelViewMatrix);
             
-            WESCore.spriteBatcher.init();
+            WAECore.spriteBatcher.init(gl);
             
         }
 
@@ -180,6 +180,8 @@ requirejs(
             wae_Scene.addToRenderBatch();
             WAECore.spriteBatcher.render(gl, shaderProgramInfo);
             
+            /*
+            
             // Pull positions from the position buffer and put into the vertexPosition attribute.
             {
                 const numComponents = 2;
@@ -203,8 +205,6 @@ requirejs(
                 gl.vertexAttribPointer(shaderProgramInfo.attribLocations.textureCoord, numComponents, type, normalize, stride, offset);
                 gl.enableVertexAttribArray( shaderProgramInfo.attribLocations.textureCoord);
             }
-            
-            /*
             
             // Use indice index to draw
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);

@@ -22,10 +22,10 @@ define(
             },
             
             init: function (gl) {
-                buffers.positions = gl.createBuffer();
-                buffers.texCoords = gl.createBuffer();
-                buffers.indices = gl.createBuffer();
-            }
+                this.buffers.positions = gl.createBuffer();
+                this.buffers.texCoords = gl.createBuffer();
+                this.buffers.indices = gl.createBuffer();
+            },
             
             addSpriteToBatch: function (sprite) {
                 var frame = sprite.getCurrentFrame();
@@ -58,7 +58,7 @@ define(
             render: function (gl, shaderProgramInfo) {
                 
                 for (var ssid = 0; ssid < this.batchData.length; ssid++) {
-                    if (this.batchData[ssid]) {
+                    if (this.batchData[ssid]) { 
                         
                         {
                             const numComponents = 2;
@@ -72,41 +72,31 @@ define(
                             gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.vertexPosition);
                         }
                         
-                        // TODO
-                        
-                        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.texCoords);
-                        gl.bufferData(gl.ARRAY_BUFFER, this.batchData[ssid].texCoords, gl.STATIC_DRAW);
+                        {
+                            const numComponents = 2;
+                            const type = gl.FLOAT;
+                            const normalize = false;
+                            const stride = 0;
+                            const offset = 0;
+                            gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.texCoords);
+                            gl.bufferData(gl.ARRAY_BUFFER, this.batchData[ssid].texCoords, gl.STATIC_DRAW);
+                            gl.vertexAttribPointer(shaderProgramInfo.attribLocations.textureCoord, numComponents, type, normalize, stride, offset);
+                            gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.textureCoord);
+                        } 
                         
                         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
                         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.batchData[ssid].indices, gl.STATIC_DRAW);
-                        
+
                         gl.activeTexture(gl.TEXTURE0);
                         gl.bindTexture(gl.TEXTURE_2D, waeSpriteSheetList[ssid].texture);
+                        gl.uniform1i(shaderProgramInfo.uniformLocations.uSampler, 0);
                         
+                        {
+                            var vertexCount = this.batchData[ssid].indices.length;
+                            gl.drawElements(gl.TRIANGLES, vertexCount, gl.UNSIGNED_SHORT, 0);
+                        }
                         
                     }
-                }
-                
-                
-                
-                // Use indice index to draw
-                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
-                
-                // Tell WebGL we want to affect texture unit 0
-                gl.activeTexture(gl.TEXTURE0);
-
-                // Bind the texture to texture unit 0
-                gl.bindTexture(gl.TEXTURE_2D, texture);
-
-                // Tell the shader we bound the texture to texture unit 0
-                gl.uniform1i(shaderProgramInfo.uniformLocations.uSampler, 0);
-                
-                // Draw a rectangle
-                {
-                    const vertexCount = 6;
-                    const type = gl.UNSIGNED_SHORT;
-                    const offset = 0;
-                    gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
                 }
                 
                 
@@ -231,7 +221,7 @@ define(
 			this.time++;
 			if (this.time >= anim.endTimeList[this.frameNum]) {
 				this.frameNum++;
-				if (this.time >= anim.endTimeList(animFrameCount - 1)) {
+				if (this.time >= anim.endTimeList[animFrameCount - 1]) {
 					this.time = 0;
 				}
 				if (this.frameNum >= animFrameCount) {
