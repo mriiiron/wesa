@@ -77,6 +77,12 @@ requirejs(
         
         function initGLConfig(gl, shaderProgramInfo) {
             
+            // Set clearing options
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+            gl.clearDepth(1.0);
+            gl.enable(gl.DEPTH_TEST);
+            gl.depthFunc(gl.LEQUAL);
+            
             // Set the projection matrix:
             // Create a orthogonal projection matrix for 640x480 viewport
             const left = -320;
@@ -100,6 +106,14 @@ requirejs(
             // In this example, projection and model view matrices are passed as uniforms.
             gl.uniformMatrix4fv(shaderProgramInfo.uniformLocations.projectionMatrix, false, projectionMatrix);
             gl.uniformMatrix4fv(shaderProgramInfo.uniformLocations.modelViewMatrix, false, modelViewMatrix);
+            
+            // Tell WebGL we want to affect texture unit 0 and bound the texture to texture unit 0 (gl.TEXTURE0)
+            gl.activeTexture(gl.TEXTURE0);
+            gl.uniform1i(shaderProgramInfo.uniformLocations.uSampler, 0);
+            
+            // Turn on attribute array
+            gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.vertexPosition);
+            gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.textureCoord);
             
             WAECore.spriteBatcher.init(gl);
             
@@ -170,63 +184,11 @@ requirejs(
         function render(gl, shaderProgramInfo, buffers, texture) {
             
             // Clear scene
-            gl.clearColor(0.0, 0.0, 0.0, 1.0);
-            gl.clearDepth(1.0);
-            gl.enable(gl.DEPTH_TEST);
-            gl.depthFunc(gl.LEQUAL);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
             WAECore.spriteBatcher.clear();
             wae_Scene.addToRenderBatch();
             WAECore.spriteBatcher.render(gl, shaderProgramInfo);
-            
-            /*
-            
-            // Pull positions from the position buffer and put into the vertexPosition attribute.
-            {
-                const numComponents = 2;
-                const type = gl.FLOAT;
-                const normalize = false;
-                const stride = 0;
-                const offset = 0;
-                gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-                gl.vertexAttribPointer(shaderProgramInfo.attribLocations.vertexPosition, numComponents, type, normalize, stride, offset);
-                gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.vertexPosition);
-            }
-            
-            // Pull texture coordinates from the texture coordinate buffer
-            {
-                const numComponents = 2;
-                const type = gl.FLOAT;
-                const normalize = false;
-                const stride = 0;
-                const offset = 0;
-                gl.bindBuffer(gl.ARRAY_BUFFER, buffers.textureCoord);
-                gl.vertexAttribPointer(shaderProgramInfo.attribLocations.textureCoord, numComponents, type, normalize, stride, offset);
-                gl.enableVertexAttribArray( shaderProgramInfo.attribLocations.textureCoord);
-            }
-            
-            // Use indice index to draw
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
-            
-            // Tell WebGL we want to affect texture unit 0
-            gl.activeTexture(gl.TEXTURE0);
-
-            // Bind the texture to texture unit 0
-            gl.bindTexture(gl.TEXTURE_2D, texture);
-
-            // Tell the shader we bound the texture to texture unit 0
-            gl.uniform1i(shaderProgramInfo.uniformLocations.uSampler, 0);
-            
-            // Draw a rectangle
-            {
-                const vertexCount = 6;
-                const type = gl.UNSIGNED_SHORT;
-                const offset = 0;
-                gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
-            }
-            
-            */
             
         }
 

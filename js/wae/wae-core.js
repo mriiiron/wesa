@@ -60,41 +60,19 @@ define(
                 for (var ssid = 0; ssid < this.batchData.length; ssid++) {
                     if (this.batchData[ssid]) { 
                         
-                        {
-                            const numComponents = 2;
-                            const type = gl.FLOAT;
-                            const normalize = false;
-                            const stride = 0;
-                            const offset = 0;
-                            gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.positions);
-                            gl.bufferData(gl.ARRAY_BUFFER, this.batchData[ssid].positions, gl.DYNAMIC_DRAW);
-                            gl.vertexAttribPointer(shaderProgramInfo.attribLocations.vertexPosition, numComponents, type, normalize, stride, offset);
-                            gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.vertexPosition);
-                        }
+                        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.positions);
+                        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.batchData[ssid].positions), gl.STATIC_DRAW);
+                        gl.vertexAttribPointer(shaderProgramInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
                         
-                        {
-                            const numComponents = 2;
-                            const type = gl.FLOAT;
-                            const normalize = false;
-                            const stride = 0;
-                            const offset = 0;
-                            gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.texCoords);
-                            gl.bufferData(gl.ARRAY_BUFFER, this.batchData[ssid].texCoords, gl.DYNAMIC_DRAW);
-                            gl.vertexAttribPointer(shaderProgramInfo.attribLocations.textureCoord, numComponents, type, normalize, stride, offset);
-                            gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.textureCoord);
-                        } 
-                        
-                        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
-                        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.batchData[ssid].indices, gl.DYNAMIC_DRAW);
+                        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.texCoords);
+                        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.batchData[ssid].texCoords), gl.STATIC_DRAW);
+                        gl.vertexAttribPointer(shaderProgramInfo.attribLocations.textureCoord, 2, gl.FLOAT, false, 0, 0);
 
-                        gl.activeTexture(gl.TEXTURE0);
-                        gl.bindTexture(gl.TEXTURE_2D, waeSpriteSheetList[ssid].texture);
-                        gl.uniform1i(shaderProgramInfo.uniformLocations.uSampler, 0);
+                        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
+                        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.batchData[ssid].indices), gl.STATIC_DRAW);
                         
-                        {
-                            var vertexCount = this.batchData[ssid].indices.length;
-                            gl.drawElements(gl.TRIANGLES, vertexCount, gl.UNSIGNED_SHORT, 0);
-                        }
+                        gl.bindTexture(gl.TEXTURE_2D, waeSpriteSheetList[ssid].texture);
+                        gl.drawElements(gl.TRIANGLES, this.batchData[ssid].indices.length, gl.UNSIGNED_SHORT, 0);
                         
                     }
                 }
