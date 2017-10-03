@@ -92,30 +92,12 @@ define(
             this.texture = null;
         }
         
-        WAESpriteSheet.prototype.loadTextureFromFile = function (gl, url) {
+        WAESpriteSheet.prototype.loadTextureFromImage = function (gl, image) {
             this.texture = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, texture);
-            
-            // Opaque white pixel used as texture before the actual image loads
-            const level = 0;
-            const internalFormat = gl.RGBA;
-            const width = 1;
-            const height = 1;
-            const border = 0;
-            const srcFormat = gl.RGBA;
-            const srcType = gl.UNSIGNED_BYTE;
-            const pixel = new Uint8Array([255, 255, 255, 255]);
-            gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, srcFormat, srcType, pixel);
-            
-            // Load actual texture
-            const image = new Image();
-            image.onload = function() {
-                gl.bindTexture(gl.TEXTURE_2D, texture);
-                gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, image);
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);  // Use NEAREST for both texture magnification and minification to keep texture sharp
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);  // Do not generate Mipmap or using LINEAR since we need sharp textures
-            };
-            image.src = url;
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);  // Use NEAREST for both texture magnification and minification to keep texture sharp
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);  // Do not generate Mipmap or using LINEAR since we need sharp textures
         };
         
         WAESpriteSheet.prototype.getCellCount = function () {

@@ -48,6 +48,33 @@ requirejs(
                 gl_FragColor = texture2D(uSampler, vTextureCoord);
             }
         `;
+        
+        function loadImages(urlArray) {
+            var newImages = [], loadedCount = 0;
+            var callBack = function () {};
+            function imageLoaded() {
+                loadedCount++;
+                if (loadedCount == urlArray.length) {
+                    callBack(newImages);
+                }
+            }
+            for (var i = 0; i < urlArray.length; i++) {
+                newImages[i] = new Image();
+                newImages[i].src = urlArray[i];
+                newImages[i].onload = function () {
+                    imageLoaded();
+                }
+                newImages[i].onerror = function () {
+                    console.log('[WARNING] "' + urlArray[i] + '" load failed.');
+                    imageLoaded();
+                }
+            }
+            return {
+                done: function (userFunction) {
+                    callBack = userFunction || callBack;
+                }
+            }
+        }
 
         function loadShader(gl, type, source) {
             const shader = gl.createShader(type);
@@ -223,9 +250,20 @@ requirejs(
         
         initGLConfig(gl, shaderProgramInfo);
         
-        loadGameResources(WAECore.spriteSheetList, WAECore.objectList);
+        var imageUrls = [
+            './assets/texture/balloon.png'
+        ];
         
-        initGameplay(WAECore.objectList);
+        loadImages(imageUrls).done(function (newImages) {
+            
+            loadGameResources(WAECore.spriteSheetList, WAECore.objectList);
+            initGameplay(WAECore.objectList);
+            
+            
+            
+            
+        }
+        
         
         var start = null;
         
