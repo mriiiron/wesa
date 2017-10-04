@@ -34,18 +34,19 @@ define(
                 var y1 = sprite.position.y - frame.center.y;
                 var y2 = y1 + frame.height;
                 var ssid = frame.spriteSheet.ssid;
+                var texClip = frame.spriteSheet.getTextureClip(frame.cellIndex);
                 if (this.batchData[ssid]) {
                     this.batchData[ssid].spriteCount++;
                     var indicesBase = 4 * (this.batchData[ssid].spriteCount - 1);
                     this.batchData[ssid].positions.push(x1, y1, x2, y1, x1, y2, x2, y2);
-                    this.batchData[ssid].texCoords.push(0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+                    this.batchData[ssid].texCoords.push(texClip.x1, texClip.y2, texClip.x2, texClip.y2, texClip.x1, texClip.y1, texClip.x2, texClip.y1);
                     this.batchData[ssid].indices.push(indicesBase, indicesBase + 1, indicesBase + 2, indicesBase + 1, indicesBase + 2, indicesBase + 3);
                 }
                 else {
                     this.batchData[ssid] = {
                         spriteCount: 1,
                         positions: [x1, y1, x2, y1, x1, y2, x2, y2],
-                        texCoords: [0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+                        texCoords: [texClip.x1, texClip.y2, texClip.x2, texClip.y2, texClip.x1, texClip.y1, texClip.x2, texClip.y1],
                         indices: [0, 1, 2, 1, 2, 3]
                     }
                 }
@@ -55,11 +56,9 @@ define(
                 this.batchData = [];
             },
             
-            render: function (gl, shaderProgramInfo) {
-                
+            render: function (gl, shaderProgramInfo) {      
                 for (var ssid = 0; ssid < this.batchData.length; ssid++) {
                     if (this.batchData[ssid]) { 
-                        
                         gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.positions);
                         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.batchData[ssid].positions), gl.STATIC_DRAW);
                         gl.vertexAttribPointer(shaderProgramInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
@@ -73,11 +72,8 @@ define(
                         
                         gl.bindTexture(gl.TEXTURE_2D, waeSpriteSheetList[ssid].texture);
                         gl.drawElements(gl.TRIANGLES, this.batchData[ssid].indices.length, gl.UNSIGNED_SHORT, 0);
-                        
                     }
                 }
-                
-                
             }
             
         }
@@ -94,10 +90,12 @@ define(
         
         WAESpriteSheet.prototype.loadTextureFromImage = function (gl, image) {
             this.texture = gl.createTexture();
-            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.bindTexture(gl.TEXTURE_2D, this.texture);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);  // Use NEAREST for both texture magnification and minification to keep texture sharp
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);  // Do not generate Mipmap or using LINEAR since we need sharp textures
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         };
         
         WAESpriteSheet.prototype.getCellCount = function () {
@@ -105,14 +103,14 @@ define(
         };
         
         WAESpriteSheet.prototype.getTextureClip = function (cellIndex, cellCount = 1, inverse = false) {
-            var rect = {};
+            var clip = {};
             var clipCellW = 1.0 / this.colCount;
             var clipCellH = 1.0 / this.rowCount;
-            rect.x1 = clipCellW * (cellIndex % colCount);
-            rect.x2 = rect.x1 + clipCellW * cellCount;
-            rect.y1 = clipCellH * Math.floor(cellIndex / colCount);
-            rect.y2 = rect.y1 + clipCellH;
-            return rect;
+            clip.x1 = clipCellW * (cellIndex % this.colCount);
+            clip.x2 = clip.x1 + clipCellW * cellCount;
+            clip.y1 = clipCellH * Math.floor(cellIndex / this.colCount);
+            clip.y2 = clip.y1 + clipCellH;
+            return clip;
         };
         
         

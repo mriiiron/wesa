@@ -25,7 +25,7 @@ requirejs(
     function (glMatrix, WAECore) {
         
         // Global WAE objects
-        var wae_Scene = null;       // TODO: WAESceneManager
+        var t_Scene = null;       // TODO: WAESceneManager
 
         // Vertex shader program
         const vsSource = `
@@ -142,11 +142,13 @@ requirejs(
             gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.vertexPosition);
             gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.textureCoord);
             
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+            
             WAECore.spriteBatcher.init(gl);
             
         }
 
-        function loadGameResources(ssList, objList) {
+        function loadSpriteSheets(gl, loadedImages, ssList) {
             var ss = new WAECore.SpriteSheet({
                 ssid: 0,
                 rowCount: 2,
@@ -154,7 +156,13 @@ requirejs(
                 cellWidth: 20,
                 cellHeight: 20
             });
+            ss.loadTextureFromImage(gl, loadedImages[0]);
             ssList[0] = ss;
+            
+            // for (var i = 0; i < loadedImages.length; i++) { }
+        }
+        
+        function loadGameObjects(ssList, objList) {
             var f1 = new WAECore.Frame({
                 spriteSheet: ssList[0],
                 cellIndex: 0,
@@ -194,8 +202,8 @@ requirejs(
         }
 
         function initGameplay(objList) {
-            wae_Scene = new WAECore.Scene();
-            wae_Scene.addSprite(new WAECore.Sprite({
+            t_Scene = new WAECore.Scene();
+            t_Scene.addSprite(new WAECore.Sprite({
                 object: objList[0],
                 action: 0,
                 team: 0,
@@ -205,7 +213,7 @@ requirejs(
         }
 
         function update() {
-            wae_Scene.update();
+            t_Scene.update();
         }
 
         function render(gl, shaderProgramInfo, buffers, texture) {
@@ -214,7 +222,7 @@ requirejs(
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
             WAECore.spriteBatcher.clear();
-            wae_Scene.addToRenderBatch();
+            t_Scene.addToRenderBatch();
             WAECore.spriteBatcher.render(gl, shaderProgramInfo);
             
         }
@@ -256,29 +264,27 @@ requirejs(
         
         loadImages(imageUrls).done(function (newImages) {
             
-            loadGameResources(WAECore.spriteSheetList, WAECore.objectList);
+            loadSpriteSheets(gl, newImages, WAECore.spriteSheetList);
+            loadGameObjects(WAECore.spriteSheetList, WAECore.objectList);
             initGameplay(WAECore.objectList);
             
-            
-            
-            
-        }
+            var start = null;
         
-        
-        var start = null;
-        
-        function mainLoop(now) {
-            if (!start) start = now;
-            var delta = (now - start) / 1000.0;
-            var fps = 1.0 / delta;
-            // console.log(fps);
-            start = now;
-            var buffers = update();
-            render(gl, shaderProgramInfo, buffers);
+            function mainLoop(now) {
+                if (!start) start = now;
+                var delta = (now - start) / 1000.0;
+                var fps = 1.0 / delta;
+                // console.log(fps);
+                start = now;
+                var buffers = update();
+                render(gl, shaderProgramInfo, buffers);
+                window.requestAnimationFrame(mainLoop);
+            }
+            
             window.requestAnimationFrame(mainLoop);
-        }
-        
-        window.requestAnimationFrame(mainLoop);
+
+        });
+
         
     }
 
