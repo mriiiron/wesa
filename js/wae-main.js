@@ -108,7 +108,7 @@ requirejs(
             gl.clearColor(0.0, 0.0, 0.0, 1.0);
             gl.clearDepth(1.0);
             gl.enable(gl.DEPTH_TEST);
-            gl.depthFunc(gl.LEQUAL);
+            gl.enable(gl.BLEND);
             
             // Set the projection matrix:
             // Create a orthogonal projection matrix for 640x480 viewport
@@ -149,56 +149,101 @@ requirejs(
         }
 
         function loadSpriteSheets(gl, loadedImages, ssList) {
-            var ss = new WAECore.SpriteSheet({
-                ssid: 0,
-                rowCount: 2,
-                colCount: 5,
-                cellWidth: 20,
-                cellHeight: 20
-            });
-            ss.loadTextureFromImage(gl, loadedImages[0]);
-            ssList[0] = ss;
+            
+            // Balloon
+            {
+                var ss = new WAECore.SpriteSheet({
+                    ssid: 0,
+                    rowCount: 2,
+                    colCount: 5,
+                    cellWidth: 20,
+                    cellHeight: 20
+                });
+                ss.loadTextureFromImage(gl, loadedImages[0]);
+                ssList[0] = ss;
+            }
+            
+            // BG
+            {
+                var ss = new WAECore.SpriteSheet({
+                    ssid: 1,
+                    rowCount: 1,
+                    colCount: 1,
+                    cellWidth: 80,
+                    cellHeight: 64
+                });
+                ss.loadTextureFromImage(gl, loadedImages[1]);
+                ssList[1] = ss;
+            }
             
             // for (var i = 0; i < loadedImages.length; i++) { }
         }
         
         function loadGameObjects(ssList, objList) {
-            var f1 = new WAECore.Frame({
-                spriteSheet: ssList[0],
-                cellIndex: 0,
-                cellCount: 1,
-                center: { x: 10, y: 10 }
-            });
-            var f2 = new WAECore.Frame({
-                spriteSheet: ssList[0],
-                cellIndex: 1,
-                cellCount: 1,
-                center: { x: 10, y: 10 }
-            });
-            var f3 = new WAECore.Frame({
-                spriteSheet: ssList[0],
-                cellIndex: 2,
-                cellCount: 1,
-                center: { x: 10, y: 10 }
-            });
-            var anim = new WAECore.Animation({
-                name: 'Idle',
-                frameCount: 4,
-                isLoop: true,
-                next: 0,
-                ttl: 0
-            });
-            anim.addFrame(0, f1, 10);
-            anim.addFrame(1, f2, 20);
-            anim.addFrame(2, f3, 30);
-            anim.addFrame(3, f2, 40);
-            var obj = new WAECore.StoredObject({
-                oid: 0,
-                type: 0,
-                name: 'Balloon'
-            });
-            obj.addAnimationAt(0, anim);
-            objList[0] = obj;
+            
+            {
+                var f1 = new WAECore.Frame({
+                    spriteSheet: ssList[0],
+                    cellIndex: 0,
+                    cellCount: 1,
+                    center: { x: 10, y: 10 }
+                });
+                var f2 = new WAECore.Frame({
+                    spriteSheet: ssList[0],
+                    cellIndex: 1,
+                    cellCount: 1,
+                    center: { x: 10, y: 10 }
+                });
+                var f3 = new WAECore.Frame({
+                    spriteSheet: ssList[0],
+                    cellIndex: 2,
+                    cellCount: 1,
+                    center: { x: 10, y: 10 }
+                });
+                var anim = new WAECore.Animation({
+                    name: 'Idle',
+                    frameCount: 4,
+                    isLoop: true,
+                    next: 0,
+                    ttl: 0
+                });
+                anim.addFrame(0, f1, 10);
+                anim.addFrame(1, f2, 20);
+                anim.addFrame(2, f3, 30);
+                anim.addFrame(3, f2, 40);
+                var obj = new WAECore.StoredObject({
+                    oid: 0,
+                    type: 0,
+                    name: 'Balloon'
+                });
+                obj.addAnimationAt(0, anim);
+                objList[0] = obj;
+            }
+            
+            {
+                var f1 = new WAECore.Frame({
+                    spriteSheet: ssList[1],
+                    cellIndex: 0,
+                    cellCount: 1,
+                    center: { x: 40, y: 32 }
+                });
+                var anim = new WAECore.Animation({
+                    name: 'Idle',
+                    frameCount: 1,
+                    isLoop: true,
+                    next: 0,
+                    ttl: 0
+                });
+                anim.addFrame(0, f1, 10);
+                var obj = new WAECore.StoredObject({
+                    oid: 0,
+                    type: 0,
+                    name: 'BG'
+                });
+                obj.addAnimationAt(0, anim);
+                objList[1] = obj;
+            }
+            
         }
 
         function initGameplay(objList) {
@@ -208,6 +253,13 @@ requirejs(
                 action: 0,
                 team: 0,
                 position: { x: 0, y: 0 },
+                zDepth: 0
+            }));
+            t_Scene.addSprite(new WAECore.Sprite({
+                object: objList[1],
+                action: 0,
+                team: 0,
+                position: { x: 0, y: 8 },
                 zDepth: 0
             }));
         }
@@ -259,7 +311,8 @@ requirejs(
         initGLConfig(gl, shaderProgramInfo);
         
         var imageUrls = [
-            './assets/texture/balloon.png'
+            './assets/texture/balloon.png',
+            './assets/texture/bg.png'
         ];
         
         loadImages(imageUrls).done(function (newImages) {

@@ -42,19 +42,10 @@ define(
             
             for (var ssid = 0; ssid < batchList.length; ssid++) {
                 if (batchList[ssid]) {
-                    
                     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, batchList[ssid].indices);
                     gl.activeTexture(gl.TEXTURE0);
-                    
-                    
-                    // TODO: PASS TEXTURE FROM wae_SpriteSheetList
-                    // gl.bindTexture(gl.TEXTURE_2D, texture);
-                    
-                    
                 }
             }
-            
-            
             
             // Use indice index to draw
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
