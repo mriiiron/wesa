@@ -196,6 +196,11 @@ define(
         };
         
         
+        function WAELayer() {
+            
+        }
+        
+        
         function WAEScene() {
             this.spriteList = [];
         }
