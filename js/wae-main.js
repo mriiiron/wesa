@@ -268,14 +268,8 @@ requirejs(
         }
 
         function render(gl, shaderProgramInfo, buffers, texture) {
-            
-            // Clear scene
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-            WAECore.spriteBatcher.clear();
-            t_Scene.addToRenderBatch();
-            WAECore.spriteBatcher.render(gl, shaderProgramInfo);
-            
+            t_Scene.render();
         }
 
         // =====================
