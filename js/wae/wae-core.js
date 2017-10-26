@@ -58,7 +58,6 @@ define(
         
         function WAEAnimation(desc) {
             this.name = desc.name;
-            this.frameCount = desc.frameCount;
             this.isLoop = desc.isLoop;
             this.next = desc.next;
             this.ttl = desc.ttl;
@@ -89,6 +88,7 @@ define(
             this.action = desc.action;
             this.team = desc.team;
             this.position = { x: desc.position.x, y: desc.position.y };
+            this.scale = desc.scale;
             this.scene = null;
             this.frameNum = 0;
             this.state = 0;
@@ -157,10 +157,10 @@ define(
                 if (this.spriteList[i]) {
                     var sprite = this.spriteList[i];
                     var frame = sprite.getCurrentFrame();
-                    var x1 = sprite.position.x - frame.center.x;
-                    var x2 = x1 + frame.width;
-                    var y1 = sprite.position.y - frame.center.y;
-                    var y2 = y1 + frame.height;
+                    var x1 = sprite.position.x - frame.center.x * sprite.scale;
+                    var x2 = x1 + frame.width * sprite.scale;
+                    var y1 = sprite.position.y - frame.center.y * sprite.scale;
+                    var y2 = y1 + frame.height * sprite.scale;
                     var ssid = frame.spriteSheet.ssid;
                     var texClip = frame.spriteSheet.getTextureClip(frame.cellIndex);
                     if (this.batchData[ssid]) {
