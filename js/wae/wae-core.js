@@ -10,74 +10,6 @@ define(
         
         var waeSpriteSheetList = [];
         var waeObjectList = [];
-        
-        var waeSpriteBatcher = {
-            
-            batchData: [],
-            
-            buffers: {
-                positions: null,
-                texCoords: null,
-                indices: null
-            },
-            
-            init: function (gl) {
-                this.buffers.positions = gl.createBuffer();
-                this.buffers.texCoords = gl.createBuffer();
-                this.buffers.indices = gl.createBuffer();
-            },
-            
-            addSpriteToBatch: function (sprite) {
-                var frame = sprite.getCurrentFrame();
-                var x1 = sprite.position.x - frame.center.x;
-                var x2 = x1 + frame.width;
-                var y1 = sprite.position.y - frame.center.y;
-                var y2 = y1 + frame.height;
-                var ssid = frame.spriteSheet.ssid;
-                var texClip = frame.spriteSheet.getTextureClip(frame.cellIndex);
-                if (this.batchData[ssid]) {
-                    this.batchData[ssid].spriteCount++;
-                    var indicesBase = 4 * (this.batchData[ssid].spriteCount - 1);
-                    this.batchData[ssid].positions.push(x1, y1, x2, y1, x1, y2, x2, y2);
-                    this.batchData[ssid].texCoords.push(texClip.x1, texClip.y2, texClip.x2, texClip.y2, texClip.x1, texClip.y1, texClip.x2, texClip.y1);
-                    this.batchData[ssid].indices.push(indicesBase, indicesBase + 1, indicesBase + 2, indicesBase + 1, indicesBase + 2, indicesBase + 3);
-                }
-                else {
-                    this.batchData[ssid] = {
-                        spriteCount: 1,
-                        positions: [x1, y1, x2, y1, x1, y2, x2, y2],
-                        texCoords: [texClip.x1, texClip.y2, texClip.x2, texClip.y2, texClip.x1, texClip.y1, texClip.x2, texClip.y1],
-                        indices: [0, 1, 2, 1, 2, 3]
-                    }
-                }
-            },
-            
-            clear: function () {
-                this.batchData = [];
-            },
-            
-            render: function (gl, shaderProgramInfo) {      
-                for (var ssid = 0; ssid < this.batchData.length; ssid++) {
-                    if (this.batchData[ssid]) { 
-                        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.positions);
-                        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.batchData[ssid].positions), gl.STATIC_DRAW);
-                        gl.vertexAttribPointer(shaderProgramInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
-                        
-                        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.texCoords);
-                        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.batchData[ssid].texCoords), gl.STATIC_DRAW);
-                        gl.vertexAttribPointer(shaderProgramInfo.attribLocations.textureCoord, 2, gl.FLOAT, false, 0, 0);
-
-                        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
-                        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.batchData[ssid].indices), gl.STATIC_DRAW);
-                        
-                        gl.bindTexture(gl.TEXTURE_2D, waeSpriteSheetList[ssid].texture);
-                        gl.drawElements(gl.TRIANGLES, this.batchData[ssid].indices.length, gl.UNSIGNED_SHORT, 0);
-                    }
-                }
-            }
-            
-        }
-        
 
         function WAESpriteSheet(desc) {
             this.ssid = desc.ssid;
@@ -157,7 +89,6 @@ define(
             this.action = desc.action;
             this.team = desc.team;
             this.position = { x: desc.position.x, y: desc.position.y };
-            this.zDepth = desc.zDepth;
             this.scene = null;
             this.frameNum = 0;
             this.state = 0;
@@ -190,10 +121,6 @@ define(
             }
         };
         
-        WAESprite.prototype.addToRenderBatch = function () {
-            waeSpriteBatcher.addSpriteToBatch(this);
-        };
-        
         
         function WAELayer() {
             this.spriteList = [];
@@ -222,8 +149,9 @@ define(
             }
         }
         
-        WAELayer.prototype.render = function (gl, shader) {
+        WAELayer.prototype.render = function (gl, shaders, buffers) {
             
+            // Prepare sprite batches in current layer
             this.batchData = [];
             for (var i = 0; i < this.spriteList.length; i++) {
                 if (this.spriteList[i]) {
@@ -253,15 +181,16 @@ define(
                 }
             }
             
+            // Batch-render current layer
             for (var ssid = 0; ssid < this.batchData.length; ssid++) {
                 if (this.batchData[ssid]) { 
-                    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.positions);
+                    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.positions);
                     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.batchData[ssid].positions), gl.STATIC_DRAW);
-                    gl.vertexAttribPointer(shader.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
-                    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.texCoords);
+                    gl.vertexAttribPointer(shaders.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
+                    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.texCoords);
                     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.batchData[ssid].texCoords), gl.STATIC_DRAW);
-                    gl.vertexAttribPointer(shader.attribLocations.textureCoord, 2, gl.FLOAT, false, 0, 0);
-                    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
+                    gl.vertexAttribPointer(shaders.attribLocations.textureCoord, 2, gl.FLOAT, false, 0, 0);
+                    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
                     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.batchData[ssid].indices), gl.STATIC_DRAW);
                     gl.bindTexture(gl.TEXTURE_2D, waeSpriteSheetList[ssid].texture);
                     gl.drawElements(gl.TRIANGLES, this.batchData[ssid].indices.length, gl.UNSIGNED_SHORT, 0);
@@ -292,25 +221,29 @@ define(
             }
         };
         
-        WAEScene.prototype.render = function () {
+        WAEScene.prototype.render = function (gl, shaders, buffers) {
             for (var i = 0; i < this.layerList.length; i++) {
                 if (this.layerList[i]) {
-                    this.layerList[i].render();
+                    this.layerList[i].render(gl, shaders, buffers);
                 }
             }
         };
         
         
         return {
+            
+            // "Classes"
             SpriteSheet: WAESpriteSheet,
             Frame: WAEFrame,
             Animation: WAEAnimation,
             StoredObject: WAEObject,
             Sprite: WAESprite,
             Scene: WAEScene,
-            spriteBatcher: waeSpriteBatcher,
+            
+            // Global Objects
             spriteSheetList: waeSpriteSheetList,
             objectList: waeObjectList
+
         };
         
     

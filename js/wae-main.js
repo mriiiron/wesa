@@ -102,12 +102,13 @@ requirejs(
             return shaderProgram;
         }
         
-        function initGLConfig(gl, shaderProgramInfo) {
+        function initGLConfig(gl, shaders) {
             
             // Set clearing options
             gl.clearColor(0.0, 0.0, 0.0, 1.0);
             gl.clearDepth(1.0);
             gl.enable(gl.BLEND);
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
             
             // Set the projection matrix:
             // Create a orthogonal projection matrix for 640x480 viewport
@@ -126,25 +127,21 @@ requirejs(
             glMatrix.mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -6.0]);
             
             // Tell WebGL to use our program when drawing
-            gl.useProgram(shaderProgramInfo.program);
+            gl.useProgram(shaders.program);
 
             // Set the shader uniforms
             // In this example, projection and model view matrices are passed as uniforms.
-            gl.uniformMatrix4fv(shaderProgramInfo.uniformLocations.projectionMatrix, false, projectionMatrix);
-            gl.uniformMatrix4fv(shaderProgramInfo.uniformLocations.modelViewMatrix, false, modelViewMatrix);
+            gl.uniformMatrix4fv(shaders.uniformLocations.projectionMatrix, false, projectionMatrix);
+            gl.uniformMatrix4fv(shaders.uniformLocations.modelViewMatrix, false, modelViewMatrix);
             
             // Tell WebGL we want to affect texture unit 0 and bound the texture to texture unit 0 (gl.TEXTURE0)
             gl.activeTexture(gl.TEXTURE0);
-            gl.uniform1i(shaderProgramInfo.uniformLocations.uSampler, 0);
+            gl.uniform1i(shaders.uniformLocations.uSampler, 0);
             
             // Turn on attribute array
-            gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.vertexPosition);
-            gl.enableVertexAttribArray(shaderProgramInfo.attribLocations.textureCoord);
-            
-            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-            
-            WAECore.spriteBatcher.init(gl);
-            
+            gl.enableVertexAttribArray(shaders.attribLocations.vertexPosition);
+            gl.enableVertexAttribArray(shaders.attribLocations.textureCoord);
+
         }
 
         function loadSpriteSheets(gl, loadedImages, ssList) {
@@ -252,14 +249,12 @@ requirejs(
                 action: 0,
                 team: 0,
                 position: { x: 0, y: 0 },
-                zDepth: 0
             }));
             t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
                 object: objList[1],
                 action: 0,
                 team: 0,
                 position: { x: 0, y: 8 },
-                zDepth: 0
             }));
         }
 
@@ -267,9 +262,9 @@ requirejs(
             t_Scene.update();
         }
 
-        function render(gl, shaderProgramInfo, buffers, texture) {
+        function render(gl, shaders, buffers) {
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            t_Scene.render();
+            t_Scene.render(gl, shaders, buffers);
         }
 
         // =====================
@@ -288,7 +283,7 @@ requirejs(
         const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
 
         // Setup shader input locations
-        const shaderProgramInfo = {
+        const shaders = {
             program: shaderProgram,
             attribLocations: {
                 vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
@@ -301,7 +296,14 @@ requirejs(
             }
         };
         
-        initGLConfig(gl, shaderProgramInfo);
+        // Initialize buffers
+        var buffers = {
+            positions: gl.createBuffer(),
+            texCoords: gl.createBuffer(),
+            indices: gl.createBuffer()
+        };
+        
+        initGLConfig(gl, shaders);
         
         var imageUrls = [
             './assets/texture/balloon.png',
@@ -322,8 +324,8 @@ requirejs(
                 var fps = 1.0 / delta;
                 // console.log(fps);
                 start = now;
-                var buffers = update();
-                render(gl, shaderProgramInfo, buffers);
+                update();
+                render(gl, shaders, buffers);
                 window.requestAnimationFrame(mainLoop);
             }
             
