@@ -246,15 +246,15 @@ requirejs(
         }
 
         function initGameplay(objList) {
-            t_Scene = new WAECore.Scene();
-            t_Scene.addSprite(new WAECore.Sprite({
+            t_Scene = new WAECore.Scene('TestScene');
+            t_Scene.addSpriteToLayer(1, new WAECore.Sprite({
                 object: objList[0],
                 action: 0,
                 team: 0,
                 position: { x: 0, y: 0 },
                 zDepth: 0
             }));
-            t_Scene.addSprite(new WAECore.Sprite({
+            t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
                 object: objList[1],
                 action: 0,
                 team: 0,

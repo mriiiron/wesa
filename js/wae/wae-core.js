@@ -271,15 +271,17 @@ define(
         }
         
         
-        function WAEScene() {
+        function WAEScene(name) {
+            this.name = name;
             this.layerList = [];
         }
 
-        WAEScene.prototype.addSpriteToLayer = function (sprite, layerIndex) {
-            if (this.layerList[layerIndex]) {
-                this.layerList[layerIndex].addSprite(sprite);
-                sprite.scene = this;
+        WAEScene.prototype.addSpriteToLayer = function (layerIndex, sprite) {
+            if (!this.layerList[layerIndex]) {
+                this.layerList[layerIndex] = new WAELayer();
             }
+            this.layerList[layerIndex].addSprite(sprite);
+            sprite.scene = this;
         }
         
         WAEScene.prototype.update = function () {
