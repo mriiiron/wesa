@@ -89,6 +89,7 @@ define(
             this.team = desc.team;
             this.position = { x: desc.position.x, y: desc.position.y };
             this.scale = desc.scale;
+            this.velocity = { x: 0, y: 0 };
             this.scene = null;
             this.frameNum = 0;
             this.state = 0;
@@ -119,6 +120,8 @@ define(
                     }
                 }
             }
+            this.position.x += this.velocity.x;
+            this.position.y += this.velocity.y;
         };
         
         

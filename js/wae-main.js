@@ -293,13 +293,15 @@ requirejs(
 
         function initGameplay(objList) {
             t_Scene = new WAECore.Scene('TestScene');
-            t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
+            var player = new WAECore.Sprite({
                 object: objList[0],
                 action: 0,
                 team: 0,
                 position: { x: 0, y: -250 },
                 scale: 2
-            }));
+            });
+            player.velocity.y = 1;
+            t_Scene.addSpriteToLayer(0, player);
             t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
                 object: objList[1],
                 action: 0,
@@ -314,7 +316,6 @@ requirejs(
                 position: { x: 156, y: 300 },
                 scale: 2
             }));
-            
             t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
                 object: objList[3],
                 action: 0,
@@ -322,7 +323,6 @@ requirejs(
                 position: { x: 188, y: 300 },
                 scale: 2
             }));
-            
             t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
                 object: objList[4],
                 action: 0,
