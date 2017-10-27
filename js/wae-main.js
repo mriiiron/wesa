@@ -297,21 +297,21 @@ requirejs(
                 object: objList[0],
                 action: 0,
                 team: 0,
-                position: { x: 0, y: -32 },
+                position: { x: 0, y: -250 },
                 scale: 2
             }));
             t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
                 object: objList[1],
                 action: 0,
                 team: 0,
-                position: { x: -48, y: 32 },
+                position: { x: 124, y: 300 },
                 scale: 2
             }));
             t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
                 object: objList[2],
                 action: 0,
                 team: 0,
-                position: { x: -16, y: 32 },
+                position: { x: 156, y: 300 },
                 scale: 2
             }));
             
@@ -319,7 +319,7 @@ requirejs(
                 object: objList[3],
                 action: 0,
                 team: 0,
-                position: { x: 16, y: 32 },
+                position: { x: 188, y: 300 },
                 scale: 2
             }));
             
@@ -327,7 +327,7 @@ requirejs(
                 object: objList[4],
                 action: 0,
                 team: 0,
-                position: { x: 48, y: 32 },
+                position: { x: 220, y: 300 },
                 scale: 2
             }));
         }
@@ -366,14 +366,13 @@ requirejs(
         };
         
         // Initialize buffers
-        var buffers = {
+        const buffers = {
             positions: gl.createBuffer(),
             texCoords: gl.createBuffer(),
             indices: gl.createBuffer()
         };
         
         WAEHelper.initGLConfig(gl, shaders);
-        
         
         var imageUrls = [
             './assets/texture/player.png',
