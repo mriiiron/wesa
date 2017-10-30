@@ -89,7 +89,9 @@ define(
             this.team = desc.team;
             this.position = { x: desc.position.x, y: desc.position.y };
             this.scale = desc.scale;
+            this.ai = null;
             this.velocity = { x: 0, y: 0 };
+            this.acceleration = {x: 0, y: 0 );
             this.scene = null;
             this.frameNum = 0;
             this.state = 0;
@@ -103,8 +105,18 @@ define(
         WAESprite.prototype.changeAction = function (newAction) {
             
         };
+        
+        WAESprite.prototype.addAI = function (ai) {
+            this.ai = ai;
+            ai.sprite = this;
+        }
        
         WAESprite.prototype.update = function () {
+            if (this.ai) {
+                if (typeof this.ai.execute == 'function') {
+                    this.ai.execute();
+                }
+            }
             var anim = this.object.animList[this.action];
             var animFrameCount = anim.frameList.length;
             this.time++;
@@ -122,7 +134,18 @@ define(
             }
             this.position.x += this.velocity.x;
             this.position.y += this.velocity.y;
+            this.velocity.x += this.acceleration.x;
+            this.velocity.y += this.acceleration.y;
         };
+        
+        
+        function WAEAI() {
+            this.sprite = null;
+        }
+        
+        WAEAI.prototype.execute() = function () {
+            
+        }
         
         
         function WAELayer() {

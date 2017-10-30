@@ -300,7 +300,7 @@ requirejs(
                 position: { x: 0, y: -250 },
                 scale: 2
             });
-            player.velocity.y = 1;
+            // player.velocity.y = 1;
             t_Scene.addSpriteToLayer(0, player);
             t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
                 object: objList[1],
