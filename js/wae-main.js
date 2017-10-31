@@ -26,7 +26,7 @@ requirejs(
     function (WAECore, WAEHelper) {
         
         // Global WAE objects
-        var t_Scene = null;       // TODO: WAESceneManager
+        var t_Scene = null;       // TODO: WAESceneManager (maybe)
 
         
         function loadImages(urlArray) {
@@ -291,11 +291,11 @@ requirejs(
 
         }
 
-        function initGameplay(objList) {
+        function initGameplay(objList, player) {
             
             t_Scene = new WAECore.Scene('TestScene');
             
-            var player = new WAECore.Sprite({
+            t_Scene.player = new WAECore.Sprite({
                 object: objList[0],
                 action: 0,
                 team: 0,
@@ -353,9 +353,42 @@ requirejs(
             }));
             */
         }
+        
+        function initInput(keyState) {
+            document.onkeydown = function (e) {
+                // console.log('keyDown: ' + e.keyCode);
+                switch (e.keyCode) {
+                    case 37:
+                        keyState.left = 1;
+                        break;
+                    case 39:
+                        keyState.right = 1;
+                        break;
+                    default:
+                        break;
+                }
+            };
+            document.onkeyup = function (e) {
+                // console.log('keyUp: ' + e.keyCode);
+                switch (e.keyCode) {
+                    case 37:
+                        keyState.left = 0;
+                        break;
+                    case 39:
+                        keyState.right = 0;
+                        break;
+                    default:
+                        break;
+                }
+            };
+        }
+        
 
         function update() {
             t_Scene.update();
+            
+            
+            
         }
 
         function render(gl, shaders, buffers) {
@@ -394,8 +427,12 @@ requirejs(
             indices: gl.createBuffer()
         };
         
-        WAEHelper.initGLConfig(gl, shaders);
-        
+        // Initialize key states
+        const keyState = {
+            left: 0,
+            right: 0
+        }
+
         var imageUrls = [
             './assets/texture/player.png',
             './assets/texture/enemy.png'
@@ -403,9 +440,12 @@ requirejs(
         
         loadImages(imageUrls).done(function (newImages) {
             
+            WAEHelper.initGLConfig(gl, shaders);
+            
             loadSpriteSheets(gl, newImages, WAECore.spriteSheetList);
             loadGameObjects(WAECore.spriteSheetList, WAECore.objectList);
             initGameplay(WAECore.objectList);
+            initInput(keyState);
             
             var start = null;
         
