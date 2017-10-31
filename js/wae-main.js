@@ -292,7 +292,9 @@ requirejs(
         }
 
         function initGameplay(objList) {
+            
             t_Scene = new WAECore.Scene('TestScene');
+            
             var player = new WAECore.Sprite({
                 object: objList[0],
                 action: 0,
@@ -300,15 +302,34 @@ requirejs(
                 position: { x: 0, y: -250 },
                 scale: 2
             });
-            // player.velocity.y = 1;
             t_Scene.addSpriteToLayer(0, player);
-            t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
+            
+            var enemy_1 = new WAECore.Sprite({
                 object: objList[1],
                 action: 0,
                 team: 0,
-                position: { x: 124, y: 300 },
+                position: { x: 50, y: -200 },
                 scale: 2
-            }));
+            });
+            t_Scene.addSpriteToLayer(0, enemy_1);
+            
+            var enemy_1_ai = new WAECore.AI();
+            enemy_1_ai.target = player;
+            enemy_1_ai.execute = function () {
+                if (this.self.position.x > this.target.position.x) {
+                    this.self.velocity.x = -1;
+                }
+                else if (this.self.position.x < this.target.position.x) {
+                    this.self.velocity.x = 1;
+                }
+                else {
+                    this.self.velocity.x = 0;
+                }
+            }
+            
+            enemy_1.setAI(enemy_1_ai);
+            
+            /*
             t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
                 object: objList[2],
                 action: 0,
@@ -330,6 +351,7 @@ requirejs(
                 position: { x: 220, y: 300 },
                 scale: 2
             }));
+            */
         }
 
         function update() {

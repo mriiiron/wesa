@@ -91,7 +91,7 @@ define(
             this.scale = desc.scale;
             this.ai = null;
             this.velocity = { x: 0, y: 0 };
-            this.acceleration = {x: 0, y: 0 );
+            this.acceleration = { x: 0, y: 0 };
             this.scene = null;
             this.frameNum = 0;
             this.state = 0;
@@ -106,9 +106,9 @@ define(
             
         };
         
-        WAESprite.prototype.addAI = function (ai) {
+        WAESprite.prototype.setAI = function (ai) {
             this.ai = ai;
-            ai.sprite = this;
+            ai.self = this;
         }
        
         WAESprite.prototype.update = function () {
@@ -140,11 +140,7 @@ define(
         
         
         function WAEAI() {
-            this.sprite = null;
-        }
-        
-        WAEAI.prototype.execute() = function () {
-            
+            this.self = null;
         }
         
         
@@ -264,6 +260,7 @@ define(
             Animation: WAEAnimation,
             StoredObject: WAEObject,
             Sprite: WAESprite,
+            AI: WAEAI,
             Scene: WAEScene,
             
             // Global Objects
