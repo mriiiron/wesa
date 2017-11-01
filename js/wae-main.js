@@ -302,7 +302,7 @@ requirejs(
                 position: { x: 0, y: -250 },
                 scale: 2
             });
-            t_Scene.addSpriteToLayer(0, player);
+            t_Scene.addSpriteToLayer(0, t_Scene.player);
             
             var enemy_1 = new WAECore.Sprite({
                 object: objList[1],
@@ -314,7 +314,7 @@ requirejs(
             t_Scene.addSpriteToLayer(0, enemy_1);
             
             var enemy_1_ai = new WAECore.AI();
-            enemy_1_ai.target = player;
+            enemy_1_ai.target = t_Scene.player;
             enemy_1_ai.execute = function () {
                 if (this.self.position.x > this.target.position.x) {
                     this.self.velocity.x = -1;
@@ -384,10 +384,19 @@ requirejs(
         }
         
 
-        function update() {
+        function update(keyState) {
+            
             t_Scene.update();
             
-            
+            if (keyState.left && !keyState.right) {
+                t_Scene.player.velocity.x = -2;
+            }
+            else if (!keyState.left && keyState.right) {
+                t_Scene.player.velocity.x = 2;
+            }
+            else {
+                t_Scene.player.velocity.x = 0;
+            }
             
         }
 
@@ -399,7 +408,7 @@ requirejs(
         
         const gl = document.getElementById('glCanvas').getContext("webgl");
         if (!gl) {
-            alert("Unable to initialize WebGL. Your browser or machine may not support it.");
+            alert('Unable to initialize WebGL. Your browser or machine may not support it.');
             return;
         }
 
@@ -455,7 +464,7 @@ requirejs(
                 var fps = 1.0 / delta;
                 // console.log(fps);
                 start = now;
-                update();
+                update(keyState);
                 render(gl, shaders, buffers);
                 window.requestAnimationFrame(mainLoop);
             }
