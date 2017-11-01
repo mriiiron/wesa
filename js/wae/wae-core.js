@@ -34,33 +34,49 @@ define(
             return this.rowCount * this.colCount;
         };
         
-        WAESpriteSheet.prototype.getTextureClip = function (cellIndex, cellCount = 1, inverse = false) {
+        WAESpriteSheet.prototype.getTextureClipByIndex = function (index) {
             var clip = {};
             var clipCellW = 1.0 / this.colCount;
             var clipCellH = 1.0 / this.rowCount;
-            clip.x1 = clipCellW * (cellIndex % this.colCount);
+            clip.x1 = clipCellW * (index % this.colCount);
             clip.x2 = clip.x1 + clipCellW * cellCount;
-            clip.y1 = clipCellH * Math.floor(cellIndex / this.colCount);
+            clip.y1 = clipCellH * Math.floor(index / this.colCount);
             clip.y2 = clip.y1 + clipCellH;
+            return clip;
+        };
+        
+        WAESpriteSheet.prototype.getTextureClipByPosition = function (row, col, rowSpan = 1, colSpan = 1) {
+            var clip = {};
+            var clipCellW = 1.0 / this.colCount;
+            var clipCellH = 1.0 / this.rowCount;
+            clip.x1 = clipCellW * col;
+            clip.x2 = clip.x1 + clipCellW * colSpan;
+            clip.y1 = clipCellH * row;
+            clip.y2 = clip.y1 + clipCellH * rowSpan;
             return clip;
         };
         
         
         function WAEFrame(desc) {
             this.spriteSheet = desc.spriteSheet;
-            this.cellIndex = desc.cellIndex;
-            this.cellCount = desc.cellCount;
-            this.center = { x: desc.center.x, y: desc.center.y };
-            this.width = desc.spriteSheet.cellWidth * desc.cellCount;
-            this.height = desc.spriteSheet.cellHeight;
+            this.cell = {
+                row: desc.cell.row,
+                col: desc.cell.col,
+                rowSpan: desc.cell.rowSpan,
+                colSpan: desc.cell.colSpan
+            };
+            this.center = {
+                x: desc.center.x,
+                y: desc.center.y
+            };
+            this.width = desc.spriteSheet.cellWidth * desc.cell.rowSpan;
+            this.height = desc.spriteSheet.cellHeight * desc.cell.colSpan;
         }
         
         
         function WAEAnimation(desc) {
             this.name = desc.name;
-            this.isLoop = desc.isLoop;
             this.next = desc.next;
-            this.ttl = desc.ttl;
             this.frameList = [];
             this.endTimeList = [];
         }
@@ -68,6 +84,11 @@ define(
         WAEAnimation.prototype.addFrame = function (index, frame, endTime) {
             this.frameList[index] = frame;
             this.endTimeList[index] = endTime;
+        };
+        
+        WAEAnimation.prototype.addFrameByArray = function (frameArr, endTimeArr) {
+            this.frameList = frameArr.slice();
+            this.endTimeList = endTimeArr.slice();
         };
 
         
@@ -78,8 +99,12 @@ define(
             this.animList = [];
         }
         
-        WAEObject.prototype.addAnimationAt = function (slot, anim) {
+        WAEObject.prototype.addAnimation = function (slot, anim) {
             this.animList[slot] = anim;
+        };
+        
+        WAEObject.prototype.addAnimationByArray = function (animArr) {
+            this.animList = animArr.slice();
         };
 
         
@@ -96,6 +121,7 @@ define(
             this.frameNum = 0;
             this.state = 0;
             this.time = 0;
+            this.deadFlag = false;
         }
         
         WAESprite.prototype.getCurrentFrame = function () {
@@ -103,7 +129,7 @@ define(
         };
         
         WAESprite.prototype.changeAction = function (newAction) {
-            
+            this.action = newAction;
         };
         
         WAESprite.prototype.setAI = function (ai) {
@@ -127,8 +153,13 @@ define(
                 }
                 if (this.frameNum >= animFrameCount) {
                     this.frameNum = 0;
-                    if (!anim.isLoop) {
-                        this.changeAction(anim.next);
+                    if (anim.next != null) {
+                        if (anim.next != this.action) {
+                            this.changeAction(anim.next);
+                        }
+                    }
+                    else {
+                        this.deadFlag = true;
                     }
                 }
             }
@@ -150,6 +181,8 @@ define(
         }
 
         WAELayer.prototype.addSprite = function (sprite) {
+            this.spriteList.push(sprite);
+            /*
             var newIndex = null;
             for (var i = 0; i < this.spriteList.length; i++) {
                 if (!this.spriteList[i]) {
@@ -161,12 +194,19 @@ define(
                 newIndex = this.spriteList.length;
                 this.spriteList[newIndex] = sprite;
             }
+            */
         }
         
         WAELayer.prototype.update = function () {
-            for (var i = 0; i < this.spriteList.length; i++) {
-                if (this.spriteList[i]) {
-                    this.spriteList[i].update();
+            var sList = this.spriteList;
+            for (var i = 0; i < sList.length; i++) {
+                if (!sList[i].deadFlag) {
+                    sList[i].update();
+                }
+            }
+            for (var i = sList.length - 1; i >= 0; i--) {
+                if (sList[i].deadFlag) {
+                    sList.splice(i, 1);
                 }
             }
         }
@@ -184,7 +224,7 @@ define(
                     var y1 = sprite.position.y - frame.center.y * sprite.scale;
                     var y2 = y1 + frame.height * sprite.scale;
                     var ssid = frame.spriteSheet.ssid;
-                    var texClip = frame.spriteSheet.getTextureClip(frame.cellIndex);
+                    var texClip = frame.spriteSheet.getTextureClipByPosition(frame.cell.row, frame.cell.col, frame.cell.rowSpan, frame.cell.colSpan);
                     if (this.batchData[ssid]) {
                         this.batchData[ssid].spriteCount++;
                         var indicesBase = 4 * (this.batchData[ssid].spriteCount - 1);
