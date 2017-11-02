@@ -135,7 +135,7 @@ define(
         WAESprite.prototype.setAI = function (ai) {
             this.ai = ai;
             ai.self = this;
-        }
+        };
        
         WAESprite.prototype.update = function () {
             if (this.ai) {
@@ -175,7 +175,8 @@ define(
         }
         
         
-        function WAELayer() {
+        function WAELayer(desc) {
+            this.lid = desc.lid;
             this.spriteList = [];
             this.batchData = null;
         }
@@ -195,7 +196,7 @@ define(
                 this.spriteList[newIndex] = sprite;
             }
             */
-        }
+        };
         
         WAELayer.prototype.update = function () {
             var sList = this.spriteList;
@@ -209,7 +210,7 @@ define(
                     sList.splice(i, 1);
                 }
             }
-        }
+        };
         
         WAELayer.prototype.render = function (gl, shaders, buffers) {
             
@@ -259,7 +260,7 @@ define(
                 }
             }
             
-        }
+        };
         
         
         function WAEScene(name) {
@@ -269,11 +270,17 @@ define(
 
         WAEScene.prototype.addSpriteToLayer = function (layerIndex, sprite) {
             if (!this.layerList[layerIndex]) {
-                this.layerList[layerIndex] = new WAELayer();
+                var layer = new WAELayer({ lid: layerIndex });
+                this.layerList[layerIndex] = layer;
             }
             this.layerList[layerIndex].addSprite(sprite);
+            sprite.layer = this.layerList[layerIndex];
             sprite.scene = this;
-        }
+        };
+        
+        WAEScene.prototype.getCollisions = function () {
+            
+        };
         
         WAEScene.prototype.update = function () {
             for (var i = 0; i < this.layerList.length; i++) {
