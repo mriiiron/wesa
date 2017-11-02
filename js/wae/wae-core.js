@@ -69,6 +69,10 @@ define(
                 x: desc.center.x,
                 y: desc.center.y
             };
+            this.box = {
+                hit: null,
+                hurt: null
+            }
             this.width = desc.spriteSheet.cellWidth * desc.cell.rowSpan;
             this.height = desc.spriteSheet.cellHeight * desc.cell.colSpan;
         }
