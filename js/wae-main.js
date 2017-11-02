@@ -296,7 +296,7 @@ requirejs(
             
         }
 
-        function initGameplay(objList, player) {
+        function initGameplay(objList) {
             
             t_Scene = new WAECore.Scene('TestScene');
             
@@ -307,13 +307,14 @@ requirejs(
                 position: { x: 0, y: -250 },
                 scale: 2
             });
+            t_Scene.player.cooldown = 0;
             t_Scene.addSpriteToLayer(0, t_Scene.player);
             
             var enemy_1 = new WAECore.Sprite({
                 object: objList[1],
                 action: 0,
-                team: 0,
-                position: { x: 50, y: -200 },
+                team: 1,
+                position: { x: 50, y: -100 },
                 scale: 2
             });
             t_Scene.addSpriteToLayer(0, enemy_1);
@@ -333,15 +334,6 @@ requirejs(
             }
             
             enemy_1.setAI(enemy_1_ai);
-            
-            var testExp = new WAECore.Sprite({
-                object: objList[5],
-                action: 1,
-                team: 0,
-                position: { x: 50, y: -200 },
-                scale: 2
-            });
-            t_Scene.addSpriteToLayer(0, testExp);
             
             /*
             t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
@@ -378,6 +370,9 @@ requirejs(
                     case 39:
                         keyState.right = 1;
                         break;
+                    case 90:
+                        keyState.z = 1;
+                        break;
                     default:
                         break;
                 }
@@ -391,6 +386,9 @@ requirejs(
                     case 39:
                         keyState.right = 0;
                         break;
+                    case 90:
+                        keyState.z = 0;
+                        break;
                     default:
                         break;
                 }
@@ -398,18 +396,36 @@ requirejs(
         }
         
 
-        function update(keyState) {
+        function update(keyState, objList) {
             
             t_Scene.update();
             
+            var player = t_Scene.player;
+            if (player.cooldown) { player.cooldown--; }
+            
             if (keyState.left && !keyState.right) {
-                t_Scene.player.velocity.x = -2;
+                player.velocity.x = -2;
             }
             else if (!keyState.left && keyState.right) {
-                t_Scene.player.velocity.x = 2;
+                player.velocity.x = 2;
             }
             else {
-                t_Scene.player.velocity.x = 0;
+                player.velocity.x = 0;
+            }
+            
+            if (keyState.z) {
+                if (!player.cooldown) {
+                    var bullet = new WAECore.Sprite({
+                        object: objList[5],
+                        action: 0,
+                        team: 0,
+                        position: { x: player.position.x, y: player.position.y },
+                        scale: 2
+                    });
+                    bullet.velocity.y = 15;
+                    t_Scene.addSpriteToLayer(0, bullet);
+                    player.cooldown = 30;
+                }
             }
             
         }
@@ -453,7 +469,8 @@ requirejs(
         // Initialize key states
         const keyState = {
             left: 0,
-            right: 0
+            right: 0,
+            z: 0
         }
 
         var imageUrls = [
@@ -477,7 +494,7 @@ requirejs(
                 var fps = 1.0 / delta;
                 // console.log(fps);
                 start = now;
-                update(keyState);
+                update(keyState, WAECore.objectList);
                 render(gl, shaders, buffers);
                 window.requestAnimationFrame(mainLoop);
             }
