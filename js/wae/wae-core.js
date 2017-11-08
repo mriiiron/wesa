@@ -126,6 +126,7 @@ define(
             this.state = 0;
             this.time = 0;
             this.deadFlag = false;
+            this.collision = null;
         }
         
         WAESprite.prototype.getCurrentFrame = function () {
