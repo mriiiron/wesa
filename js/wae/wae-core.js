@@ -69,7 +69,7 @@ define(
                 x: desc.center.x,
                 y: desc.center.y
             };
-            this.box = {
+            this.collision = {
                 hit: null,
                 hurt: null
             }
@@ -126,8 +126,22 @@ define(
             this.state = 0;
             this.time = 0;
             this.deadFlag = false;
-            this.collision = null;
+            this.collision = {
+                mode: WAESprite.CollisionMode.BY_SPRITE,
+                hit: null,
+                hurt: null
+            };
         }
+        
+        WAESprite.CollisionMode = Object.freeze({
+            BY_SPRITE: 'BY_SPRITE',
+            BY_FRAME: 'BY_FRAME'
+        });
+        
+        WAESprite.CollisionShape = Object.freeze({
+            CIRCLE: 'CIRCLE',
+            BOX: 'BOX'
+        });
         
         WAESprite.prototype.getCurrentFrame = function () {
             return this.object.animList[this.action].frameList[this.frameNum];
@@ -188,19 +202,6 @@ define(
 
         WAELayer.prototype.addSprite = function (sprite) {
             this.spriteList.push(sprite);
-            /*
-            var newIndex = null;
-            for (var i = 0; i < this.spriteList.length; i++) {
-                if (!this.spriteList[i]) {
-                    newIndex = i;
-                    this.spriteList[i] = sprite;
-                }
-            }
-            if (!newIndex) {
-                newIndex = this.spriteList.length;
-                this.spriteList[newIndex] = sprite;
-            }
-            */
         };
         
         WAELayer.prototype.update = function () {
@@ -283,8 +284,53 @@ define(
             sprite.scene = this;
         };
         
-        WAEScene.prototype.getCollisions = function () {
+        WAEScene.prototype.getCollisions = function (layerIndexes = null) {
+            var listOfSpriteList = [];
+            if (layerIndexes) {
+                for (var i = 0; i < layerIndexes.length; i++) {
+                    if (this.layerList[layerIndexes[i]]) {
+                        listOfSpriteList.push(this.layerList[layerIndexes[i]].spriteList);
+                    }
+                }
+            }
+            else {
+                for (var i = 0; i < this.layerList.length; i++) {
+                    if (this.layerList[i]) {
+                        listOfSpriteList.push(this.layerList[i].spriteList);
+                    }
+                }
+            }
+            var allSprites = [].concat.apply([], listOfSpriteList);
+            for (var i = 0; i < allSprites.length; i++) {
+                for (var j = 0; j < allSprites.length; j++) {
+                    if (i == j) { continue; }
+                    var si = allSprites[i], sj = allSprites[j];
+                    if (si.collision && sj.collision) {
+                        var hit = null, hurt = null;
+                        if (si.collision.mode == WAESprite.CollisionMode.BY_SPRITE) {
+                            hit = si.collision.hit;
+                        }
+                        else if (si.collision.mode == WAESprite.CollisionMode.BY_FRAME) {
+                            hit = si.getCurrentFrame().collision.hit;
+                        }
+                        if (sj.collision.mode == WAESprite.CollisionMode.BY_SPRITE) {
+                            hurt = sj.collision.hurt;
+                        }
+                        else if (sj.collision.mode == WAESprite.CollisionMode.BY_FRAME) {
+                            hurt = sj.getCurrentFrame().collision.hurt;
+                        }
+                        if (hit && hurt) {
+                            
+                            
+                            // TODO
+                            
+                            
+                        }
+                    } 
+                }
+            }
             
+            console.log(allSprites);
         };
         
         WAEScene.prototype.update = function () {
