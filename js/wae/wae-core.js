@@ -140,7 +140,7 @@ define(
         
         WAESprite.CollisionShape = Object.freeze({
             CIRCLE: 'CIRCLE',
-            BOX: 'BOX'
+            RECT: 'RECT'
         });
         
         WAESprite.prototype.getCurrentFrame = function () {
@@ -191,6 +191,8 @@ define(
         
         function WAEAI() {
             this.self = null;
+            this.target = null;
+            this.execute = null;
         }
         
         
@@ -301,36 +303,66 @@ define(
                 }
             }
             var allSprites = [].concat.apply([], listOfSpriteList);
+            var collisionList = [];
             for (var i = 0; i < allSprites.length; i++) {
                 for (var j = 0; j < allSprites.length; j++) {
                     if (i == j) { continue; }
                     var si = allSprites[i], sj = allSprites[j];
                     if (si.collision && sj.collision) {
-                        var hit = null, hurt = null;
+                        var iHitbox = {}, jHurtbox = {};
                         if (si.collision.mode == WAESprite.CollisionMode.BY_SPRITE) {
-                            hit = si.collision.hit;
+                            var hit = si.collision.hit;
+                            if (!hit) { continue; }
+                            iHitbox.shape = hit.shape;
+                            if (iHitbox.shape == WAESprite.CollisionShape.CIRCLE) {
+                                iHitbox.center = { x: si.position.x + hit.centerOffset.x, y: si.position.y + hit.centerOffset.y };
+                                iHitbox.radius = hit.radius;
+                            }
+                            else if (iHitbox.mode == WAESprite.CollisionShape.RECT) {
+                                iHitbox.x1 = si.position.x + hit.x1;
+                                iHitbox.x2 = si.position.x + hit.x2;
+                                iHitbox.y1 = si.position.y + hit.y1;
+                                iHitbox.y2 = si.position.y + hit.y2;
+                            }
                         }
                         else if (si.collision.mode == WAESprite.CollisionMode.BY_FRAME) {
-                            hit = si.getCurrentFrame().collision.hit;
+                            // TODO
                         }
                         if (sj.collision.mode == WAESprite.CollisionMode.BY_SPRITE) {
-                            hurt = sj.collision.hurt;
+                            var hurt = sj.collision.hurt;
+                            if (!hurt) { continue; }
+                            jHurtbox.shape = hurt.shape;
+                            if (jHurtbox.shape == WAESprite.CollisionShape.CIRCLE) {
+                                jHurtbox.center = { x: sj.position.x + hurt.centerOffset.x, y: sj.position.y + hurt.centerOffset.y };
+                                jHurtbox.radius = hurt.radius;
+                            }
+                            else if (jHurtbox.mode == WAESprite.CollisionShape.RECT) {
+                                jHurtbox.x1 = sj.position.x + hurt.x1;
+                                jHurtbox.x2 = sj.position.x + hurt.x2;
+                                jHurtbox.y1 = sj.position.y + hurt.y1;
+                                jHurtbox.y2 = sj.position.y + hurt.y2;
+                            }
                         }
                         else if (sj.collision.mode == WAESprite.CollisionMode.BY_FRAME) {
-                            hurt = sj.getCurrentFrame().collision.hurt;
-                        }
-                        if (hit && hurt) {
-                            
-                            
                             // TODO
-                            
-                            
+                        }
+                        if (iHitbox.shape == WAESprite.CollisionShape.CIRCLE && jHurtbox.shape == WAESprite.CollisionShape.CIRCLE) {
+                            var dx = iHitbox.center.x - jHurtbox.center.x, dy = iHitbox.center.y - jHurtbox.center.y;
+                            var dist = Math.sqrt(dx * dx + dy * dy);
+                            if (iHitbox.radius + jHurtbox.radius > dist) {
+                                collisionList.push({
+                                    hiter: si,
+                                    hurter: sj
+                                });
+                            }
+                        }
+                        else if (iHitbox.shape == WAESprite.CollisionShape.RECT && jHurtbox.shape == WAESprite.CollisionShape.RECT) {
+                            // TODO
                         }
                     } 
                 }
             }
-            
-            console.log(allSprites);
+            //console.log(allSprites);
         };
         
         WAEScene.prototype.update = function () {
