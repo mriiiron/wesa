@@ -278,6 +278,12 @@ requirejs(
                     anim.addFrameByArray([f[0], f[1], f[2], f[1]], [15, 30, 45, 60]);
                     obj.addAnimation(0, anim);
                 }
+                {
+                    var anim = new WAECore.Animation({
+                        anim: 'Explode',
+                        next: null
+                    });
+                }
                 objList[obj.oid] = obj;
             }
             
