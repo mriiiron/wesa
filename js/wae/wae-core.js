@@ -149,6 +149,8 @@ define(
         
         WAESprite.prototype.changeAction = function (newAction) {
             this.action = newAction;
+            this.time = 0;
+            this.frameNum = 0;
         };
         
         WAESprite.prototype.setAI = function (ai) {
@@ -283,7 +285,7 @@ define(
             this.layerList = [];
         }
 
-        WAEScene.prototype.addSpriteToLayer = function (layerIndex, sprite) {
+        WAEScene.prototype.addSpriteToLayer = function (layerIndex, sprite, action = 0) {
             if (!this.layerList[layerIndex]) {
                 var layer = new WAELayer({ lid: layerIndex });
                 this.layerList[layerIndex] = layer;
@@ -291,6 +293,7 @@ define(
             this.layerList[layerIndex].addSprite(sprite);
             sprite.layer = this.layerList[layerIndex];
             sprite.scene = this;
+            sprite.action = action;
         };
         
         WAEScene.prototype.getCollisions = function (layerIndexes = null) {

@@ -57,7 +57,7 @@ define(
             return shaderProgram;
         }
         
-        function initGLConfig(gl, shaders) {
+        function initGLConfig(canvas, gl, shaders) {
             
             // Set clearing options
             gl.clearColor(0.0, 0.125, 0.0, 1.0);
@@ -67,10 +67,10 @@ define(
             
             // Set the projection matrix:
             // Create a orthogonal projection matrix for 480x640 viewport
-            const left = -240;
-            const right = 240;
-            const bottom = -320;
-            const top = 320;
+            const left = -canvas.width / 2;
+            const right = canvas.width / 2;
+            const bottom = -canvas.height / 2;
+            const top = canvas.height / 2;
             const zNear = 0.1;
             const zFar = 100.0;
             const projectionMatrix = glMatrix.mat4.create();

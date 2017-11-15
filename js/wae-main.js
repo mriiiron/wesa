@@ -104,6 +104,7 @@ requirejs(
         
         function loadGameObjects(ssList, objList) {
             
+            // Bomberman
             {
                 var f = [
                     new WAECore.Frame({
@@ -165,9 +166,38 @@ requirejs(
                         spriteSheet: ssList[0],
                         cell: { row: 9, col: 5, rowSpan: 1, colSpan: 1 },
                         center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 8, col: 6, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 8, col: 7, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 8, col: 8, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 9, col: 6, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 9, col: 7, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 9, col: 8, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
                     })
                 ];
-                
                 var obj = new WAECore.StoredObject({
                     oid: 0,
                     type: 0,
@@ -205,47 +235,18 @@ requirejs(
                     anim.addFrameByArray([f[9], f[10], f[11], f[10]], [8, 16, 24, 32]);
                     obj.addAnimation(3, anim);
                 }
+                {
+                    var anim = new WAECore.Animation({
+                        name: 'Dead',
+                        next: null
+                    });
+                    anim.addFrameByArray([f[12], f[13], f[14], f[15], f[16], f[17]], [30, 20, 15, 12, 10, 8]);
+                    obj.addAnimation(4, anim);
+                }
                 objList[obj.oid] = obj;
             }
             
-            
-            {
-                var f = [
-                    new WAECore.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 0, rowSpan: 1, colSpan: 1 },
-                        center: { x: 8, y: 8 }
-                    }),
-                    new WAECore.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 1, rowSpan: 1, colSpan: 1 },
-                        center: { x: 8, y: 8 }
-                    }),
-                    new WAECore.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 2, rowSpan: 1, colSpan: 1 },
-                        center: { x: 8, y: 8 }
-                    }), 
-                    new WAECore.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 3, rowSpan: 1, colSpan: 1 },
-                        center: { x: 8, y: 8 }
-                    })
-                ];
-                var anim = new WAECore.Animation({
-                    name: 'Floating',
-                    next: 0
-                });
-                anim.addFrameByArray(f, [10, 20, 30, 40]);
-                var obj = new WAECore.StoredObject({
-                    oid: 10,
-                    type: 0,
-                    name: 'Balloon'
-                });
-                obj.addAnimation(0, anim);
-                objList[obj.oid] = obj;
-            }
-            
+            // Bomb
             {
                 var f = [
                     new WAECore.Frame({
@@ -308,6 +309,125 @@ requirejs(
                 objList[obj.oid] = obj;
             }
             
+            // Balloon
+            {
+                var f = [
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 0, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 1, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 2, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }), 
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 3, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 4, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 5, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 6, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 4, col: 0, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 4, col: 1, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 4, col: 2, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 4, col: 3, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 9, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 1, col: 9, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 2, col: 9, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    }),
+                    new WAECore.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 3, col: 9, rowSpan: 1, colSpan: 1 },
+                        center: { x: 8, y: 8 }
+                    })
+                ];
+                var obj = new WAECore.StoredObject({
+                    oid: 10,
+                    type: 0,
+                    name: 'Balloon'
+                });
+                {
+                    var anim = new WAECore.Animation({
+                        name: 'MoveRight',
+                        next: 0
+                    });
+                    anim.addFrameByArray([f[0], f[1], f[2], f[1]], [8, 16, 24, 32]);
+                    obj.addAnimation(0, anim);
+                }
+                {
+                    var anim = new WAECore.Animation({
+                        name: 'MoveLeft',
+                        next: 1
+                    });
+                    anim.addFrameByArray([f[5], f[4], f[3], f[4]], [8, 16, 24, 32]);
+                    obj.addAnimation(1, anim);
+                }
+                {
+                    var anim = new WAECore.Animation({
+                        name: 'Dead',
+                        next: null
+                    });
+                    anim.addFrameByArray([f[6], f[7], f[8], f[9], f[10]], [30, 20, 10, 7, 4]);
+                    obj.addAnimation(2, anim);
+                }
+                {
+                    var anim = new WAECore.Animation({
+                        name: 'Spawn',
+                        next: 3
+                    });
+                    anim.addFrameByArray([f[11], f[12], f[13], f[14], f[13], f[12], f[11]], [3, 3, 3, 3, 3, 3, 3]);
+                    obj.addAnimation(3, anim);
+                }
+                objList[obj.oid] = obj;
+            }
+            
         }
 
         function initGameplay(objList) {
@@ -317,6 +437,29 @@ requirejs(
             t_Scene.inputState = {
                 mouse: { x: 0, y: 0 }
             }
+            
+            t_Scene.enemyCount = 0;
+            
+            t_Scene.enemyAI = function () {
+                if (this.self.spawnDelay > 0) {
+                    this.self.spawnDelay--;
+                    return;
+                }
+                else if (!this.self.spawned) {
+                    this.self.spawned = true;
+                    this.self.changeAction(0);
+                }
+                var dx = this.target.position.x - this.self.position.x;
+                var dy = this.target.position.y - this.self.position.y;
+                var d = Math.sqrt(dx * dx + dy * dy);
+                if (dx > 0) {
+                    if (this.self.action != 0) { this.self.changeAction(0); }
+                }
+                else {
+                    if (this.self.action != 1) { this.self.changeAction(1); }
+                }
+                this.self.velocity = { x: 1 * dx / d, y: 1 * dy / d };
+            };
             
             var player = new WAECore.Sprite({
                 object: objList[0],
@@ -331,86 +474,57 @@ requirejs(
                 var d = Math.sqrt(dx * dx + dy * dy);
                 if (Math.abs(dy / dx) <= 1) {
                     if (dx > 0) {
-                        this.self.changeAction(1);
+                        if (this.self.action != 1) { this.self.changeAction(1); }
                     }
                     else {
-                        this.self.changeAction(3);
+                        if (this.self.action != 3) { this.self.changeAction(3); }
                     }
                 }
                 else {
                     if (dy > 0) {
-                        this.self.changeAction(2);
+                        if (this.self.action != 2) { this.self.changeAction(2); }
                     }
                     else {
-                        this.self.changeAction(0);
+                        if (this.self.action != 0) { this.self.changeAction(0); }
                     }
                 }
-                
-                
-                
+                if (d > 100) {
+                    this.self.velocity = { x: 3 * dx / d, y: 3 * dy / d };
+                }
+                else if (d > 50) {
+                    this.self.velocity = { x: 2 * dx / d, y: 2 * dy / d };
+                }
+                else if (d > 5){
+                    this.self.velocity = { x: 1 * dx / d, y: 1 * dy / d };
+                }
+                else {
+                    this.self.velocity = { x: 0, y: 0 };
+                }
             });
-            t_Scene.addSpriteToLayer(1, player);
-            t_Scene.player = player;
-
-            
-            var testEnemy = new WAECore.Sprite({
-                object: objList[10],
-                action: 0,
-                team: 1,
-                position: { x: 50, y: -100 },
-                scale: 2
-            });
-            testEnemy.addAI(function () {
-                
-            });
-            testEnemy.collision.hurt = {
+            player.collision.hurt = {
                 shape: WAECore.Sprite.CollisionShape.CIRCLE,
                 centerOffset: { x: 0, y: 0 },
                 radius: 16
             }
-            t_Scene.addSpriteToLayer(1, testEnemy);
-            
-            /*
-            t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
-                object: objList[2],
-                action: 0,
-                team: 0,
-                position: { x: 156, y: 300 },
-                scale: 2
-            }));
-            t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
-                object: objList[3],
-                action: 0,
-                team: 0,
-                position: { x: 188, y: 300 },
-                scale: 2
-            }));
-            t_Scene.addSpriteToLayer(0, new WAECore.Sprite({
-                object: objList[4],
-                action: 0,
-                team: 0,
-                position: { x: 220, y: 300 },
-                scale: 2
-            }));
-            */
+            t_Scene.addSpriteToLayer(1, player);
+            t_Scene.player = player;
+
         }
         
         function initInput(inputState) {
             
             canvas.onmousemove = function(e) {
-                inputState.mouse.x = e.pageX - canvas.offsetLeft - 240;
-                inputState.mouse.y = 320 - (e.pageY - canvas.offsetTop);
-                output.innerText = 'Mouse: (' + inputState.mouse.x + ', ' + inputState.mouse.y + ')';
+                inputState.mouse.x = e.pageX - canvas.offsetLeft - canvas.width / 2;
+                inputState.mouse.y = canvas.height / 2 - (e.pageY - canvas.offsetTop);
+                //output.innerText = 'Mouse: (' + inputState.mouse.x + ', ' + inputState.mouse.y + ')';
             };
             
             canvas.onmousedown = function(e) {
                 var player = t_Scene.player;
-                player.changeAction((player.action + 1) % 4);
-                
                 var bomb = new WAECore.Sprite({
                     object: WAECore.objectList[1],
                     action: 0,
-                    team: 0,
+                    team: 2,
                     position: { x: player.position.x, y: player.position.y },
                     scale: 2
                 });
@@ -432,12 +546,56 @@ requirejs(
         }
         
 
-        function update() {
+        function update(objList) {
             t_Scene.update();
             var collisions = t_Scene.getCollisions();
             if (collisions.length > 0) {
-                console.log(collisions);
+                for (var i = 0; i < collisions.length; i++) {
+                    var coll = collisions[i];
+                    if (coll.hiter.team != coll.hurter.team) {
+                        if (coll.hurter.object.name == 'Balloon') {
+                            coll.hurter.ai = null;
+                            coll.hurter.collision.hurt = null;
+                            coll.hurter.velocity = { x: 0, y: 0 };
+                            coll.hurter.changeAction(2);
+                            t_Scene.enemyCount--;
+                        }
+                        else if (coll.hurter.object.name == 'Bomberman') {
+                            coll.hurter.ai = null;
+                            coll.hurter.collision.hurt = null;
+                            coll.hurter.velocity = { x: 0, y: 0 };
+                            coll.hurter.changeAction(4);
+                        }
+                    }
+                    //console.log(coll);
+                }
             }
+            if (t_Scene.enemyCount < 3) {
+                var enemy = new WAECore.Sprite({
+                    object: objList[10],
+                    action: 0,
+                    team: 1,
+                    position: { x: Math.random() * 400 - 200, y: Math.random() * 400 - 200 },
+                    scale: 2
+                });
+                enemy.spawnDelay = 60;
+                enemy.spawned = false;
+                enemy.addAI(t_Scene.enemyAI);
+                enemy.ai.target = t_Scene.player;
+                enemy.collision.hurt = {
+                    shape: WAECore.Sprite.CollisionShape.CIRCLE,
+                    centerOffset: { x: 0, y: 0 },
+                    radius: 16
+                }
+                enemy.collision.hit = {
+                    shape: WAECore.Sprite.CollisionShape.CIRCLE,
+                    centerOffset: { x: 0, y: 0 },
+                    radius: 10
+                }
+                t_Scene.addSpriteToLayer(1, enemy, 3);
+                t_Scene.enemyCount++;
+            }
+            output.innerText = 'Enemy Count: ' + t_Scene.enemyCount;
         }
 
         function render(gl, shaders, buffers) {
@@ -452,7 +610,7 @@ requirejs(
         
         loadImages(imageUrls).done(function (newImages) {
             
-            WAEHelper.initGLConfig(gl, shaders);
+            WAEHelper.initGLConfig(canvas, gl, shaders);
             
             loadSpriteSheets(gl, newImages, WAECore.spriteSheetList);
             loadGameObjects(WAECore.spriteSheetList, WAECore.objectList);
@@ -467,7 +625,7 @@ requirejs(
                 var fps = 1.0 / delta;
                 // console.log(fps);
                 start = now;
-                update();
+                update(WAECore.objectList);
                 render(gl, shaders, buffers);
                 window.requestAnimationFrame(mainLoop);
             }
