@@ -152,9 +152,16 @@ define(
         };
         
         WAESprite.prototype.setAI = function (ai) {
-            this.ai = ai;
             ai.self = this;
+            this.ai = ai;
         };
+        
+        WAESprite.prototype.addAI = function (aiExecuteFunction) {
+            var ai = new WAEAI();
+            ai.execute = aiExecuteFunction;
+            ai.self = this;
+            this.ai = ai;
+        }
        
         WAESprite.prototype.update = function () {
             if (this.ai) {
@@ -303,7 +310,7 @@ define(
                 }
             }
             var allSprites = [].concat.apply([], listOfSpriteList);
-            var collisionList = [];
+            var collisions = [];
             for (var i = 0; i < allSprites.length; i++) {
                 for (var j = 0; j < allSprites.length; j++) {
                     if (i == j) { continue; }
@@ -350,7 +357,7 @@ define(
                             var dx = iHitbox.center.x - jHurtbox.center.x, dy = iHitbox.center.y - jHurtbox.center.y;
                             var dist = Math.sqrt(dx * dx + dy * dy);
                             if (iHitbox.radius + jHurtbox.radius > dist) {
-                                collisionList.push({
+                                collisions.push({
                                     hiter: si,
                                     hurter: sj
                                 });
@@ -362,7 +369,7 @@ define(
                     } 
                 }
             }
-            //console.log(allSprites);
+            return collisions;
         };
         
         WAEScene.prototype.update = function () {
