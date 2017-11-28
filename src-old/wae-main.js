@@ -2,8 +2,8 @@
 
 
 // RequireJS Configuration
-requirejs.config({
-    baseUrl: './js/wae',
+require.config({
+    baseUrl: '../src/wae',
     paths: {
         'WAECore': './wae-core',
         'WAEHelper': './wae-helper',
@@ -11,13 +11,13 @@ requirejs.config({
     },
     
     // Use it in dev to bust cache
-    urlArgs: 'bust=' +  (new Date()).getTime()
+    urlArgs: 'bust=' + (new Date()).getTime()
     
 });
 
 
 // RequireJS Main
-requirejs(
+require(
     
     // Load all modules
     ['WAECore', 'WAEHelper'],
