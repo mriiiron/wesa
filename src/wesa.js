@@ -3,7 +3,7 @@
     
     function WESACore () {
 
-        // Internal Functions
+        // Internal functions (private utilities)
     
         function loadShader(gl, type, source) {
             const shader = gl.createShader(type);
@@ -29,12 +29,12 @@
                 return null;
             }
             return shaderProgram;
-        },
+        }
         
-        function initGLConfig(canvas, gl, shaders) {
+        function initWebGL(canvas, gl, shader) {
             
             // Set clearing options
-            gl.clearColor(0.0, 0.125, 0.0, 1.0);
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
             gl.clearDepth(1.0);
             gl.enable(gl.BLEND);
             gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -56,33 +56,43 @@
             glMatrix.mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -6.0]);
             
             // Tell WebGL to use our program when drawing
-            gl.useProgram(shaders.program);
+            gl.useProgram(shader.program);
 
             // Set the shader uniforms
             // In this example, projection and model view matrices are passed as uniforms.
-            gl.uniformMatrix4fv(shaders.uniformLocations.projectionMatrix, false, projectionMatrix);
-            gl.uniformMatrix4fv(shaders.uniformLocations.modelViewMatrix, false, modelViewMatrix);
+            gl.uniformMatrix4fv(shader.uniformLocations.projectionMatrix, false, projectionMatrix);
+            gl.uniformMatrix4fv(shader.uniformLocations.modelViewMatrix, false, modelViewMatrix);
             
             // Tell WebGL we want to affect texture unit 0 and bound the texture to texture unit 0 (gl.TEXTURE0)
             gl.activeTexture(gl.TEXTURE0);
-            gl.uniform1i(shaders.uniformLocations.uSampler, 0);
+            gl.uniform1i(shader.uniformLocations.uSampler, 0);
             
             // Turn on attribute array
-            gl.enableVertexAttribArray(shaders.attribLocations.vertexPosition);
-            gl.enableVertexAttribArray(shaders.attribLocations.textureCoord);
+            gl.enableVertexAttribArray(shader.attribLocations.vertexPosition);
+            gl.enableVertexAttribArray(shader.attribLocations.textureCoord);
 
         }
         
+        // function loadImages(urlArray) {}
         
         
-        //
+        // "wesa.res" object
         
+        const wesaResource = {
+            spriteSheetList: [],
+            objectList: []
+        }
+        
+        
+        // "wesa.core" object
         
         const wesaCore = {
             
-            handles: {
+            handle: {
                 gl: null,
-                canvas: null
+                canvas: null,
+                shader: null,
+                buffer: null
             },
             
             config: {
@@ -107,14 +117,54 @@
                     `
                 }
             },
+            
+            init: function (canvas) {
+                
+                if (!canvas || canvas.tagName != 'CANVAS') {
+                    console.error('Canvas provided is invalid.');
+                    return;
+                }
+                
+                const gl = canvas.getContext("webgl");
+                if (!gl) {
+                    console.error('Unable to initialize WebGL. Your browser or machine may not support it.');
+                    return;
+                }
+                
+                const shaderProgram = initShaderProgram(gl, this.config.shaderSource.vs, this.config.shaderSource.fs);
+                const shader = {
+                    program: shaderProgram,
+                    attribLocations: {
+                        vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+                        textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord')
+                    },
+                    uniformLocations: {
+                        projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
+                        modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+                        uSampler: gl.getUniformLocation(shaderProgram, 'uSampler')
+                    }
+                }
+                
+                const buffer = {
+                    positions: gl.createBuffer(),
+                    texCoords: gl.createBuffer(),
+                    indices: gl.createBuffer()
+                };
+                   
+                initWebGL(canvas, gl, shader);                
+                
+                this.handle.gl = gl;
+                this.handle.canvas = canvas;
+                this.handle.shader = shader;
+                this.handle.buffer = buffer;
+                
+            }
 
-        
         };
         
         
         
-        var wesaSpriteSheetList = [];
-        var wesaObjectList = [];
+        // Core classes
 
         function WESASpriteSheet(desc) {
             this.ssid = desc.ssid;
@@ -499,7 +549,7 @@
         
         return {
             
-            // "Classes"
+            // Classes
             SpriteSheet: WESASpriteSheet,
             Frame: WESAFrame,
             Animation: WESAAnimation,
@@ -508,9 +558,9 @@
             AI: WESAAI,
             Scene: WESAScene,
             
-            // Global Objects
-            spriteSheetList: wesaSpriteSheetList,
-            objectList: wesaObjectList
+            // Objects
+            core: wesaCore,
+            res: wesaResource
 
         };
         
