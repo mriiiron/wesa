@@ -84,6 +84,40 @@
         }
         
         
+        // "wesa.loader" object
+        
+        const wesaLoader = {
+            
+            loadImages: function (urlArray) {
+                var newImages = [], loadedCount = 0;
+                var callBack = function () {};
+                function imageLoaded() {
+                    loadedCount++;
+                    if (loadedCount == urlArray.length) {
+                        callBack(newImages);
+                    }
+                }
+                for (var i = 0; i < urlArray.length; i++) {
+                    newImages[i] = new Image();
+                    newImages[i].src = urlArray[i];
+                    newImages[i].onload = function () {
+                        imageLoaded();
+                    }
+                    newImages[i].onerror = function () {
+                        console.warning('[WARNING] "' + urlArray[i] + '" load failed.');
+                        imageLoaded();
+                    }
+                }
+                return {
+                    done: function (userFunction) {
+                        callBack = userFunction || callBack;
+                    }
+                }
+            }
+            
+        }
+
+        
         // "wesa.core" object
         
         const wesaCore = {
@@ -162,8 +196,7 @@
 
         };
         
-        
-        
+
         // Core classes
 
         function WESASpriteSheet(desc) {
@@ -239,15 +272,15 @@
             this.frameList = [];
             this.endTimeList = [];
         }
-   
-        WESAAnimation.prototype.addFrame = function (index, frame, endTime) {
-            this.frameList[index] = frame;
-            this.endTimeList[index] = endTime;
-        };
         
-        WESAAnimation.prototype.addFrameByArray = function (frameArr, endTimeArr) {
+        WESAAnimation.prototype.setFrames = function (frameArr, frameTimeArr) {
+            var len = frameArr.length;
+            var time = 0;
             this.frameList = frameArr.slice();
-            this.endTimeList = endTimeArr.slice();
+            for (var i = 0; i < len; i++) {
+                time += frameTimeArr[i];
+                this.endTimeList[i] = time;
+            }
         };
 
         
@@ -384,7 +417,7 @@
             }
         };
         
-        WESALayer.prototype.render = function (gl, shaders, buffers) {
+        WESALayer.prototype.render = function (gl, shader, buffer) {
             
             // Prepare sprite batches in current layer
             this.batchData = [];
@@ -419,15 +452,15 @@
             // Batch-render current layer
             for (var ssid = 0; ssid < this.batchData.length; ssid++) {
                 if (this.batchData[ssid]) { 
-                    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.positions);
+                    gl.bindBuffer(gl.ARRAY_BUFFER, buffer.positions);
                     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.batchData[ssid].positions), gl.STATIC_DRAW);
-                    gl.vertexAttribPointer(shaders.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
-                    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.texCoords);
+                    gl.vertexAttribPointer(shader.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
+                    gl.bindBuffer(gl.ARRAY_BUFFER, buffer.texCoords);
                     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.batchData[ssid].texCoords), gl.STATIC_DRAW);
-                    gl.vertexAttribPointer(shaders.attribLocations.textureCoord, 2, gl.FLOAT, false, 0, 0);
-                    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
+                    gl.vertexAttribPointer(shader.attribLocations.textureCoord, 2, gl.FLOAT, false, 0, 0);
+                    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer.indices);
                     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.batchData[ssid].indices), gl.STATIC_DRAW);
-                    gl.bindTexture(gl.TEXTURE_2D, waeSpriteSheetList[ssid].texture);
+                    gl.bindTexture(gl.TEXTURE_2D, wesaResource.spriteSheetList[ssid].texture);
                     gl.drawElements(gl.TRIANGLES, this.batchData[ssid].indices.length, gl.UNSIGNED_SHORT, 0);
                 }
             }
@@ -538,10 +571,13 @@
             }
         };
         
-        WESAScene.prototype.render = function (gl, shaders, buffers) {
+        WESAScene.prototype.render = function () {
+            var gl = wesaCore.handle.gl;
+            var shader = wesaCore.handle.shader;
+            var buffer = wesaCore.handle.buffer;
             for (var i = 0; i < this.layerList.length; i++) {
                 if (this.layerList[i]) {
-                    this.layerList[i].render(gl, shaders, buffers);
+                    this.layerList[i].render(gl, shader, buffer);
                 }
             }
         };
@@ -560,7 +596,8 @@
             
             // Objects
             core: wesaCore,
-            res: wesaResource
+            res: wesaResource,
+            loader: wesaLoader
 
         };
         

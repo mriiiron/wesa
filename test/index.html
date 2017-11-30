@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <title>hello wesa</title>
+    <title>Hello WESA</title>
     <link rel="stylesheet" type="text/css" href="./css/style.css">
 </head>
 
@@ -14,64 +14,124 @@
     </div>
     <div class="dynamic-output" id="output"></div>
     
-    <script src="../src/lib/gl-matrix-min.js"></script>
+    <script src="../src/lib/gl-matrix.min.js"></script>
     <script src="../src/wesa.js"></script>
     <script>
         
-        /*
-        function loadImages(urlArray) {
-            var newImages = [], loadedCount = 0;
-            var callBack = function () {};
-            function imageLoaded() {
-                loadedCount++;
-                if (loadedCount == urlArray.length) {
-                    callBack(newImages);
-                }
-            }
-            for (var i = 0; i < urlArray.length; i++) {
-                newImages[i] = new Image();
-                newImages[i].src = urlArray[i];
-                newImages[i].onload = function () {
-                    imageLoaded();
-                }
-                newImages[i].onerror = function () {
-                    console.warning('[WARNING] "' + urlArray[i] + '" load failed.');
-                    imageLoaded();
-                }
-            }
-            return {
-                done: function (userFunction) {
-                    callBack = userFunction || callBack;
-                }
-            }
-        }
-        */
+        var sampleSprite = null;
         
-        // Initialize WESA
-        wesa.core.init(document.getElementById('canvas'));
+        wesa.loader.loadImages([ './assets/texture/megaman.png' ]).done(function (images) {
         
-        /*
-        // Load texture sources
-        var imageUrls = [
-            './assets/texture/all.png'
-        ];
-        loadImages(imageUrls).done(function (loadedImages) {
+            // Initialize WESA
+            wesa.core.init(document.getElementById('canvas'));
+        
+            // Load sprite sheets
+            {
+                let ss = new wesa.SpriteSheet({
+                    ssid: 0,
+                    rowCount: 1,
+                    colCount: 10,
+                    cellWidth: 36,
+                    cellHeight: 36
+                });
+                ss.loadTextureFromImage(wesa.core.handle.gl, images[0]);
+                wesa.res.spriteSheetList[0] = ss;
+            }
+            
+            // Load stored objects
+            {
+                let ssList = wesa.res.spriteSheetList;
+                let obj = new wesa.StoredObject({
+                    oid: 0,
+                    type: 0,
+                    name: 'Megaman'
+                });
+                let f = [
+                    new wesa.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 0, rowSpan: 1, colSpan: 1 },
+                        center: { x: 18, y: 18 }
+                    }),
+                    new wesa.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 1, rowSpan: 1, colSpan: 1 },
+                        center: { x: 18, y: 18 }
+                    }),
+                    new wesa.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 2, rowSpan: 1, colSpan: 1 },
+                        center: { x: 18, y: 18 }
+                    }),
+                    new wesa.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 3, rowSpan: 1, colSpan: 1 },
+                        center: { x: 18, y: 18 }
+                    }),
+                    new wesa.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 4, rowSpan: 1, colSpan: 1 },
+                        center: { x: 18, y: 18 }
+                    }),
+                    new wesa.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 5, rowSpan: 1, colSpan: 1 },
+                        center: { x: 18, y: 18 }
+                    }),
+                    new wesa.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 6, rowSpan: 1, colSpan: 1 },
+                        center: { x: 18, y: 18 }
+                    }),
+                    new wesa.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 7, rowSpan: 1, colSpan: 1 },
+                        center: { x: 18, y: 18 }
+                    }),
+                    new wesa.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 8, rowSpan: 1, colSpan: 1 },
+                        center: { x: 18, y: 18 }
+                    }),
+                    new wesa.Frame({
+                        spriteSheet: ssList[0],
+                        cell: { row: 0, col: 9, rowSpan: 1, colSpan: 1 },
+                        center: { x: 18, y: 18 }
+                    })
+                ];
+                let anim = new wesa.Animation({
+                    name: 'Running',
+                    next: 0
+                });
+                anim.setFrames(
+                    [f[0], f[1], f[2], f[3], f[4], f[5], f[6], f[7], f[8], f[9]],
+                    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+                );
+                obj.addAnimation(0, anim);
+                wesa.res.objectList[0] = obj;
+            }
+        
+            // Create the scene
+            var scene = new wesa.Scene('TestScene');
+            sampleSprite = new wesa.Sprite({
+                object: wesa.res.objectList[0],
+                action: 0,
+                team: 0,
+                position: { x: 0, y: 0 },
+                scale: 4
+            });
+            scene.addSpriteToLayer(0, sampleSprite);
+
+            // Run the scene
+            var animate = function () {
+                requestAnimationFrame(animate);
+                scene.update();
+                scene.render();
+            }
+            animate();
+        
+        });
         
 
-        
-            // Create scene(s)
-            var scene = new wae.Scene();
-            
-            // Customize scene(s)
-            
-            
-            // Run WAE
-            wae.activeScene = scene;
-            wae.run();
-
-        }
-        */
-        
     </script>
     
 </body>
