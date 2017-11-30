@@ -1,5 +1,3 @@
-import glm from './lib/gl-matrix-min.js';
-
 (function (window) {
     'use strict'
     
@@ -49,13 +47,13 @@ import glm from './lib/gl-matrix-min.js';
             const top = canvas.height / 2;
             const zNear = 0.1;
             const zFar = 100.0;
-            const projectionMatrix = glMatrix.mat4.create();
-            glMatrix.mat4.ortho(projectionMatrix, left, right, bottom, top, zNear, zFar);
+            const projectionMatrix = mat4.create();
+            mat4.ortho(projectionMatrix, left, right, bottom, top, zNear, zFar);
             
             // Set the model view matrix:
             // Under change based on camera (TODO)
-            const modelViewMatrix = glMatrix.mat4.create();
-            glMatrix.mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -6.0]);
+            const modelViewMatrix = mat4.create();
+            mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -6.0]);
             
             // Tell WebGL to use our program when drawing
             gl.useProgram(shader.program);

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>hello wesa</title>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+
+<body>
+
+    <div class="canvas-wrapper">
+        <canvas id="canvas" width="640" height="480"></canvas>
+    </div>
+    <div class="dynamic-output" id="output"></div>
+    
+    <script src="../src/lib/gl-matrix-min.js"></script>
+    <script src="../src/wesa.js"></script>
+    <script>
+        
+        /*
+        function loadImages(urlArray) {
+            var newImages = [], loadedCount = 0;
+            var callBack = function () {};
+            function imageLoaded() {
+                loadedCount++;
+                if (loadedCount == urlArray.length) {
+                    callBack(newImages);
+                }
+            }
+            for (var i = 0; i < urlArray.length; i++) {
+                newImages[i] = new Image();
+                newImages[i].src = urlArray[i];
+                newImages[i].onload = function () {
+                    imageLoaded();
+                }
+                newImages[i].onerror = function () {
+                    console.warning('[WARNING] "' + urlArray[i] + '" load failed.');
+                    imageLoaded();
+                }
+            }
+            return {
+                done: function (userFunction) {
+                    callBack = userFunction || callBack;
+                }
+            }
+        }
+        */
+        
+        // Initialize WESA
+        wesa.core.init(document.getElementById('canvas'));
+        
+        /*
+        // Load texture sources
+        var imageUrls = [
+            './assets/texture/all.png'
+        ];
+        loadImages(imageUrls).done(function (loadedImages) {
+        
+
+        
+            // Create scene(s)
+            var scene = new wae.Scene();
+            
+            // Customize scene(s)
+            
+            
+            // Run WAE
+            wae.activeScene = scene;
+            wae.run();
+
+        }
+        */
+        
+    </script>
+    
+</body>
+
+</html>
