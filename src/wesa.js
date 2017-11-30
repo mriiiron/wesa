@@ -1,3 +1,5 @@
+import glm from './lib/gl-matrix-min.js';
+
 (function (window) {
     'use strict'
     
