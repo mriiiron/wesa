@@ -575,6 +575,7 @@
             var gl = wesaCore.handle.gl;
             var shader = wesaCore.handle.shader;
             var buffer = wesaCore.handle.buffer;
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             for (var i = 0; i < this.layerList.length; i++) {
                 if (this.layerList[i]) {
                     this.layerList[i].render(gl, shader, buffer);
