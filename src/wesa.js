@@ -10,7 +10,7 @@
             gl.shaderSource(shader, source);
             gl.compileShader(shader);
             if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-                console.error('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
+                console.error('WESA Core: An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
                 gl.deleteShader(shader);
                 return null;
             }
@@ -25,7 +25,7 @@
             gl.attachShader(shaderProgram, fragmentShader);
             gl.linkProgram(shaderProgram);
             if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-                console.error('Unable to initialize the shader program: ' + gl.getshaderProgramInfoLog(shaderProgram));
+                console.error('WESA Core: Unable to initialize the shader program: ' + gl.getshaderProgramInfoLog(shaderProgram));
                 return null;
             }
             return shaderProgram;
@@ -88,6 +88,68 @@
         
         const wesaLoader = {
             
+            spriteSheetSource: null,
+            objectSource: null,
+            
+            add: function (type, data) {
+                if (type == 'spriteSheets') {
+                    if (Array.isArray(data)) {
+                        spriteSheetSource = data;
+                    }
+                    else {
+                        console.error('WESA Loader: Sprite Sheet source is not array.');
+                        return;
+                    }
+                }
+                else if (type == 'objects') {
+                    objectSource = data;
+                }
+                else {
+                    console.error('WESA Loader: Invalid loading type.');
+                }
+            },
+            
+            load: function (callBack) {
+                
+                if (!this.spriteSheetSource) {
+                    console.error('WESA Loader: spriteSheetSource is null.');
+                    return;
+                }
+                if (!this.objectSource) {
+                    console.error('WESA Loader: objectSource is null.');
+                    return;
+                }
+                
+                var loadedImageCount = 0;
+                var isObjectsLoaded = false;
+                
+                function onAssetLoaded(type) {
+                    if (type == 'image') {
+                        loadedImageCount++;
+                    }
+                    else if (type = 'objects') {
+                        isObjectsLoaded = true;
+                    }
+                    if (loadedImageCount == this.spriteSheetSource.length && isObjectsLoaded) {
+                        callBack();
+                    }
+                }
+                
+                for (var i = 0; i < urlArray.length; i++) {
+                    newImages[i] = new Image();
+                    newImages[i].src = urlArray[i];
+                    newImages[i].onload = function () {
+                        imageLoaded();
+                    }
+                    newImages[i].onerror = function () {
+                        console.warning('[WARNING] "' + urlArray[i] + '" load failed.');
+                        imageLoaded();
+                    }
+                }
+                
+            }
+            
+            /*
             loadImages: function (urlArray) {
                 var newImages = [], loadedCount = 0;
                 var callBack = function () {};
@@ -114,6 +176,7 @@
                     }
                 }
             }
+            */
             
         }
 
@@ -155,13 +218,13 @@
             init: function (canvas) {
                 
                 if (!canvas || canvas.tagName != 'CANVAS') {
-                    console.error('Canvas provided is invalid.');
+                    console.error('WESA Core: Canvas provided is invalid.');
                     return;
                 }
                 
                 const gl = canvas.getContext("webgl");
                 if (!gl) {
-                    console.error('Unable to initialize WebGL. Your browser or machine may not support it.');
+                    console.error('WESA Core: Unable to initialize WebGL. Your browser or machine may not support it.');
                     return;
                 }
                 

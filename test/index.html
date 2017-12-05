@@ -20,6 +20,17 @@
         
         var sampleSprite = null;
         
+        wesa.loader.add('spriteSheets', [ './assets/texture/megaman.png' ]);
+        wesa.loader.add('objects', './assets/objects.json');
+        wesa.loader.load(onAssetsLoaded);
+        
+        function onAssetsLoaded() {
+        
+        
+        
+        }
+        
+        
         wesa.loader.loadImages([ './assets/texture/megaman.png' ]).done(function (images) {
         
             // Initialize WESA
