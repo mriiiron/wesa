@@ -16,7 +16,10 @@
     
     <script src="../src/lib/gl-matrix.min.js"></script>
     <script src="../src/wesa.js"></script>
+    
     <script>
+        
+        var sprite = null;
         
         // Initialize WESA
         wesa.core.init(document.getElementById('canvas'));
@@ -30,13 +33,14 @@
         
             // Create the scene
             var scene = new wesa.Scene('TestScene');
-            scene.addSpriteToLayer(0, new wesa.Sprite({
+            sprite = new wesa.Sprite({
                 object: wesa.assets.objectList[0],
                 action: 0,
                 team: 0,
                 position: { x: 0, y: 0 },
                 scale: 4
-            }));
+            });
+            scene.addSpriteToLayer(0, sprite);
 
             // Run the scene
             var animate = function () {

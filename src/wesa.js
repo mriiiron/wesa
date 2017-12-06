@@ -31,7 +31,25 @@
             return shaderProgram;
         }
         
-        function initWebGL(canvas, gl, shader) {
+        function setProjection(gl, shader) {
+            let left = -gl.canvas.width / 2;
+            let right = gl.canvas.width / 2;
+            let bottom = -gl.canvas.height / 2;
+            let top = gl.canvas.height / 2;
+            let zNear = 0.1;
+            let zFar = 100.0;
+            let projectionMatrix = mat4.create();
+            mat4.ortho(projectionMatrix, left, right, bottom, top, zNear, zFar);
+            gl.uniformMatrix4fv(shader.uniformLocations.projectionMatrix, false, projectionMatrix);
+        }
+        
+        function setModelView(gl, shader) {
+            let modelViewMatrix = mat4.create();
+            mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -6.0]);
+            gl.uniformMatrix4fv(shader.uniformLocations.modelViewMatrix, false, modelViewMatrix);
+        }
+        
+        function initWebGL(gl, shader) {
             
             // Set clearing options
             gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -39,29 +57,16 @@
             gl.enable(gl.BLEND);
             gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
             
+            // Tell WebGL to use our program when drawing
+            gl.useProgram(shader.program);
+            
             // Set the projection matrix:
             // Create a orthogonal projection matrix for 480x640 viewport
-            const left = -canvas.width / 2;
-            const right = canvas.width / 2;
-            const bottom = -canvas.height / 2;
-            const top = canvas.height / 2;
-            const zNear = 0.1;
-            const zFar = 100.0;
-            const projectionMatrix = mat4.create();
-            mat4.ortho(projectionMatrix, left, right, bottom, top, zNear, zFar);
+            setProjection(gl, shader);
             
             // Set the model view matrix:
             // Under change based on camera (TODO)
-            const modelViewMatrix = mat4.create();
-            mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -6.0]);
-            
-            // Tell WebGL to use our program when drawing
-            gl.useProgram(shader.program);
-
-            // Set the shader uniforms
-            // In this example, projection and model view matrices are passed as uniforms.
-            gl.uniformMatrix4fv(shader.uniformLocations.projectionMatrix, false, projectionMatrix);
-            gl.uniformMatrix4fv(shader.uniformLocations.modelViewMatrix, false, modelViewMatrix);
+            setModelView(gl, shader);
             
             // Tell WebGL we want to affect texture unit 0 and bound the texture to texture unit 0 (gl.TEXTURE0)
             gl.activeTexture(gl.TEXTURE0);
@@ -205,7 +210,6 @@
             
             handle: {
                 gl: null,
-                canvas: null,
                 shader: null,
                 buffer: null
             },
@@ -231,6 +235,11 @@
                         }
                     `
                 }
+            },
+            
+            canvasResize: function() {
+                setProjection(this.handle.gl, this.handle.shader);
+                this.handle.gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
             },
             
             init: function (canvas) {
@@ -266,10 +275,9 @@
                     indices: gl.createBuffer()
                 };
                    
-                initWebGL(canvas, gl, shader);                
+                initWebGL(gl, shader);                
                 
                 this.handle.gl = gl;
-                this.handle.canvas = canvas;
                 this.handle.shader = shader;
                 this.handle.buffer = buffer;
                 
