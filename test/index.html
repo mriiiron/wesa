@@ -12,125 +12,31 @@
     <div class="canvas-wrapper">
         <canvas id="canvas" width="640" height="480"></canvas>
     </div>
-    <div class="dynamic-output" id="output"></div>
+    <div class="dynamic-output" id="output">WESA Basic Demo</div>
     
     <script src="../src/lib/gl-matrix.min.js"></script>
     <script src="../src/wesa.js"></script>
     <script>
         
-        var sampleSprite = null;
+        // Initialize WESA
+        wesa.core.init(document.getElementById('canvas'));
         
-        wesa.loader.add('spriteSheets', [ './assets/texture/megaman.png' ]);
-        wesa.loader.add('objects', './assets/objects.json');
-        wesa.loader.load(onAssetsLoaded);
+        // Adding assets ready for loading
+        wesa.assets.source.spriteSheetUrlArray.push('./assets/texture/megaman.png');
+        wesa.assets.source.objectJsonUrl = './assets/objects.json';
         
-        function onAssetsLoaded() {
-        
-        
-        
-        }
-        
-        
-        wesa.loader.loadImages([ './assets/texture/megaman.png' ]).done(function (images) {
-        
-            // Initialize WESA
-            wesa.core.init(document.getElementById('canvas'));
-        
-            // Load sprite sheets
-            {
-                let ss = new wesa.SpriteSheet({
-                    ssid: 0,
-                    rowCount: 1,
-                    colCount: 10,
-                    cellWidth: 36,
-                    cellHeight: 36
-                });
-                ss.loadTextureFromImage(wesa.core.handle.gl, images[0]);
-                wesa.res.spriteSheetList[0] = ss;
-            }
-            
-            // Load stored objects
-            {
-                let ssList = wesa.res.spriteSheetList;
-                let obj = new wesa.StoredObject({
-                    oid: 0,
-                    type: 0,
-                    name: 'Megaman'
-                });
-                let f = [
-                    new wesa.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 0, rowSpan: 1, colSpan: 1 },
-                        center: { x: 18, y: 18 }
-                    }),
-                    new wesa.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 1, rowSpan: 1, colSpan: 1 },
-                        center: { x: 18, y: 18 }
-                    }),
-                    new wesa.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 2, rowSpan: 1, colSpan: 1 },
-                        center: { x: 18, y: 18 }
-                    }),
-                    new wesa.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 3, rowSpan: 1, colSpan: 1 },
-                        center: { x: 18, y: 18 }
-                    }),
-                    new wesa.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 4, rowSpan: 1, colSpan: 1 },
-                        center: { x: 18, y: 18 }
-                    }),
-                    new wesa.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 5, rowSpan: 1, colSpan: 1 },
-                        center: { x: 18, y: 18 }
-                    }),
-                    new wesa.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 6, rowSpan: 1, colSpan: 1 },
-                        center: { x: 18, y: 18 }
-                    }),
-                    new wesa.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 7, rowSpan: 1, colSpan: 1 },
-                        center: { x: 18, y: 18 }
-                    }),
-                    new wesa.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 8, rowSpan: 1, colSpan: 1 },
-                        center: { x: 18, y: 18 }
-                    }),
-                    new wesa.Frame({
-                        spriteSheet: ssList[0],
-                        cell: { row: 0, col: 9, rowSpan: 1, colSpan: 1 },
-                        center: { x: 18, y: 18 }
-                    })
-                ];
-                let anim = new wesa.Animation({
-                    name: 'Running',
-                    next: 0
-                });
-                anim.setFrames(
-                    [f[0], f[1], f[2], f[3], f[4], f[5], f[6], f[7], f[8], f[9]],
-                    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
-                );
-                obj.addAnimation(0, anim);
-                wesa.res.objectList[0] = obj;
-            }
+        // Load assets
+        wesa.assets.load(function () {
         
             // Create the scene
             var scene = new wesa.Scene('TestScene');
-            sampleSprite = new wesa.Sprite({
-                object: wesa.res.objectList[0],
+            scene.addSpriteToLayer(0, new wesa.Sprite({
+                object: wesa.assets.objectList[0],
                 action: 0,
                 team: 0,
                 position: { x: 0, y: 0 },
                 scale: 4
-            });
-            scene.addSpriteToLayer(0, sampleSprite);
+            }));
 
             // Run the scene
             var animate = function () {
@@ -139,9 +45,8 @@
                 scene.render();
             }
             animate();
-        
+            
         });
-        
 
     </script>
     

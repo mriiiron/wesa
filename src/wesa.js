@@ -73,110 +73,128 @@
 
         }
         
-        // function loadImages(urlArray) {}
+
+        // "wesa.assets" object
         
-        
-        // "wesa.res" object
-        
-        const wesaResource = {
-            spriteSheetList: [],
-            objectList: []
-        }
-        
-        
-        // "wesa.loader" object
-        
-        const wesaLoader = {
+        const wesaAssets = {
             
-            spriteSheetSource: null,
-            objectSource: null,
-            
-            add: function (type, data) {
-                if (type == 'spriteSheets') {
-                    if (Array.isArray(data)) {
-                        spriteSheetSource = data;
-                    }
-                    else {
-                        console.error('WESA Loader: Sprite Sheet source is not array.');
-                        return;
-                    }
-                }
-                else if (type == 'objects') {
-                    objectSource = data;
-                }
-                else {
-                    console.error('WESA Loader: Invalid loading type.');
-                }
+            source: {
+                spriteSheetUrlArray: [],
+                objectJsonUrl: null
             },
             
-            load: function (callBack) {
+            spriteSheetList: [],
+            objectList: [],
+            
+            load: function (callback) {
                 
-                if (!this.spriteSheetSource) {
-                    console.error('WESA Loader: spriteSheetSource is null.');
+                let _self = this;
+                
+                if (_self.source.spriteSheetUrlArray.length == 0) {
+                    console.error('WESA Loader: No sprite sheet added.');
                     return;
                 }
-                if (!this.objectSource) {
-                    console.error('WESA Loader: objectSource is null.');
+                if (!_self.source.objectJsonUrl) {
+                    console.error('WESA Loader: No object added.');
                     return;
                 }
                 
-                var loadedImageCount = 0;
-                var isObjectsLoaded = false;
+                let loadedImageCount = 0;
+                let isObjectsLoaded = false;
+                
+                var loadedImages = [];
+                var loadedObjectJson = null;
+                
+                let imageUrls = _self.source.spriteSheetUrlArray;
                 
                 function onAssetLoaded(type) {
                     if (type == 'image') {
                         loadedImageCount++;
                     }
-                    else if (type = 'objects') {
+                    else if (type = 'object') {
                         isObjectsLoaded = true;
                     }
-                    if (loadedImageCount == this.spriteSheetSource.length && isObjectsLoaded) {
-                        callBack();
+                    if (loadedImageCount == imageUrls.length && isObjectsLoaded) {
+                        
+                        let parsed = JSON.parse(loadedObjectJson);
+                        
+                        // Load Sprite Sheets
+                        for (let i = 0; i < parsed.spriteSheetsMeta.length; i++) {
+                            let ssMeta = parsed.spriteSheetsMeta[i];
+                            let ss = new WESASpriteSheet({
+                                ssid: i,
+                                rowCount: ssMeta.rowCount,
+                                colCount: ssMeta.colCount,
+                                cellWidth: ssMeta.cellWidth,
+                                cellHeight: ssMeta.cellHeight
+                            });
+                            ss.loadTextureFromImage(wesaCore.handle.gl, loadedImages[i]);
+                            _self.spriteSheetList.push(ss);
+                        }
+                        
+                        // Load Objects
+                        for (let i = 0; i < parsed.objects.length; i++) {
+                            let objData = parsed.objects[i];
+                            let obj = new wesa.StoredObject({
+                                oid: i,
+                                type: objData.type,
+                                name: objData.name
+                            });
+                            let fArr = [];
+                            for (let j = 0; j < objData.frameLib.length; j++) {
+                                let f = objData.frameLib[j];
+                                fArr.push(new WESAFrame({
+                                    spriteSheet: _self.spriteSheetList[f.spriteSheet],
+                                    cell: { row: f.cell.row, col: f.cell.col, rowSpan: f.cell.rowSpan, colSpan: f.cell.colSpan },
+                                    center: { x: f.center.x, y: f.center.y }
+                                }));
+                            }
+                            for (let j = 0; j < objData.animList.length; j++) {
+                                let a = objData.animList[j];
+                                let anim = new WESAAnimation({
+                                    aid: j,
+                                    name: a.name,
+                                    next: a.next
+                                });
+                                anim.setFrames(Array.from(a.frameList, x => fArr[x]), a.frameTimeList.slice());
+                                obj.addAnimation(j, anim);
+                            }
+                            _self.objectList.push(obj);
+                        }
+                        
+                        callback();
                     }
                 }
                 
-                for (var i = 0; i < urlArray.length; i++) {
-                    newImages[i] = new Image();
-                    newImages[i].src = urlArray[i];
-                    newImages[i].onload = function () {
-                        imageLoaded();
+                for (var i = 0; i < imageUrls.length; i++) {
+                    loadedImages[i] = new Image();
+                    loadedImages[i].src = imageUrls[i];
+                    loadedImages[i].onload = function () {
+                        onAssetLoaded('image');
                     }
-                    newImages[i].onerror = function () {
-                        console.warning('[WARNING] "' + urlArray[i] + '" load failed.');
-                        imageLoaded();
+                    loadedImages[i].onerror = function () {
+                        console.warning('WESA Loader: Image "' + urlArray[i] + '" load failed.');
+                        onAssetLoaded('image');
                     }
                 }
                 
+                let r = new XMLHttpRequest();
+                r.open('GET', this.source.objectJsonUrl)
+                r.onload = function () {
+                    if (r.status >= 200 && r.status < 400) {
+                        loadedObjectJson = r.responseText;
+                        onAssetLoaded('object');
+                    }
+                    else {
+                        console.error('WESA Loader: Cannot load JSON "' + this.source.objectJsonUrl + '".');
+                    }
+                }
+                r.onerror = function () {
+                    console.error('WESA Loader: Cannot load JSON "' + this.source.objectJsonUrl + '" (connection error).');
+                }
+                r.send();
+                
             }
-            
-            /*
-            loadImages: function (urlArray) {
-                var newImages = [], loadedCount = 0;
-                var callBack = function () {};
-                function imageLoaded() {
-                    loadedCount++;
-                    if (loadedCount == urlArray.length) {
-                        callBack(newImages);
-                    }
-                }
-                for (var i = 0; i < urlArray.length; i++) {
-                    newImages[i] = new Image();
-                    newImages[i].src = urlArray[i];
-                    newImages[i].onload = function () {
-                        imageLoaded();
-                    }
-                    newImages[i].onerror = function () {
-                        console.warning('[WARNING] "' + urlArray[i] + '" load failed.');
-                        imageLoaded();
-                    }
-                }
-                return {
-                    done: function (userFunction) {
-                        callBack = userFunction || callBack;
-                    }
-                }
-            }
-            */
             
         }
 
@@ -330,6 +348,7 @@
         
         
         function WESAAnimation(desc) {
+            this.aid = desc.aid
             this.name = desc.name;
             this.next = desc.next;
             this.frameList = [];
@@ -523,7 +542,7 @@
                     gl.vertexAttribPointer(shader.attribLocations.textureCoord, 2, gl.FLOAT, false, 0, 0);
                     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer.indices);
                     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.batchData[ssid].indices), gl.STATIC_DRAW);
-                    gl.bindTexture(gl.TEXTURE_2D, wesaResource.spriteSheetList[ssid].texture);
+                    gl.bindTexture(gl.TEXTURE_2D, wesaAssets.spriteSheetList[ssid].texture);
                     gl.drawElements(gl.TRIANGLES, this.batchData[ssid].indices.length, gl.UNSIGNED_SHORT, 0);
                 }
             }
@@ -660,8 +679,7 @@
             
             // Objects
             core: wesaCore,
-            res: wesaResource,
-            loader: wesaLoader
+            assets: wesaAssets,
 
         };
         
