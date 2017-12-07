@@ -238,8 +238,9 @@
             },
             
             canvasResize: function() {
-                setProjection(this.handle.gl, this.handle.shader);
-                this.handle.gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+                var gl = this.handle.gl;
+                setProjection(gl, this.handle.shader);
+                gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
             },
             
             init: function (canvas) {
@@ -350,8 +351,8 @@
                 hit: null,
                 hurt: null
             }
-            this.width = desc.spriteSheet.cellWidth * desc.cell.rowSpan;
-            this.height = desc.spriteSheet.cellHeight * desc.cell.colSpan;
+            this.width = desc.spriteSheet.cellWidth * desc.cell.colSpan;
+            this.height = desc.spriteSheet.cellHeight * desc.cell.rowSpan;
         }
         
         
@@ -563,7 +564,7 @@
             this.layerList = [];
         }
 
-        WESAScene.prototype.addSpriteToLayer = function (layerIndex, sprite, action = 0) {
+        WESAScene.prototype.addSpriteToLayer = function (layerIndex, sprite) {
             if (!this.layerList[layerIndex]) {
                 var layer = new WESALayer({ lid: layerIndex });
                 this.layerList[layerIndex] = layer;
@@ -571,7 +572,6 @@
             this.layerList[layerIndex].addSprite(sprite);
             sprite.layer = this.layerList[layerIndex];
             sprite.scene = this;
-            sprite.action = action;
         };
         
         WESAScene.prototype.getCollisions = function (layerIndexes = null) {

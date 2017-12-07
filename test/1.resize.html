@@ -5,28 +5,44 @@
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <title>Hello WESA</title>
     <link rel="stylesheet" type="text/css" href="./css/style.css">
+    <style>
+        #canvas {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
 </head>
 
 <body>
 
-    <div class="canvas-wrapper">
+    <div class="canvas-wrapper" id="wrapper">
         <canvas id="canvas" width="640" height="480"></canvas>
     </div>
-    <div class="dynamic-output" id="output">WESA Basic Demo</div>
+    <div class="dynamic-output" id="output">WESA Resize Demo (Try resizing browser window)</div>
     
     <script src="../src/lib/gl-matrix.min.js"></script>
     <script src="../src/wesa.js"></script>
     
     <script>
-        
+    
+        function resizeCanvas(canvas) {
+            if (canvas.width != canvas.clientWidth || canvas.height != canvas.clientHeight) {
+                canvas.width = canvas.clientWidth;
+                canvas.height = canvas.clientHeight;
+                wesa.core.canvasResize();
+            }
+        }
+    
+        var canvas = document.getElementById('canvas');
         var sprite = null;
         
         // Initialize WESA
-        wesa.core.init(document.getElementById('canvas'));
+        wesa.core.init(canvas);
         
         // Adding assets ready for loading
         wesa.assets.source.spriteSheetUrlArray.push('./assets/texture/megaman.png');
-        wesa.assets.source.objectJsonUrl = './assets/objects.json';
+        wesa.assets.source.objectJsonUrl = './assets/megaman.json';
         
         // Load assets
         wesa.assets.load(function () {
@@ -44,6 +60,7 @@
 
             // Run the scene
             var animate = function () {
+                resizeCanvas(canvas);
                 requestAnimationFrame(animate);
                 scene.update();
                 scene.render();
