@@ -13,12 +13,46 @@
         <canvas id="canvas" width="800" height="600"></canvas>
     </div>
     <div class="dynamic-output" id="output">WESA Collision Demo</div>
-    
-    <script src="../src/lib/gl-matrix.min.js"></script>
+
     <script src="../src/wesa.js"></script>
     
     <script>
     
+        const v2 = {
+            
+            create: function (x, y) {
+                return { x: x, y: y };
+            },
+            
+            magnitude: function (v) {
+                return Math.sqrt(v.x * v.x + v.y * v.y);
+            },
+            
+            normalize: function (v) {
+                let mag = v2.magnitude(v);
+                v.x /= mag;
+                v.y /= mag;
+                return v;
+            },
+            
+            dot: function (v, w) {
+                return v.x * w.x + v.y * w.y;
+            },
+            
+            reflect: function (v, n) {
+                let d = v2.dot(v, n);
+                v.x = v.x - 2 * d * n.x;
+                v.y = v.y - 2 * d * n.y;
+                return v;
+            },
+            
+            angle: function (v, w) {
+                return Math.acos(v2.dot(v, w) / (v2.magnitude(v) * v2.magnitude(w)));
+            }
+            
+        };
+        
+        
         function addBubble(scene, x, y, vx, vy) {
             let bubble = new wesa.Sprite({
                 object: wesa.assets.objectList[0],
@@ -29,17 +63,35 @@
             });
             bubble.collision.hit = {
                 shape: wesa.Sprite.CollisionShape.CIRCLE,
-                centerOffset: { x: 0, y: 0 },
+                centerRelative: { x: 0, y: 0 },
                 radius: 60
-            }
+            };
             bubble.collision.hurt = {
                 shape: wesa.Sprite.CollisionShape.CIRCLE,
-                centerOffset: { x: 0, y: 0 },
+                centerRelative: { x: 0, y: 0 },
                 radius: 60
-            }
+            };
             bubble.velocity.x = vx;
             bubble.velocity.y = vy;
             scene.addSpriteToLayer(0, bubble);
+        }
+        
+        function addWall(scene, x, y) {
+            let wall = new wesa.Sprite({
+                object: wesa.assets.objectList[1],
+                action: 0,
+                team: 0,
+                position: { x: x, y: y },
+                scale: 1
+            });
+            wall.collision.hurt = {
+                shape: wesa.Sprite.CollisionShape.RECT,
+                x1Relative: -1,
+                x2Relative: 1,
+                y1Relative: -300,
+                y2Relative: 300
+            };
+            scene.addSpriteToLayer(0, wall);
         }
         
         // Initialize WESA
@@ -55,16 +107,27 @@
             // Create the scene
             var scene = new wesa.Scene('Scene');
             
-            addBubble(scene, -150, 20, 1, 0);
-            addBubble(scene, 150, -20, -1, 0);
+            addBubble(scene, -150, 20, 2, 0);
+            //addBubble(scene, 150, -20, -1, 0);
+            addWall(scene, 150, 0);
 
             // Run the scene
             var animate = function () {
                 requestAnimationFrame(animate);
-                
-                let coll = scene.getCollisions();
-                if (coll.length > 0) { console.log(coll); debugger; }
-                
+                let collisions = scene.getCollisions();
+                if (collisions.length > 0) {
+                    for (let i = 0; i < collisions.length; i++) {
+                        let coll = collisions[i];
+                        let v = v2.create(coll.hitter.velocity.x, coll.hitter.velocity.y);
+                        let n = v2.create(coll.hitter.position.x - coll.hurter.position.x, coll.hitter.position.y - coll.hurter.position.y);
+                        if (v2.angle(v, n) > Math.PI / 2) {
+                            v2.normalize(n);
+                            v2.reflect(v, n);
+                            coll.hitter.velocity.x = v.x;
+                            coll.hitter.velocity.y = v.y;
+                        }
+                    }
+                }
                 scene.update();
                 scene.render();
             }

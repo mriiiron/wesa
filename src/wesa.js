@@ -3,7 +3,56 @@
     
     function WESACore () {
 
-        // Internal functions (private utilities)
+        // Private functions and types
+    
+        const m4 = {
+
+            fromTranslation: function (v) {
+                let out = new Float32Array(16);
+                out[0] = 1;
+                out[1] = 0;
+                out[2] = 0;
+                out[3] = 0;
+                out[4] = 0;
+                out[5] = 1;
+                out[6] = 0;
+                out[7] = 0;
+                out[8] = 0;
+                out[9] = 0;
+                out[10] = 1;
+                out[11] = 0;
+                out[12] = v[0];
+                out[13] = v[1];
+                out[14] = v[2];
+                out[15] = 1;
+                return out;
+            },
+            
+            ortho: function (left, right, bottom, top, near, far) {
+                let out = new Float32Array(16);
+                let lr = 1 / (left - right);
+                let bt = 1 / (bottom - top);
+                let nf = 1 / (near - far);
+                out[0] = -2 * lr;
+                out[1] = 0;
+                out[2] = 0;
+                out[3] = 0;
+                out[4] = 0;
+                out[5] = -2 * bt;
+                out[6] = 0;
+                out[7] = 0;
+                out[8] = 0;
+                out[9] = 0;
+                out[10] = 2 * nf;
+                out[11] = 0;
+                out[12] = (left + right) * lr;
+                out[13] = (top + bottom) * bt;
+                out[14] = (far + near) * nf;
+                out[15] = 1;
+                return out;
+            }
+          
+        };
     
         function loadShader(gl, type, source) {
             const shader = gl.createShader(type);
@@ -38,14 +87,12 @@
             let top = gl.canvas.height / 2;
             let zNear = 0.1;
             let zFar = 100.0;
-            let projectionMatrix = mat4.create();
-            mat4.ortho(projectionMatrix, left, right, bottom, top, zNear, zFar);
+            let projectionMatrix = m4.ortho(left, right, bottom, top, zNear, zFar);
             gl.uniformMatrix4fv(shader.uniformLocations.projectionMatrix, false, projectionMatrix);
         }
         
         function setModelView(gl, shader) {
-            let modelViewMatrix = mat4.create();
-            mat4.translate(modelViewMatrix, modelViewMatrix, [0.0, 0.0, -6.0]);
+            let modelViewMatrix = m4.fromTranslation([0.0, 0.0, -6.0]);
             gl.uniformMatrix4fv(shader.uniformLocations.modelViewMatrix, false, modelViewMatrix);
         }
         
@@ -78,7 +125,9 @@
 
         }
         
-
+        // END Private content
+        
+        
         // "wesa.assets" object
         
         const wesaAssets = {
@@ -161,7 +210,7 @@
                                     name: a.name,
                                     next: a.next
                                 });
-                                anim.setFrames(Array.from(a.frameList, x => fArr[x]), a.frameTimeList.slice());
+                                anim.setFrames(Array.from(a.frameList, x => (x == null ? null : fArr[x])), a.frameTimeList.slice());
                                 obj.addAnimation(j, anim);
                             }
                             _self.objectList.push(obj);
@@ -171,7 +220,7 @@
                     }
                 }
                 
-                for (var i = 0; i < imageUrls.length; i++) {
+                for (let i = 0; i < imageUrls.length; i++) {
                     loadedImages[i] = new Image();
                     loadedImages[i].src = imageUrls[i];
                     loadedImages[i].onload = function () {
@@ -368,7 +417,7 @@
             var len = frameArr.length;
             var time = 0;
             this.frameList = frameArr.slice();
-            for (var i = 0; i < len; i++) {
+            for (let i = 0; i < len; i++) {
                 time += frameTimeArr[i];
                 this.endTimeList[i] = time;
             }
@@ -496,12 +545,12 @@
         
         WESALayer.prototype.update = function () {
             var sList = this.spriteList;
-            for (var i = 0; i < sList.length; i++) {
+            for (let i = 0; i < sList.length; i++) {
                 if (!sList[i].deadFlag) {
                     sList[i].update();
                 }
             }
-            for (var i = sList.length - 1; i >= 0; i--) {
+            for (let i = sList.length - 1; i >= 0; i--) {
                 if (sList[i].deadFlag) {
                     sList.splice(i, 1);
                 }
@@ -512,36 +561,39 @@
             
             // Prepare sprite batches in current layer
             this.batchData = [];
-            for (var i = 0; i < this.spriteList.length; i++) {
+            for (let i = 0; i < this.spriteList.length; i++) {
                 if (this.spriteList[i]) {
                     var sprite = this.spriteList[i];
                     var frame = sprite.getCurrentFrame();
-                    var x1 = sprite.position.x - frame.center.x * sprite.scale;
-                    var x2 = x1 + frame.width * sprite.scale;
-                    var y1 = sprite.position.y - frame.center.y * sprite.scale;
-                    var y2 = y1 + frame.height * sprite.scale;
-                    var ssid = frame.spriteSheet.ssid;
-                    var texClip = frame.spriteSheet.getTextureClipByPosition(frame.cell.row, frame.cell.col, frame.cell.rowSpan, frame.cell.colSpan);
-                    if (this.batchData[ssid]) {
-                        this.batchData[ssid].spriteCount++;
-                        var indicesBase = 4 * (this.batchData[ssid].spriteCount - 1);
-                        this.batchData[ssid].positions.push(x1, y1, x2, y1, x1, y2, x2, y2);
-                        this.batchData[ssid].texCoords.push(texClip.x1, texClip.y2, texClip.x2, texClip.y2, texClip.x1, texClip.y1, texClip.x2, texClip.y1);
-                        this.batchData[ssid].indices.push(indicesBase, indicesBase + 1, indicesBase + 2, indicesBase + 1, indicesBase + 2, indicesBase + 3);
-                    }
-                    else {
-                        this.batchData[ssid] = {
-                            spriteCount: 1,
-                            positions: [x1, y1, x2, y1, x1, y2, x2, y2],
-                            texCoords: [texClip.x1, texClip.y2, texClip.x2, texClip.y2, texClip.x1, texClip.y1, texClip.x2, texClip.y1],
-                            indices: [0, 1, 2, 1, 2, 3]
+                    if (frame) {
+                        var x1 = sprite.position.x - frame.center.x * sprite.scale;
+                        var x2 = x1 + frame.width * sprite.scale;
+                        var y1 = sprite.position.y - frame.center.y * sprite.scale;
+                        var y2 = y1 + frame.height * sprite.scale;
+                        var ssid = frame.spriteSheet.ssid;
+                        var texClip = frame.spriteSheet.getTextureClipByPosition(frame.cell.row, frame.cell.col, frame.cell.rowSpan, frame.cell.colSpan);
+                        if (this.batchData[ssid]) {
+                            this.batchData[ssid].spriteCount++;
+                            var indicesBase = 4 * (this.batchData[ssid].spriteCount - 1);
+                            this.batchData[ssid].positions.push(x1, y1, x2, y1, x1, y2, x2, y2);
+                            this.batchData[ssid].texCoords.push(texClip.x1, texClip.y2, texClip.x2, texClip.y2, texClip.x1, texClip.y1, texClip.x2, texClip.y1);
+                            this.batchData[ssid].indices.push(indicesBase, indicesBase + 1, indicesBase + 2, indicesBase + 1, indicesBase + 2, indicesBase + 3);
+                        }
+                        else {
+                            this.batchData[ssid] = {
+                                spriteCount: 1,
+                                positions: [x1, y1, x2, y1, x1, y2, x2, y2],
+                                texCoords: [texClip.x1, texClip.y2, texClip.x2, texClip.y2, texClip.x1, texClip.y1, texClip.x2, texClip.y1],
+                                indices: [0, 1, 2, 1, 2, 3]
+                            }
                         }
                     }
+ 
                 }
             }
             
             // Batch-render current layer
-            for (var ssid = 0; ssid < this.batchData.length; ssid++) {
+            for (let ssid = 0; ssid < this.batchData.length; ssid++) {
                 if (this.batchData[ssid]) { 
                     gl.bindBuffer(gl.ARRAY_BUFFER, buffer.positions);
                     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.batchData[ssid].positions), gl.STATIC_DRAW);
@@ -575,74 +627,99 @@
         };
         
         WESAScene.prototype.getCollisions = function (layerIndexes = null) {
-            var listOfSpriteList = [];
+            let listOfSpriteList = [];
             if (layerIndexes) {
-                for (var i = 0; i < layerIndexes.length; i++) {
+                for (let i = 0; i < layerIndexes.length; i++) {
                     if (this.layerList[layerIndexes[i]]) {
                         listOfSpriteList.push(this.layerList[layerIndexes[i]].spriteList);
                     }
                 }
             }
             else {
-                for (var i = 0; i < this.layerList.length; i++) {
+                for (let i = 0; i < this.layerList.length; i++) {
                     if (this.layerList[i]) {
                         listOfSpriteList.push(this.layerList[i].spriteList);
                     }
                 }
             }
-            var allSprites = [].concat.apply([], listOfSpriteList);
-            var collisions = [];
-            for (var i = 0; i < allSprites.length; i++) {
-                for (var j = 0; j < allSprites.length; j++) {
+            let allSprites = [].concat.apply([], listOfSpriteList);
+            let collisions = [];
+            for (let i = 0; i < allSprites.length; i++) {
+                for (let j = 0; j < allSprites.length; j++) {
                     if (i == j) { continue; }
-                    var si = allSprites[i], sj = allSprites[j];
+                    let si = allSprites[i], sj = allSprites[j];
                     if (si.collision && sj.collision) {
-                        var iHitbox = {}, jHurtbox = {};
+                        let iHitbox = {}, jHurtbox = {};
                         if (si.collision.mode == WESASprite.CollisionMode.BY_SPRITE) {
-                            var hit = si.collision.hit;
+                            let hit = si.collision.hit;
                             if (!hit) { continue; }
                             iHitbox.shape = hit.shape;
                             if (iHitbox.shape == WESASprite.CollisionShape.CIRCLE) {
-                                iHitbox.center = { x: si.position.x + hit.centerOffset.x, y: si.position.y + hit.centerOffset.y };
+                                iHitbox.center = { x: si.position.x + hit.centerRelative.x, y: si.position.y + hit.centerRelative.y };
                                 iHitbox.radius = hit.radius;
                             }
-                            else if (iHitbox.mode == WESASprite.CollisionShape.RECT) {
-                                iHitbox.x1 = si.position.x + hit.x1;
-                                iHitbox.x2 = si.position.x + hit.x2;
-                                iHitbox.y1 = si.position.y + hit.y1;
-                                iHitbox.y2 = si.position.y + hit.y2;
+                            else if (iHitbox.shape == WESASprite.CollisionShape.RECT) {
+                                iHitbox.x1 = si.position.x + hit.x1Relative;
+                                iHitbox.x2 = si.position.x + hit.x2Relative;
+                                iHitbox.y1 = si.position.y + hit.y1Relative;
+                                iHitbox.y2 = si.position.y + hit.y2Relative;
                             }
                         }
                         else if (si.collision.mode == WESASprite.CollisionMode.BY_FRAME) {
                             // TODO
                         }
                         if (sj.collision.mode == WESASprite.CollisionMode.BY_SPRITE) {
-                            var hurt = sj.collision.hurt;
+                            let hurt = sj.collision.hurt;
                             if (!hurt) { continue; }
                             jHurtbox.shape = hurt.shape;
                             if (jHurtbox.shape == WESASprite.CollisionShape.CIRCLE) {
-                                jHurtbox.center = { x: sj.position.x + hurt.centerOffset.x, y: sj.position.y + hurt.centerOffset.y };
+                                jHurtbox.center = { x: sj.position.x + hurt.centerRelative.x, y: sj.position.y + hurt.centerRelative.y };
                                 jHurtbox.radius = hurt.radius;
                             }
-                            else if (jHurtbox.mode == WESASprite.CollisionShape.RECT) {
-                                jHurtbox.x1 = sj.position.x + hurt.x1;
-                                jHurtbox.x2 = sj.position.x + hurt.x2;
-                                jHurtbox.y1 = sj.position.y + hurt.y1;
-                                jHurtbox.y2 = sj.position.y + hurt.y2;
+                            else if (jHurtbox.shape == WESASprite.CollisionShape.RECT) {
+                                jHurtbox.x1 = sj.position.x + hurt.x1Relative;
+                                jHurtbox.x2 = sj.position.x + hurt.x2Relative;
+                                jHurtbox.y1 = sj.position.y + hurt.y1Relative;
+                                jHurtbox.y2 = sj.position.y + hurt.y2Relative;
                             }
                         }
                         else if (sj.collision.mode == WESASprite.CollisionMode.BY_FRAME) {
                             // TODO
                         }
                         if (iHitbox.shape == WESASprite.CollisionShape.CIRCLE && jHurtbox.shape == WESASprite.CollisionShape.CIRCLE) {
-                            var dx = iHitbox.center.x - jHurtbox.center.x, dy = iHitbox.center.y - jHurtbox.center.y;
-                            var dist = Math.sqrt(dx * dx + dy * dy);
-                            if (iHitbox.radius + jHurtbox.radius > dist) {
+                            let dx = iHitbox.center.x - jHurtbox.center.x, dy = iHitbox.center.y - jHurtbox.center.y;
+                            let d = Math.sqrt(dx * dx + dy * dy);
+                            if (iHitbox.radius + jHurtbox.radius > d) {
                                 collisions.push({
-                                    hiter: si,
+                                    hitter: si,
                                     hurter: sj
                                 });
                             }
+                        }
+                        else if (iHitbox.shape == WESASprite.CollisionShape.CIRCLE && jHurtbox.shape == WESASprite.CollisionShape.RECT) {
+                            let dx = 0, dy = 0;
+                            if (iHitbox.center.x < jHurtbox.x1) {
+                                dx = jHurtbox.x1 - iHitbox.center.x;
+                            }
+                            else if (iHitbox.center.x > jHurtbox.x2) {
+                                dx = iHitbox.center.x - jHurtbox.x2;
+                            }
+                            if (iHitbox.center.y < jHurtbox.y1) {
+                                dy = jHurtbox.y1 - iHitbox.center.y;
+                            }
+                            else if (iHitbox.center.y > jHurtbox.y2) {
+                                dy = iHitbox.center.y - jHurtbox.y2;
+                            }
+                            let d = Math.sqrt(dx * dx + dy * dy);
+                            if (iHitbox.radius > d) {
+                                collisions.push({
+                                    hitter: si,
+                                    hurter: sj
+                                });
+                            }
+                        }
+                        else if (iHitbox.shape == WESASprite.CollisionShape.RECT && jHurtbox.shape == WESASprite.CollisionShape.CIRCLE) {
+                            // TODO
                         }
                         else if (iHitbox.shape == WESASprite.CollisionShape.RECT && jHurtbox.shape == WESASprite.CollisionShape.RECT) {
                             // TODO
@@ -654,7 +731,7 @@
         };
         
         WESAScene.prototype.update = function () {
-            for (var i = 0; i < this.layerList.length; i++) {
+            for (let i = 0; i < this.layerList.length; i++) {
                 if (this.layerList[i]) {
                     this.layerList[i].update();
                 }
@@ -662,11 +739,11 @@
         };
         
         WESAScene.prototype.render = function () {
-            var gl = wesaCore.handle.gl;
-            var shader = wesaCore.handle.shader;
-            var buffer = wesaCore.handle.buffer;
+            let gl = wesaCore.handle.gl;
+            let shader = wesaCore.handle.shader;
+            let buffer = wesaCore.handle.buffer;
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            for (var i = 0; i < this.layerList.length; i++) {
+            for (let i = 0; i < this.layerList.length; i++) {
                 if (this.layerList[i]) {
                     this.layerList[i].render(gl, shader, buffer);
                 }
