@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Hello WESA</title>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+
+<body>
+
+    <div class="canvas-wrapper">
+        <canvas id="canvas" width="800" height="600"></canvas>
+    </div>
+    <div class="dynamic-output" id="output">WESA Collision Demo</div>
+    
+    <script src="../src/lib/gl-matrix.min.js"></script>
+    <script src="../src/wesa.js"></script>
+    
+    <script>
+    
+        function addBubble(scene, x, y, vx, vy) {
+            let bubble = new wesa.Sprite({
+                object: wesa.assets.objectList[0],
+                action: 0,
+                team: 0,
+                position: { x: x, y: y },
+                scale: 1
+            });
+            bubble.collision.hit = {
+                shape: wesa.Sprite.CollisionShape.CIRCLE,
+                centerOffset: { x: 0, y: 0 },
+                radius: 60
+            }
+            bubble.collision.hurt = {
+                shape: wesa.Sprite.CollisionShape.CIRCLE,
+                centerOffset: { x: 0, y: 0 },
+                radius: 60
+            }
+            bubble.velocity.x = vx;
+            bubble.velocity.y = vy;
+            scene.addSpriteToLayer(0, bubble);
+        }
+        
+        // Initialize WESA
+        wesa.core.init(document.getElementById('canvas'));
+        
+        // Adding assets ready for loading
+        wesa.assets.source.spriteSheetUrlArray.push('./assets/texture/bubble.png');
+        wesa.assets.source.objectJsonUrl = './assets/bubble.json';
+        
+        // Load assets
+        wesa.assets.load(function () {
+        
+            // Create the scene
+            var scene = new wesa.Scene('Scene');
+            
+            addBubble(scene, -150, 20, 1, 0);
+            addBubble(scene, 150, -20, -1, 0);
+
+            // Run the scene
+            var animate = function () {
+                requestAnimationFrame(animate);
+                
+                let coll = scene.getCollisions();
+                if (coll.length > 0) { console.log(coll); debugger; }
+                
+                scene.update();
+                scene.render();
+            }
+            animate();
+            
+        });
+
+    </script>
+    
+</body>
+
+</html>
