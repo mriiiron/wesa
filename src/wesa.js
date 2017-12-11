@@ -687,34 +687,50 @@
                             // TODO
                         }
                         if (iHitbox.shape == WESASprite.CollisionShape.CIRCLE && jHurtbox.shape == WESASprite.CollisionShape.CIRCLE) {
-                            let dx = iHitbox.center.x - jHurtbox.center.x, dy = iHitbox.center.y - jHurtbox.center.y;
+                            let x1 = iHitbox.center.x, x2 = jHurtbox.center.x;
+                            let y1 = iHitbox.center.y, y2 = jHurtbox.center.y;
+                            let dx = x1 - x2, dy = y1 - y2;
                             let d = Math.sqrt(dx * dx + dy * dy);
-                            if (iHitbox.radius + jHurtbox.radius > d) {
+                            let r1 = iHitbox.radius, r2 = jHurtbox.radius;
+                            if (r1 + r2 > d) {
                                 collisions.push({
                                     hitter: si,
-                                    hurter: sj
+                                    hurter: sj,
+                                    collisionPoint: { x: (r2 * r2 * x1 + r1 * r1 * x2) / (r1 * r1 + r2 * r2), y: (r2 * r2 * y1 + r1 * r1 * y2) / (r1 * r1 + r2 * r2)}
                                 });
                             }
                         }
                         else if (iHitbox.shape == WESASprite.CollisionShape.CIRCLE && jHurtbox.shape == WESASprite.CollisionShape.RECT) {
                             let dx = 0, dy = 0;
+                            let px, py;
                             if (iHitbox.center.x < jHurtbox.x1) {
                                 dx = jHurtbox.x1 - iHitbox.center.x;
+                                px = jHurtbox.x1;
                             }
                             else if (iHitbox.center.x > jHurtbox.x2) {
                                 dx = iHitbox.center.x - jHurtbox.x2;
+                                px = jHurtbox.x2;
+                            }
+                            else {
+                                px = iHitbox.center.x;
                             }
                             if (iHitbox.center.y < jHurtbox.y1) {
                                 dy = jHurtbox.y1 - iHitbox.center.y;
+                                py = jHurtbox.y1;
                             }
                             else if (iHitbox.center.y > jHurtbox.y2) {
                                 dy = iHitbox.center.y - jHurtbox.y2;
+                                py = jHurtbox.y2
+                            }
+                            else {
+                                py = iHitbox.center.y;
                             }
                             let d = Math.sqrt(dx * dx + dy * dy);
                             if (iHitbox.radius > d) {
                                 collisions.push({
                                     hitter: si,
-                                    hurter: sj
+                                    hurter: sj,
+                                    collisionPoint: { x: px, y: py }
                                 });
                             }
                         }

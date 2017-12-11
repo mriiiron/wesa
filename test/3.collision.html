@@ -40,9 +40,10 @@
             },
             
             reflect: function (v, n) {
-                let d = v2.dot(v, n);
-                v.x = v.x - 2 * d * n.x;
-                v.y = v.y - 2 * d * n.y;
+                norm = v2.normalize(n);
+                let d = v2.dot(v, norm);
+                v.x = v.x - 2 * d * norm.x;
+                v.y = v.y - 2 * d * norm.y;
                 return v;
             },
             
@@ -51,8 +52,8 @@
             }
             
         };
-        
-        
+
+ 
         function addBubble(scene, x, y, vx, vy) {
             let bubble = new wesa.Sprite({
                 object: wesa.assets.objectList[0],
@@ -74,9 +75,10 @@
             bubble.velocity.x = vx;
             bubble.velocity.y = vy;
             scene.addSpriteToLayer(0, bubble);
+            return bubble;
         }
         
-        function addWall(scene, x, y) {
+        function addWall(scene, x, y, wallType) {
             let wall = new wesa.Sprite({
                 object: wesa.assets.objectList[1],
                 action: 0,
@@ -84,15 +86,30 @@
                 position: { x: x, y: y },
                 scale: 1
             });
-            wall.collision.hurt = {
-                shape: wesa.Sprite.CollisionShape.RECT,
-                x1Relative: -1,
-                x2Relative: 1,
-                y1Relative: -300,
-                y2Relative: 300
-            };
+            if (wallType == 'horizontal') {
+                wall.collision.hurt = {
+                    shape: wesa.Sprite.CollisionShape.RECT,
+                    x1Relative: -1000,
+                    x2Relative: 1000,
+                    y1Relative: -1,
+                    y2Relative: 1
+                };
+            }
+            else if (wallType == 'vertical') {
+                wall.collision.hurt = {
+                    shape: wesa.Sprite.CollisionShape.RECT,
+                    x1Relative: -1,
+                    x2Relative: 1,
+                    y1Relative: -1000,
+                    y2Relative: 1000
+                };
+            }
             scene.addSpriteToLayer(0, wall);
         }
+        
+        
+        const bubbles = [];
+        
         
         // Initialize WESA
         wesa.core.init(document.getElementById('canvas'));
@@ -107,26 +124,32 @@
             // Create the scene
             var scene = new wesa.Scene('Scene');
             
-            addBubble(scene, -150, 20, 2, 0);
-            //addBubble(scene, 150, -20, -1, 0);
-            addWall(scene, 150, 0);
+            addWall(scene, -400, 0, 'vertical');
+            addWall(scene, 400, 0, 'vertical');
+            addWall(scene, 0, -300, 'horizontal');
+            addWall(scene, 0, 300, 'horizontal');
+            
+            for (let i = 0; i < 10; i++) {
+                bubbles.push(addBubble(scene, 0, 0, 3 * Math.random(), 3 * Math.random()));
+                //addBubble(scene, 0, 0, 3 * getRandomIntInclusive(), 3 * getRandomIntInclusive());
+            }
 
             // Run the scene
             var animate = function () {
                 requestAnimationFrame(animate);
                 let collisions = scene.getCollisions();
-                if (collisions.length > 0) {
-                    for (let i = 0; i < collisions.length; i++) {
-                        let coll = collisions[i];
-                        let v = v2.create(coll.hitter.velocity.x, coll.hitter.velocity.y);
-                        let n = v2.create(coll.hitter.position.x - coll.hurter.position.x, coll.hitter.position.y - coll.hurter.position.y);
-                        if (v2.angle(v, n) > Math.PI / 2) {
-                            v2.normalize(n);
-                            v2.reflect(v, n);
-                            coll.hitter.velocity.x = v.x;
-                            coll.hitter.velocity.y = v.y;
-                        }
+                for (let i = 0; i < collisions.length; i++) {
+                    let coll = collisions[i];
+                    let v = v2.create(coll.hitter.velocity.x, coll.hitter.velocity.y);
+                    let n = v2.create(coll.hitter.position.x - coll.collisionPoint.x, coll.hitter.position.y - coll.collisionPoint.y);
+                    if (v2.angle(v, n) > Math.PI / 2) {
+                        v2.reflect(v, n);
+                        coll.hitter.velocity.x = v.x;
+                        coll.hitter.velocity.y = v.y;
                     }
+                }
+                for (let i = 0; i < bubbles.length; i++) {
+
                 }
                 scene.update();
                 scene.render();
