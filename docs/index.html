@@ -24,7 +24,7 @@
         </div>
        
         <div class="banner-demo-wrap">
-            <p><img src="./demo/assets/texture/megaman.png" /><code class="no-bg"> + wesa.js =</code></p>
+            <p><img src="./assets/texture/megaman.png" /><code class="no-bg"> + wesa.js =</code></p>
             <canvas id="canvas" width="640" height="480"></canvas>
             <span class="in-canvas-display">Scroll inside canvas to change the sprite's "scale" property.<br />You may check the variable "s_Megaman" in your favorite developer tool.<br /><br />s_Megaman.scale = <span id="scale-value">4</span></span>
         </div>
@@ -84,8 +84,8 @@
         wesa.core.init(document.getElementById('canvas'));
         
         // Adding assets ready for loading
-        wesa.assets.source.spriteSheetUrlArray.push('./demo/assets/texture/megaman.png');
-        wesa.assets.source.objectJsonUrl = './demo/assets/megaman.json';
+        wesa.assets.source.spriteSheetUrlArray.push('./assets/texture/megaman.png');
+        wesa.assets.source.objectJsonUrl = './assets/megaman.json';
         
         // Load assets
         wesa.assets.load(function () {
