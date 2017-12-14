@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Hello WESA</title>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+
+<body>
+
+    <div class="canvas-wrapper">
+        <canvas id="canvas" width="640" height="480"></canvas>
+    </div>
+    <div class="dynamic-output" id="output">WESA Mouse Demo (Hover inside canvas)</div>
+    
+    <script src="../js/wesa.js"></script>
+    
+    <script>
+        
+        function getRandomIntInclusive(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        
+        var canvas = document.getElementById('canvas');
+        var mouse = { x: 0, y: 0 };
+        
+        canvas.onmousemove = function(e) {
+            mouse.x = e.pageX - canvas.offsetLeft - canvas.width / 2;
+            mouse.y = canvas.height / 2 - (e.pageY - canvas.offsetTop);
+        };
+        
+        // Initialize WESA
+        wesa.core.init(canvas);
+        
+        // Adding assets ready for loading
+        wesa.assets.source.spriteSheetUrlArray.push('../assets/texture/ripple.png');
+        wesa.assets.source.objectJsonUrl = '../assets/ripple.json';
+        
+        // Load assets
+        wesa.assets.load(function () {
+        
+            // Create the scene
+            var scene = new wesa.Scene('Scene');
+
+            // Run the scene
+            var animate = function () {
+            
+                let x = mouse.x + getRandomIntInclusive(-80, 80);
+                let y = mouse.y + getRandomIntInclusive(-50, 50);
+                let action = getRandomIntInclusive(0, 1);
+                let sprite = new wesa.Sprite({
+                    object: wesa.assets.objectList[0],
+                    action: action,
+                    team: 0,
+                    position: { x: x, y: y },
+                    scale: 1
+                });
+                scene.addSpriteToLayer(0, sprite);
+            
+                requestAnimationFrame(animate);
+                scene.update();
+                scene.render();
+            }
+            animate();
+            
+        });
+
+    </script>
+    
+</body>
+
+</html>

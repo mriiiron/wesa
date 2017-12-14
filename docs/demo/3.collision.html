@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Hello WESA</title>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+
+<body>
+
+    <div class="canvas-wrapper">
+        <canvas id="canvas" width="800" height="600"></canvas>
+    </div>
+    <div class="dynamic-output" id="output">WESA Collision Demo</div>
+
+    <script src="../js/wesa.js"></script>
+    
+    <script>
+    
+        const v2 = {
+            
+            create: function (x, y) {
+                return { x: x, y: y };
+            },
+            
+            magnitude: function (v) {
+                return Math.sqrt(v.x * v.x + v.y * v.y);
+            },
+            
+            normalize: function (v) {
+                let mag = v2.magnitude(v);
+                v.x /= mag;
+                v.y /= mag;
+                return v;
+            },
+            
+            dot: function (v, w) {
+                return v.x * w.x + v.y * w.y;
+            },
+            
+            reflect: function (v, n) {
+                norm = v2.normalize(n);
+                let d = v2.dot(v, norm);
+                v.x = v.x - 2 * d * norm.x;
+                v.y = v.y - 2 * d * norm.y;
+                return v;
+            },
+            
+            angle: function (v, w) {
+                return Math.acos(v2.dot(v, w) / (v2.magnitude(v) * v2.magnitude(w)));
+            }
+            
+        };
+
+ 
+        function addBubble(scene, x, y, vx, vy) {
+            let bubble = new wesa.Sprite({
+                object: wesa.assets.objectList[0],
+                action: 0,
+                team: 0,
+                position: { x: x, y: y },
+                scale: 1
+            });
+            bubble.collision.hit = {
+                shape: wesa.Sprite.CollisionShape.CIRCLE,
+                centerRelative: { x: 0, y: 0 },
+                radius: 60
+            };
+            bubble.collision.hurt = {
+                shape: wesa.Sprite.CollisionShape.CIRCLE,
+                centerRelative: { x: 0, y: 0 },
+                radius: 60
+            };
+            bubble.velocity.x = vx;
+            bubble.velocity.y = vy;
+            scene.addSpriteToLayer(0, bubble);
+            return bubble;
+        }
+        
+        function addWall(scene, x, y, wallType) {
+            let wall = new wesa.Sprite({
+                object: wesa.assets.objectList[1],
+                action: 0,
+                team: 0,
+                position: { x: x, y: y },
+                scale: 1
+            });
+            if (wallType == 'horizontal') {
+                wall.collision.hurt = {
+                    shape: wesa.Sprite.CollisionShape.RECT,
+                    x1Relative: -1000,
+                    x2Relative: 1000,
+                    y1Relative: -1,
+                    y2Relative: 1
+                };
+            }
+            else if (wallType == 'vertical') {
+                wall.collision.hurt = {
+                    shape: wesa.Sprite.CollisionShape.RECT,
+                    x1Relative: -1,
+                    x2Relative: 1,
+                    y1Relative: -1000,
+                    y2Relative: 1000
+                };
+            }
+            scene.addSpriteToLayer(0, wall);
+        }
+        
+        
+        const bubbles = [];
+        
+        
+        // Initialize WESA
+        wesa.core.init(document.getElementById('canvas'));
+        
+        // Adding assets ready for loading
+        wesa.assets.source.spriteSheetUrlArray.push('../assets/texture/bubble.png');
+        wesa.assets.source.objectJsonUrl = '../assets/bubble.json';
+        
+        // Load assets
+        wesa.assets.load(function () {
+        
+            // Create the scene
+            var scene = new wesa.Scene('Scene');
+            
+            addWall(scene, -400, 0, 'vertical');
+            addWall(scene, 400, 0, 'vertical');
+            addWall(scene, 0, -300, 'horizontal');
+            addWall(scene, 0, 300, 'horizontal');
+            
+            for (let i = 0; i < 10; i++) {
+                bubbles.push(addBubble(scene, 0, 0, 3 * Math.random(), 3 * Math.random()));
+            }
+
+            // Run the scene
+            var animate = function () {
+                requestAnimationFrame(animate);
+                let collisions = scene.getCollisions();
+                for (let i = 0; i < collisions.length; i++) {
+                    let coll = collisions[i];
+                    let v = v2.create(coll.hitter.velocity.x, coll.hitter.velocity.y);
+                    let n = v2.create(coll.hitter.position.x - coll.collisionPoint.x, coll.hitter.position.y - coll.collisionPoint.y);
+                    if (v2.angle(v, n) > Math.PI / 2) {
+                        v2.reflect(v, n);
+                        coll.hitter.velocity.x = v.x;
+                        coll.hitter.velocity.y = v.y;
+                    }
+                }
+                for (let i = 0; i < bubbles.length; i++) {
+
+                }
+                scene.update();
+                scene.render();
+            }
+            animate();
+            
+        });
+
+    </script>
+    
+</body>
+
+</html>
