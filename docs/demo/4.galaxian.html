@@ -19,6 +19,12 @@
     <script>
         
         const canvas = document.getElementById('canvas');
+        const dim = {
+            top: canvas.height / 2,
+            bottom: -canvas.height / 2,
+            left: -canvas.width / 2,
+            right: canvas.width / 2
+        };
         const stars = [];
         
         function getRandomIntInclusive(min, max) {
@@ -32,8 +38,8 @@
                 object: wesa.assets.objectList[0],
                 action: 0,
                 team: 0,
-                position: { x: getRandomIntInclusive(-canvas.width / 2, canvas.width / 2), y: canvas.height / 2 },
-                scale: 4
+                position: { x: getRandomIntInclusive(dim.left, dim.right), y: getRandomIntInclusive(dim.bottom, dim.top) },
+                scale: 2
             });
             star.velocity.y = -2;
             stars.push(star);
@@ -62,6 +68,15 @@
 
             // Run the scene
             var animate = function () {
+            
+                for (let i = 0; i < stars.length; i++) {
+                    let star = stars[i];
+                    if (star.position.y < dim.bottom) {
+                        star.position.x = getRandomIntInclusive(dim.left, dim.right);
+                        star.position.y = dim.top;
+                    }
+                }
+            
                 requestAnimationFrame(animate);
                 scene.update();
                 scene.render();
