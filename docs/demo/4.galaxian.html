@@ -25,28 +25,30 @@
             left: -canvas.width / 2,
             right: canvas.width / 2
         };
-        const stars = [];
+        
+        var stars = [];
+        var player = null;
         
         function getRandomIntInclusive(min, max) {
             min = Math.ceil(min);
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
-        
+
         function addStar(scene) {
             let star = new wesa.Sprite({
                 object: wesa.assets.objectList[0],
                 action: 0,
                 team: 0,
                 position: { x: getRandomIntInclusive(dim.left, dim.right), y: getRandomIntInclusive(dim.bottom, dim.top) },
-                scale: 2
+                scale: 1
             });
-            star.velocity.y = -2;
+            star.velocity.y = -2 + Math.random();
+            let endTimes = star.getCurrentAnim().endTimeList;
+            star.setTime(getRandomIntInclusive(0, endTimes[endTimes.length - 1]) - 1);  
             stars.push(star);
             scene.addSpriteToLayer(0, star);
         }
-        
-        var sprite = null;
         
         // Initialize WESA
         wesa.core.init(document.getElementById('canvas'));
@@ -61,11 +63,21 @@
             // Create the scene
             var scene = new wesa.Scene('Scene');
             
-            for (let i = 0; i < 10; i++) {
+            // Background
+            for (let i = 0; i < 30; i++) {
                 addStar(scene);
             }
             
-
+            // Player
+            player = new wesa.Sprite({
+                object: wesa.assets.objectList[1],
+                action: 0,
+                team: 0,
+                position: { x: 0, y: -250 },
+                scale: 2
+            });
+            scene.addSpriteToLayer(1, player);
+            
             // Run the scene
             var animate = function () {
             

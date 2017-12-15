@@ -471,6 +471,10 @@
             RECT: 'RECT'
         });
         
+        WESASprite.prototype.getCurrentAnim = function () {
+            return this.object.animList[this.action];
+        };
+        
         WESASprite.prototype.getCurrentFrame = function () {
             return this.object.animList[this.action].frameList[this.frameNum];
         };
@@ -481,13 +485,27 @@
             this.frameNum = 0;
         };
         
+        WESASprite.prototype.setTime = function (time) {
+            let endTimeList = this.object.animList[this.action].endTimeList;
+            let max = endTimeList[endTimeList.length - 1];
+            if (time < 0) { time = 0; }
+            if (time >= max) { time = max - 1; }
+            this.time = time;
+            for (let i = 0; i < endTimeList.length; i++) {
+                if (time < endTimeList[i]) {
+                    this.frameNum = i;
+                    break;
+                }
+            }
+        }
+        
         WESASprite.prototype.setAI = function (ai) {
             ai.self = this;
             this.ai = ai;
         };
         
         WESASprite.prototype.addAI = function (aiExecuteFunction) {
-            var ai = new WESAAI();
+            let ai = new WESAAI();
             ai.execute = aiExecuteFunction;
             ai.self = this;
             this.ai = ai;
@@ -499,8 +517,8 @@
                     this.ai.execute();
                 }
             }
-            var anim = this.object.animList[this.action];
-            var animFrameCount = anim.frameList.length;
+            let anim = this.object.animList[this.action];
+            let animFrameCount = anim.frameList.length;
             this.time++;
             if (this.time >= anim.endTimeList[this.frameNum]) {
                 this.frameNum++;
