@@ -4,12 +4,12 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <title>Hello WESA</title>
-    <link rel="stylesheet" type="text/css" href="./css/style.css">
+    <link rel="stylesheet" type="text/css" href="./css/demo-iframe.css">
 </head>
 
 <body>
 
-    <div class="canvas-wrapper">
+    <div class="flex-wrapper">
         <canvas id="canvas" width="640" height="480"></canvas>
     </div>
     <div class="dynamic-output" id="output">WESA Mouse Demo (Hover inside canvas)</div>
@@ -48,8 +48,8 @@
             // Run the scene
             var animate = function () {
             
-                let x = mouse.x + getRandomIntInclusive(-80, 80);
-                let y = mouse.y + getRandomIntInclusive(-50, 50);
+                let x = mouse.x + getRandomIntInclusive(-120, 120);
+                let y = mouse.y + getRandomIntInclusive(-90, 90);
                 let action = getRandomIntInclusive(0, 1);
                 let sprite = new wesa.Sprite({
                     object: wesa.assets.objectList[0],

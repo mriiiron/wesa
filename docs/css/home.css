@@ -9,6 +9,10 @@ body {
     margin: 0;
 }
 
+header .container {
+    height: 50px;
+}
+
 .container {
     width: 900px;
     margin: 0 auto;
@@ -25,6 +29,19 @@ canvas {
 h1, h2, h3, h4, h5, h6 {
     font-weight: normal;
     margin-top: 0;
+}
+
+a:link, a:visited {
+    text-decoration: none;
+    color: #ccc;
+}
+
+a:hover {
+    color: #66ccff;
+}
+
+a:active {
+    color: #66ccff;
 }
 
 a.btn {
