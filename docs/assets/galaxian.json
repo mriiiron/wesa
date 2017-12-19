@@ -1,8 +1,8 @@
 ﻿{
   "spriteSheetsMeta": [
     {
-      "rowCount": 2,
-      "colCount": 2,
+      "rowCount": 10,
+      "colCount": 10,
       "cellWidth": 16,
       "cellHeight": 16
     }
@@ -16,7 +16,7 @@
           "spriteSheet": 0,
           "cell": {
             "row": 0,
-            "col": 1,
+            "col": 9,
             "rowSpan": 1,
             "colSpan": 1
           },
@@ -31,12 +31,10 @@
           "name": "Blink",
           "next": 0,
           "frameList": [
-            0,
-            null
+            0, null
           ],
           "frameTimeList": [
-            60,
-            45
+            60, 45
           ]
         }
       ]
@@ -49,7 +47,7 @@
           "spriteSheet": 0,
           "cell": {
             "row": 0,
-            "col": 0,
+            "col": 8,
             "rowSpan": 1,
             "colSpan": 1
           },
@@ -68,6 +66,63 @@
           ],
           "frameTimeList": [
             10
+          ]
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "name": "Green Alien",
+      "frameLib": [
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 0,
+            "col": 0,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 0,
+            "col": 1,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 1,
+            "col": 0,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        }
+      ],
+      "animList": [
+        {
+          "name": "Idle",
+          "next": 0,
+          "frameList": [
+            0, 1, 2
+          ],
+          "frameTimeList": [
+            10, 10, 10
           ]
         }
       ]

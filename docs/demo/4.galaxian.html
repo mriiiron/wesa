@@ -27,6 +27,7 @@
         };
         
         var stars = [];
+        var enemies = [];
         var player = null;
         
         function getRandomIntInclusive(min, max) {
@@ -48,6 +49,18 @@
             star.setTime(getRandomIntInclusive(0, endTimes[endTimes.length - 1]) - 1);  
             stars.push(star);
             scene.addSpriteToLayer(0, star);
+        }
+        
+        function addEnemy(scene, x, y) {
+            let enemy = new wesa.Sprite({
+                object: wesa.assets.objectList[2],
+                action: 0,
+                team: 0,
+                position: { x: x, y: y },
+                scale: 2
+            });
+            enemies.push(enemy);
+            scene.addSpriteToLayer(1, enemy);
         }
         
         // Initialize WESA
@@ -77,6 +90,8 @@
                 scale: 2
             });
             scene.addSpriteToLayer(1, player);
+            
+            addEnemy(scene, 0, 250);
             
             // Run the scene
             var animate = function () {
