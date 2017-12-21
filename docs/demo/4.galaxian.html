@@ -51,7 +51,7 @@
             scene.addSpriteToLayer(0, star);
         }
         
-        function addEnemy(scene, x, y) {
+        function addEnemy(scene, x, y, player) {
             let enemy = new wesa.Sprite({
                 object: wesa.assets.objectList[2],
                 action: 0,
@@ -59,6 +59,40 @@
                 position: { x: x, y: y },
                 scale: 2
             });
+            let enemyAI = new wesa.AI()
+            enemyAI.target = player;
+            
+            enemyAI.timer = 0;
+            
+            enemyAI.execute = function () {
+                if (this.timer == 0) {
+                    let me = this.self, it = this.target;
+                    //me.velocity.y = -1;
+                    
+                    let p = (it.position.x - me.position.x + 300) / 600;
+                    if (p < 0) { p = 0; }
+                    if (p > 1) { p = 1; }
+                    if (Math.random() < p) {
+                        me.acceleration.x = 0.1;
+                    }
+                    else {
+                        me.acceleration.x = -0.1;
+                    }
+
+                    let dir = Math.atan2(it.position.y - me.position.y, it.position.x - me.position.x);
+                    if (dir < 0) { dir += 2 * Math.PI; }
+                    let action = Math.ceil((dir - (Math.PI * 17 / 16)) / Math.PI * 8);
+                    if (action < 1) { action = 1; }
+                    if (action > 7) { action = 7; }
+                    me.changeAction(action);
+                    this.timer = getRandomIntInclusive(10, 20);
+                }
+                else {
+                    this.timer--;
+                }
+            }
+            
+            enemy.setAI(enemyAI);
             enemies.push(enemy);
             scene.addSpriteToLayer(1, enemy);
         }
@@ -91,7 +125,7 @@
             });
             scene.addSpriteToLayer(1, player);
             
-            addEnemy(scene, 0, 250);
+            addEnemy(scene, 0, 250, player);
             
             // Run the scene
             var animate = function () {
