@@ -112,6 +112,201 @@
             "x": 8,
             "y": 8
           }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 1,
+            "col": 1,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 1,
+            "col": 2,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 1,
+            "col": 3,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 2,
+            "col": 0,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 2,
+            "col": 1,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 2,
+            "col": 2,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 2,
+            "col": 3,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 3,
+            "col": 0,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 3,
+            "col": 1,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 3,
+            "col": 2,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 3,
+            "col": 3,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 4,
+            "col": 0,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 4,
+            "col": 1,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 4,
+            "col": 2,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "spriteSheet": 0,
+          "cell": {
+            "row": 4,
+            "col": 3,
+            "rowSpan": 1,
+            "colSpan": 1
+          },
+          "center": {
+            "x": 8,
+            "y": 8
+          }
         }
       ],
       "animList": [
@@ -123,6 +318,16 @@
           ],
           "frameTimeList": [
             10, 10, 10
+          ]
+        },
+        {
+          "name": "Fly_270",
+          "next": 1,
+          "frameList": [
+            2
+          ],
+          "frameTimeList": [
+            10
           ]
         }
       ]
