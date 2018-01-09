@@ -1,37 +1,37 @@
 ﻿{
   "spriteSheetsMeta": [
     {
-      "rowCount": 1,
-      "colCount": 1,
-      "cellWidth": 36,
-      "cellHeight": 36
+      "rowCount": 5,
+      "colCount": 3,
+      "cellWidth": 16,
+      "cellHeight": 16
     }
   ],
   "objects": [
     {
       "type": 0,
-      "name": "Megaman",
+      "name": "Tile",
       "frameLib": [
         {
           "spriteSheet": 0,
           "cell": {
             "row": 0,
             "col": 0,
-            "rowSpan": 1,
+            "rowSpan": 3,
             "colSpan": 1
           },
           "center": {
-            "x": 18,
-            "y": 18
+            "x": 8,
+            "y": 24
           }
         }
       ],
       "animList": [
         {
-          "name": "Running",
+          "name": "Idle",
           "next": 0,
           "frameList": [0],
-          "frameTimeList": [4]
+          "frameTimeList": [10]
         }
       ]
     }
