@@ -1,10 +1,10 @@
 (function (window) {
     'use strict'
-    
+
     function WESACore () {
 
         // Private functions and types
-    
+
         const m4 = {
 
             fromTranslation: function (v) {
@@ -27,7 +27,7 @@
                 out[15] = 1;
                 return out;
             },
-            
+
             ortho: function (left, right, bottom, top, near, far) {
                 let out = new Float32Array(16);
                 let lr = 1 / (left - right);
@@ -51,9 +51,9 @@
                 out[15] = 1;
                 return out;
             }
-          
+
         };
-    
+
         function loadShader(gl, type, source) {
             const shader = gl.createShader(type);
             gl.shaderSource(shader, source);
@@ -65,7 +65,7 @@
             }
             return shader;
         }
-    
+
         function initShaderProgram(gl, vsSource, fsSource) {
             const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
             const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
@@ -79,7 +79,7 @@
             }
             return shaderProgram;
         }
-        
+
         function setProjection(gl, shader) {
             let left = -gl.canvas.width / 2;
             let right = gl.canvas.width / 2;
@@ -90,60 +90,60 @@
             let projectionMatrix = m4.ortho(left, right, bottom, top, zNear, zFar);
             gl.uniformMatrix4fv(shader.uniformLocations.projectionMatrix, false, projectionMatrix);
         }
-        
+
         function setModelView(gl, shader) {
             let modelViewMatrix = m4.fromTranslation([0.0, 0.0, -6.0]);
             gl.uniformMatrix4fv(shader.uniformLocations.modelViewMatrix, false, modelViewMatrix);
         }
-        
+
         function initWebGL(gl, shader) {
-            
+
             // Set clearing options
             gl.clearColor(0.0, 0.0, 0.0, 1.0);
             gl.clearDepth(1.0);
             gl.enable(gl.BLEND);
             gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-            
+
             // Tell WebGL to use our program when drawing
             gl.useProgram(shader.program);
-            
+
             // Set the projection matrix:
             // Create a orthogonal projection matrix for 480x640 viewport
             setProjection(gl, shader);
-            
+
             // Set the model view matrix:
             // Under change based on camera (TODO)
             setModelView(gl, shader);
-            
+
             // Tell WebGL we want to affect texture unit 0 and bound the texture to texture unit 0 (gl.TEXTURE0)
             gl.activeTexture(gl.TEXTURE0);
             gl.uniform1i(shader.uniformLocations.uSampler, 0);
-            
+
             // Turn on attribute array
             gl.enableVertexAttribArray(shader.attribLocations.vertexPosition);
             gl.enableVertexAttribArray(shader.attribLocations.textureCoord);
 
         }
-        
+
         // END Private content
-        
-        
+
+
         // "wesa.assets" object
-        
+
         const wesaAssets = {
-            
+
             source: {
                 spriteSheetUrlArray: [],
                 objectJsonUrl: null
             },
-            
+
             spriteSheetList: [],
             objectList: [],
-            
+
             load: function (callback) {
-                
+
                 let _self = this;
-                
+
                 if (_self.source.spriteSheetUrlArray.length == 0) {
                     console.error('WESA Loader: No sprite sheet added.');
                     return;
@@ -152,15 +152,15 @@
                     console.error('WESA Loader: No object added.');
                     return;
                 }
-                
+
                 let loadedImageCount = 0;
                 let isObjectsLoaded = false;
-                
+
                 var loadedImages = [];
                 var loadedObjectJson = null;
-                
+
                 let imageUrls = _self.source.spriteSheetUrlArray;
-                
+
                 function onAssetLoaded(type) {
                     if (type == 'image') {
                         loadedImageCount++;
@@ -169,9 +169,9 @@
                         isObjectsLoaded = true;
                     }
                     if (loadedImageCount == imageUrls.length && isObjectsLoaded) {
-                        
+
                         let parsed = JSON.parse(loadedObjectJson);
-                        
+
                         // Load Sprite Sheets
                         for (let i = 0; i < parsed.spriteSheetsMeta.length; i++) {
                             let ssMeta = parsed.spriteSheetsMeta[i];
@@ -185,7 +185,7 @@
                             ss.loadTextureFromImage(wesaCore.handle.gl, loadedImages[i]);
                             _self.spriteSheetList.push(ss);
                         }
-                        
+
                         // Load Objects
                         for (let i = 0; i < parsed.objects.length; i++) {
                             let objData = parsed.objects[i];
@@ -215,11 +215,11 @@
                             }
                             _self.objectList.push(obj);
                         }
-                        
+
                         callback();
                     }
                 }
-                
+
                 for (let i = 0; i < imageUrls.length; i++) {
                     loadedImages[i] = new Image();
                     loadedImages[i].src = imageUrls[i];
@@ -231,7 +231,7 @@
                         onAssetLoaded('image');
                     }
                 }
-                
+
                 let r = new XMLHttpRequest();
                 r.open('GET', this.source.objectJsonUrl)
                 r.onload = function () {
@@ -247,22 +247,22 @@
                     console.error('WESA Loader: Cannot load JSON "' + this.source.objectJsonUrl + '" (connection error).');
                 }
                 r.send();
-                
+
             }
-            
+
         }
 
-        
+
         // "wesa.core" object
-        
+
         const wesaCore = {
-            
+
             handle: {
                 gl: null,
                 shader: null,
                 buffer: null
             },
-            
+
             config: {
                 shaderSource: {
                     vs: `
@@ -285,26 +285,26 @@
                     `
                 }
             },
-            
+
             canvasResize: function() {
                 var gl = this.handle.gl;
                 setProjection(gl, this.handle.shader);
                 gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
             },
-            
+
             init: function (canvas) {
-                
+
                 if (!canvas || canvas.tagName != 'CANVAS') {
                     console.error('WESA Core: Canvas provided is invalid.');
                     return;
                 }
-                
+
                 const gl = canvas.getContext("webgl");
                 if (!gl) {
                     console.error('WESA Core: Unable to initialize WebGL. Your browser or machine may not support it.');
                     return;
                 }
-                
+
                 const shaderProgram = initShaderProgram(gl, this.config.shaderSource.vs, this.config.shaderSource.fs);
                 const shader = {
                     program: shaderProgram,
@@ -318,23 +318,23 @@
                         uSampler: gl.getUniformLocation(shaderProgram, 'uSampler')
                     }
                 }
-                
+
                 const buffer = {
                     positions: gl.createBuffer(),
                     texCoords: gl.createBuffer(),
                     indices: gl.createBuffer()
                 };
-                   
-                initWebGL(gl, shader);                
-                
+
+                initWebGL(gl, shader);
+
                 this.handle.gl = gl;
                 this.handle.shader = shader;
                 this.handle.buffer = buffer;
-                
+
             }
 
         };
-        
+
 
         // Core classes
 
@@ -346,7 +346,7 @@
             this.cellHeight = desc.cellHeight;
             this.texture = null;
         }
-        
+
         WESASpriteSheet.prototype.loadTextureFromImage = function (gl, image) {
             this.texture = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, this.texture);
@@ -356,11 +356,11 @@
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         };
-        
+
         WESASpriteSheet.prototype.getCellCount = function () {
             return this.rowCount * this.colCount;
         };
-        
+
         WESASpriteSheet.prototype.getTextureClipByIndex = function (index) {
             var clip = {};
             var clipCellW = 1.0 / this.colCount;
@@ -371,7 +371,7 @@
             clip.y2 = clip.y1 + clipCellH;
             return clip;
         };
-        
+
         WESASpriteSheet.prototype.getTextureClipByPosition = function (row, col, rowSpan = 1, colSpan = 1) {
             var clip = {};
             var clipCellW = 1.0 / this.colCount;
@@ -382,8 +382,8 @@
             clip.y2 = clip.y1 + clipCellH * rowSpan;
             return clip;
         };
-        
-        
+
+
         function WESAFrame(desc) {
             this.spriteSheet = desc.spriteSheet;
             this.cell = {
@@ -403,8 +403,8 @@
             this.width = desc.spriteSheet.cellWidth * desc.cell.colSpan;
             this.height = desc.spriteSheet.cellHeight * desc.cell.rowSpan;
         }
-        
-        
+
+
         function WESAAnimation(desc) {
             this.aid = desc.aid
             this.name = desc.name;
@@ -412,7 +412,7 @@
             this.frameList = [];
             this.endTimeList = [];
         }
-        
+
         WESAAnimation.prototype.setFrames = function (frameArr, frameTimeArr) {
             var len = frameArr.length;
             var time = 0;
@@ -423,23 +423,23 @@
             }
         };
 
-        
+
         function WESAObject(desc) {
             this.oid = desc.oid;
             this.type = desc.type;
             this.name = desc.name;
             this.animList = [];
         }
-        
+
         WESAObject.prototype.addAnimation = function (slot, anim) {
             this.animList[slot] = anim;
         };
-        
+
         WESAObject.prototype.addAnimationByArray = function (animArr) {
             this.animList = animArr.slice();
         };
 
-        
+
         function WESASprite(desc) {
             this.object = desc.object;
             this.action = desc.action;
@@ -460,31 +460,31 @@
                 hurt: null
             };
         }
-        
+
         WESASprite.CollisionMode = Object.freeze({
             BY_SPRITE: 'BY_SPRITE',
             BY_FRAME: 'BY_FRAME'
         });
-        
+
         WESASprite.CollisionShape = Object.freeze({
             CIRCLE: 'CIRCLE',
             RECT: 'RECT'
         });
-        
+
         WESASprite.prototype.getCurrentAnim = function () {
             return this.object.animList[this.action];
         };
-        
+
         WESASprite.prototype.getCurrentFrame = function () {
             return this.object.animList[this.action].frameList[this.frameNum];
         };
-        
+
         WESASprite.prototype.changeAction = function (newAction) {
             this.action = newAction;
             this.time = 0;
             this.frameNum = 0;
         };
-        
+
         WESASprite.prototype.setTime = function (time) {
             let endTimeList = this.object.animList[this.action].endTimeList;
             let max = endTimeList[endTimeList.length - 1];
@@ -498,19 +498,19 @@
                 }
             }
         }
-        
+
         WESASprite.prototype.setAI = function (ai) {
             ai.self = this;
             this.ai = ai;
         };
-        
+
         WESASprite.prototype.addAI = function (aiExecuteFunction) {
             let ai = new WESAAI();
             ai.execute = aiExecuteFunction;
             ai.self = this;
             this.ai = ai;
         }
-       
+
         WESASprite.prototype.update = function () {
             if (this.ai) {
                 if (typeof this.ai.execute == 'function') {
@@ -542,15 +542,52 @@
             this.velocity.x += this.acceleration.x;
             this.velocity.y += this.acceleration.y;
         };
-        
-        
+
+
         function WESAAI() {
             this.self = null;
             this.target = null;
             this.execute = null;
         }
-        
-        
+
+
+        function WESATiledSprite(desc) {
+            this.object = desc.object;
+            this.action = desc.action;
+            this.position = { x: desc.position.x, y: desc.position.y };
+            this.scale = desc.scale;
+            this.width = desc.width;
+            this.height = desc.height;
+            this.texOffset = { x: 0.0, y: 0.0 };
+            this.scene = null;
+            this.frameNum = 0;
+            this.time = 0;
+        }
+
+        WESATiledSprite.prototype.getCurrentAnim = function () {
+            return this.object.animList[this.action];
+        };
+
+        WESATiledSprite.prototype.getCurrentFrame = function () {
+            return this.object.animList[this.action].frameList[this.frameNum];
+        };
+
+        WESATiledSprite.prototype.update = function () {
+            let anim = this.object.animList[this.action];
+            let animFrameCount = anim.frameList.length;
+            this.time++;
+            if (this.time >= anim.endTimeList[this.frameNum]) {
+                this.frameNum++;
+                if (this.time >= anim.endTimeList[animFrameCount - 1]) {
+                    this.time = 0;
+                }
+                if (this.frameNum >= animFrameCount) {
+                    this.frameNum = 0;
+                }
+            }
+        };
+
+
         function WESALayer(desc) {
             this.lid = desc.lid;
             this.spriteList = [];
@@ -560,7 +597,7 @@
         WESALayer.prototype.addSprite = function (sprite) {
             this.spriteList.push(sprite);
         };
-        
+
         WESALayer.prototype.update = function () {
             var sList = this.spriteList;
             for (let i = 0; i < sList.length; i++) {
@@ -574,25 +611,40 @@
                 }
             }
         };
-        
+
         WESALayer.prototype.render = function (gl, shader, buffer) {
-            
+
             // Prepare sprite batches in current layer
             this.batchData = [];
             for (let i = 0; i < this.spriteList.length; i++) {
                 if (this.spriteList[i]) {
-                    var sprite = this.spriteList[i];
-                    var frame = sprite.getCurrentFrame();
+                    let sprite = this.spriteList[i];
+                    let frame = sprite.getCurrentFrame();
+                    let ssid = frame.spriteSheet.ssid;
                     if (frame) {
-                        var x1 = sprite.position.x - frame.center.x * sprite.scale;
-                        var x2 = x1 + frame.width * sprite.scale;
-                        var y1 = sprite.position.y - frame.center.y * sprite.scale;
-                        var y2 = y1 + frame.height * sprite.scale;
-                        var ssid = frame.spriteSheet.ssid;
-                        var texClip = frame.spriteSheet.getTextureClipByPosition(frame.cell.row, frame.cell.col, frame.cell.rowSpan, frame.cell.colSpan);
+                        let x1, x2, y1, y2, texClip;
+                        if (sprite instanceof WESASprite) {
+                            x1 = sprite.position.x - frame.center.x * sprite.scale;
+                            x2 = x1 + frame.width * sprite.scale;
+                            y1 = sprite.position.y - frame.center.y * sprite.scale;
+                            y2 = y1 + frame.height * sprite.scale;
+                            texClip = frame.spriteSheet.getTextureClipByPosition(frame.cell.row, frame.cell.col, frame.cell.rowSpan, frame.cell.colSpan);
+                        }
+                        else if (sprite instanceof WESATiledSprite) {
+                            x1 = sprite.position.x;
+                            x2 = x1 + sprite.width;
+                            y1 = sprite.position.y;
+                            y2 = y1 + sprite.height;
+                            texClip = {
+                                x1: sprite.texOffset.x,
+                                y1: sprite.texOffset.y,
+                                x2: sprite.texOffset.x + sprite.width / frame.width,
+                                y2: sprite.texOffset.y + sprite.height / frame.height
+                            };
+                        }
                         if (this.batchData[ssid]) {
                             this.batchData[ssid].spriteCount++;
-                            var indicesBase = 4 * (this.batchData[ssid].spriteCount - 1);
+                            let indicesBase = 4 * (this.batchData[ssid].spriteCount - 1);
                             this.batchData[ssid].positions.push(x1, y1, x2, y1, x1, y2, x2, y2);
                             this.batchData[ssid].texCoords.push(texClip.x1, texClip.y2, texClip.x2, texClip.y2, texClip.x1, texClip.y1, texClip.x2, texClip.y1);
                             this.batchData[ssid].indices.push(indicesBase, indicesBase + 1, indicesBase + 2, indicesBase + 1, indicesBase + 2, indicesBase + 3);
@@ -606,13 +658,12 @@
                             }
                         }
                     }
- 
                 }
             }
-            
+
             // Batch-render current layer
             for (let ssid = 0; ssid < this.batchData.length; ssid++) {
-                if (this.batchData[ssid]) { 
+                if (this.batchData[ssid]) {
                     gl.bindBuffer(gl.ARRAY_BUFFER, buffer.positions);
                     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.batchData[ssid].positions), gl.STATIC_DRAW);
                     gl.vertexAttribPointer(shader.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
@@ -625,10 +676,10 @@
                     gl.drawElements(gl.TRIANGLES, this.batchData[ssid].indices.length, gl.UNSIGNED_SHORT, 0);
                 }
             }
-            
+
         };
-        
-        
+
+
         function WESAScene(name) {
             this.name = name;
             this.layerList = [];
@@ -643,7 +694,7 @@
             sprite.layer = this.layerList[layerIndex];
             sprite.scene = this;
         };
-        
+
         WESAScene.prototype.getCollisions = function (layerIndexes = null) {
             let listOfSpriteList = [];
             if (layerIndexes) {
@@ -758,12 +809,12 @@
                         else if (iHitbox.shape == WESASprite.CollisionShape.RECT && jHurtbox.shape == WESASprite.CollisionShape.RECT) {
                             // TODO
                         }
-                    } 
+                    }
                 }
             }
             return collisions;
         };
-        
+
         WESAScene.prototype.update = function () {
             for (let i = 0; i < this.layerList.length; i++) {
                 if (this.layerList[i]) {
@@ -771,7 +822,7 @@
                 }
             }
         };
-        
+
         WESAScene.prototype.render = function () {
             let gl = wesaCore.handle.gl;
             let shader = wesaCore.handle.shader;
@@ -783,29 +834,30 @@
                 }
             }
         };
-        
-        
+
+
         return {
-            
+
             // Classes
             SpriteSheet: WESASpriteSheet,
             Frame: WESAFrame,
             Animation: WESAAnimation,
             StoredObject: WESAObject,
             Sprite: WESASprite,
+            TiledSprite: WESATiledSprite,
             AI: WESAAI,
             Scene: WESAScene,
-            
+
             // Objects
             core: wesaCore,
             assets: wesaAssets,
 
         };
-        
+
     }
-    
+
     if (typeof(window.wesa) === 'undefined'){
         window.wesa = WESACore();
     }
-    
+
 })(window);

@@ -13,31 +13,32 @@
         <canvas id="canvas" width="640" height="480"></canvas>
     </div>
     <div class="dynamic-output" id="output">Texture Wrapping</div>
-    
+
     <script src="../../src/wesa.js"></script>
-    
+
     <script>
-        
+
         var sprite = null;
-        
+
         // Initialize WESA
         wesa.core.init(document.getElementById('canvas'));
-        
+
         // Adding assets ready for loading
         wesa.assets.source.spriteSheetUrlArray.push('./megaman.png');
         wesa.assets.source.objectJsonUrl = './megaman.json';
-        
+
         // Load assets
         wesa.assets.load(function () {
-        
+
             // Create the scene
             var scene = new wesa.Scene('Scene');
-            sprite = new wesa.Sprite({
+            sprite = new wesa.TiledSprite({
                 object: wesa.assets.objectList[0],
                 action: 0,
-                team: 0,
                 position: { x: 0, y: 0 },
-                scale: 4
+                scale: 1,
+                width: 72,
+                height: 72
             });
             scene.addSpriteToLayer(0, sprite);
 
@@ -48,11 +49,11 @@
                 scene.render();
             }
             animate();
-            
+
         });
 
     </script>
-    
+
 </body>
 
 </html>
