@@ -620,8 +620,8 @@
                 if (this.spriteList[i]) {
                     let sprite = this.spriteList[i];
                     let frame = sprite.getCurrentFrame();
-                    let ssid = frame.spriteSheet.ssid;
                     if (frame) {
+                        let ssid = frame.spriteSheet.ssid;
                         let x1, x2, y1, y2, texClip;
                         if (sprite instanceof WESASprite) {
                             x1 = sprite.position.x - frame.center.x * sprite.scale;
