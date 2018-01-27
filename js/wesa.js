@@ -630,17 +630,9 @@
                             y2 = y1 + frame.height * sprite.scale;
                             texClip = frame.spriteSheet.getTextureClipByPosition(frame.cell.row, frame.cell.col, frame.cell.rowSpan, frame.cell.colSpan);
                         }
-                        else if (sprite instanceof WESATiledSprite) {
-                            x1 = sprite.position.x;
-                            x2 = x1 + sprite.width;
-                            y1 = sprite.position.y;
-                            y2 = y1 + sprite.height;
-                            texClip = {
-                                x1: sprite.texOffset.x,
-                                y1: sprite.texOffset.y,
-                                x2: sprite.texOffset.x + sprite.width / frame.width,
-                                y2: sprite.texOffset.y + sprite.height / frame.height
-                            };
+                        else {
+                            console.error('WESALayer: An error occurred when rendering: Unknown sprite type: ' + sprite.constructor.name);
+                            return;
                         }
                         if (this.batchData[ssid]) {
                             this.batchData[ssid].spriteCount++;
