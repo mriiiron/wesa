@@ -16,19 +16,19 @@
     </header>
 
     <div class="container">
-    
+
         <div class="master-title-wrap">
             <h1 class="master-title font-pixel">WESA</h1>
             <h4 class="master-title-sub">A WebGL-based Engine of Sprite Animation</h4>
             <div class="short-hr"></div>
         </div>
-       
+
         <div class="banner-demo-wrap">
             <p><img src="./assets/texture/megaman.png" /><code class="no-bg"> + wesa.js =</code></p>
             <canvas id="canvas" width="640" height="480"></canvas>
             <span class="in-canvas-display">Scroll inside canvas to change the sprite's "scale" property.<br />You may check the variable "s_Megaman" in your favorite developer tool.<br /><br />s_Megaman.scale = <span id="scale-value">4</span></span>
         </div>
-        
+
         <div class="features-wrap">
             <div class="col">
                 <h2>Simple and Light-weighted</h2>
@@ -39,7 +39,7 @@
                 <p><code>wesa.js</code> will always be fully open-sourced, for the sake of my personal interest of sprite animations.</p>
             </div>
         </div>
-        
+
         <div class="content-wrap">
             <div class="paragraph">
                 <h1>Why WESA?</h1>
@@ -50,7 +50,7 @@
                 <p>Check out demos of <code>wesa.js</code>, get started with the documentation and see full code on GitHub.</p>
             </div>
             <div class="button-row">
-                <a href="#" class="btn disabled"><i class="fa fa-cube"></i> More Demo</a>
+                <a href="demo" class="btn"><i class="fa fa-cube"></i> More Demo</a>
                 <a href="#" class="btn disabled"><i class="fa fa-book"></i> Documentation</a>
                 <a target="_blank" href="https://github.com/mriiiron/wesa" class="btn"><i class="fa fa-github"></i> Source Code</a>
             </div>
@@ -62,34 +62,34 @@
         <div class="container" style="height:400px;"></div>
     </footer>
 
-    
+
     <script src="./js/wesa.js"></script>
     <script>
-        
+
         var canvas = document.getElementById('canvas');
         var s_Megaman = null;
         var scaleValue = document.getElementById('scale-value');
-        
+
         function onMouseWheel(e) {
             e.preventDefault();
             var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
             s_Megaman.scale = (s_Megaman.scale + delta < 1 ? 1 : s_Megaman.scale + delta);
             scaleValue.textContent = s_Megaman.scale;
         }
-        
+
         canvas.addEventListener("mousewheel", onMouseWheel);
         canvas.addEventListener("DOMMouseScroll", onMouseWheel);  // Firefox
-        
+
         // Initialize WESA
         wesa.core.init(document.getElementById('canvas'));
-        
+
         // Adding assets ready for loading
         wesa.assets.source.spriteSheetUrlArray.push('./assets/texture/megaman.png');
         wesa.assets.source.objectJsonUrl = './assets/megaman.json';
-        
+
         // Load assets
         wesa.assets.load(function () {
-        
+
             // Create the scene
             var scene = new wesa.Scene('TestScene');
             s_Megaman = new wesa.Sprite({
@@ -108,12 +108,12 @@
                 scene.render();
             }
             animate();
-            
+
         });
-        
+
 
     </script>
-    
+
 </body>
 
 </html>

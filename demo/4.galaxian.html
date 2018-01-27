@@ -13,11 +13,11 @@
         <canvas id="canvas" width="600" height="800"></canvas>
     </div>
     <div class="dynamic-output" id="output">WESA Galaxian Plus</div>
-    
+
     <script src="../js/wesa.js"></script>
-    
+
     <script>
-        
+
         const canvas = document.getElementById('canvas');
         const dim = {
             top: canvas.height / 2,
@@ -25,11 +25,11 @@
             left: -canvas.width / 2,
             right: canvas.width / 2
         };
-        
+
         var stars = [];
         var enemies = [];
         var player = null;
-        
+
         function getRandomIntInclusive(min, max) {
             min = Math.ceil(min);
             max = Math.floor(max);
@@ -46,11 +46,11 @@
             });
             star.velocity.y = -2 + Math.random();
             let endTimes = star.getCurrentAnim().endTimeList;
-            star.setTime(getRandomIntInclusive(0, endTimes[endTimes.length - 1]) - 1);  
+            star.setTime(getRandomIntInclusive(0, endTimes[endTimes.length - 1]) - 1);
             stars.push(star);
             scene.addSpriteToLayer(0, star);
         }
-        
+
         function addEnemy(scene, x, y, player) {
             let enemy = new wesa.Sprite({
                 object: wesa.assets.objectList[2],
@@ -61,14 +61,14 @@
             });
             let enemyAI = new wesa.AI()
             enemyAI.target = player;
-            
+
             enemyAI.timer = 0;
-            
+
             enemyAI.execute = function () {
                 if (this.timer == 0) {
                     let me = this.self, it = this.target;
                     //me.velocity.y = -1;
-                    
+
                     let p = (it.position.x - me.position.x + 300) / 600;
                     if (p < 0) { p = 0; }
                     if (p > 1) { p = 1; }
@@ -91,30 +91,30 @@
                     this.timer--;
                 }
             }
-            
+
             enemy.setAI(enemyAI);
             enemies.push(enemy);
             scene.addSpriteToLayer(1, enemy);
         }
-        
+
         // Initialize WESA
         wesa.core.init(document.getElementById('canvas'));
-        
+
         // Adding assets ready for loading
         wesa.assets.source.spriteSheetUrlArray.push('../assets/texture/galaxian.png');
         wesa.assets.source.objectJsonUrl = '../assets/galaxian.json';
-        
+
         // Load assets
         wesa.assets.load(function () {
-        
+
             // Create the scene
             var scene = new wesa.Scene('Scene');
-            
+
             // Background
             for (let i = 0; i < 30; i++) {
                 addStar(scene);
             }
-            
+
             // Player
             player = new wesa.Sprite({
                 object: wesa.assets.objectList[1],
@@ -124,12 +124,12 @@
                 scale: 2
             });
             scene.addSpriteToLayer(1, player);
-            
-            addEnemy(scene, 0, 250, player);
-            
+
+            //addEnemy(scene, 0, 250, player);
+
             // Run the scene
             var animate = function () {
-            
+
                 for (let i = 0; i < stars.length; i++) {
                     let star = stars[i];
                     if (star.position.y < dim.bottom) {
@@ -137,17 +137,17 @@
                         star.position.y = dim.top;
                     }
                 }
-            
+
                 requestAnimationFrame(animate);
                 scene.update();
                 scene.render();
             }
             animate();
-            
+
         });
 
     </script>
-    
+
 </body>
 
 </html>
