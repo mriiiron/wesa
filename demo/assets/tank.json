@@ -1,0 +1,58 @@
+﻿{
+    "spriteSheetsMeta": [
+        {
+            "rowCount": 16,
+            "colCount": 16,
+            "cellWidth": 16,
+            "cellHeight": 16
+        }
+    ],
+    "objects": [
+        {
+            "type": 0,
+            "name": "Gold",
+            "frameLib": [
+                {
+                    "spriteSheet": 0,
+                    "cell": {
+                        "row": 0,
+                        "col": 0,
+                        "rowSpan": 1,
+                        "colSpan": 1
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "spriteSheet": 0,
+                    "cell": {
+                        "row": 0,
+                        "col": 1,
+                        "rowSpan": 1,
+                        "colSpan": 1
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ],
+            "animList": [
+                {
+                    "name": "Idle",
+                    "next": 0,
+                    "frameList": [0],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Move Up",
+                    "next": 1,
+                    "frameList": [0, 1],
+                    "frameTimeList": [3, 3]
+                }
+            ]
+        }
+    ]
+}

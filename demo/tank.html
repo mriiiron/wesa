@@ -18,12 +18,14 @@
 
     <script>
 
+        let playerTank = null;
+
         // Initialize WESA
         wesa.core.init(document.getElementById('canvas'));
 
         // Adding assets ready for loading
-        wesa.assets.source.spriteSheetUrlArray.push('./assets/texture/megaman.png');
-        wesa.assets.source.objectJsonUrl = './assets/megaman.json';
+        wesa.assets.source.spriteSheetUrlArray.push('./assets/texture/tank.png');
+        wesa.assets.source.objectJsonUrl = './assets/tank.json';
 
         // Load assets
         wesa.assets.load(function () {
@@ -32,10 +34,10 @@
             let scene = new wesa.Scene('Scene');
             scene.addSpriteToLayer(0, new wesa.Sprite({
                 object: wesa.assets.objectList[0],
-                action: 0,
+                action: 1,
                 team: 0,
                 position: { x: 0, y: 0 },
-                scale: 4
+                scale: 2
             }));
 
             // Run the scene

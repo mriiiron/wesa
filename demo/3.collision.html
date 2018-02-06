@@ -15,30 +15,30 @@
     <div class="dynamic-output" id="output">WESA Collision Demo</div>
 
     <script src="../js/wesa.js"></script>
-    
+
     <script>
-    
+
         const v2 = {
-            
+
             create: function (x, y) {
                 return { x: x, y: y };
             },
-            
+
             magnitude: function (v) {
                 return Math.sqrt(v.x * v.x + v.y * v.y);
             },
-            
+
             normalize: function (v) {
                 let mag = v2.magnitude(v);
                 v.x /= mag;
                 v.y /= mag;
                 return v;
             },
-            
+
             dot: function (v, w) {
                 return v.x * w.x + v.y * w.y;
             },
-            
+
             reflect: function (v, n) {
                 norm = v2.normalize(n);
                 let d = v2.dot(v, norm);
@@ -46,14 +46,14 @@
                 v.y = v.y - 2 * d * norm.y;
                 return v;
             },
-            
+
             angle: function (v, w) {
                 return Math.acos(v2.dot(v, w) / (v2.magnitude(v) * v2.magnitude(w)));
             }
-            
+
         };
 
- 
+
         function addBubble(scene, x, y, vx, vy) {
             let bubble = new wesa.Sprite({
                 object: wesa.assets.objectList[0],
@@ -77,7 +77,7 @@
             scene.addSpriteToLayer(0, bubble);
             return bubble;
         }
-        
+
         function addWall(scene, x, y, wallType) {
             let wall = new wesa.Sprite({
                 object: wesa.assets.objectList[1],
@@ -106,35 +106,35 @@
             }
             scene.addSpriteToLayer(0, wall);
         }
-        
-        
+
+
         const bubbles = [];
-        
-        
+
+
         // Initialize WESA
         wesa.core.init(document.getElementById('canvas'));
-        
+
         // Adding assets ready for loading
-        wesa.assets.source.spriteSheetUrlArray.push('../assets/texture/bubble.png');
-        wesa.assets.source.objectJsonUrl = '../assets/bubble.json';
-        
+        wesa.assets.source.spriteSheetUrlArray.push('./assets/texture/bubble.png');
+        wesa.assets.source.objectJsonUrl = './assets/bubble.json';
+
         // Load assets
         wesa.assets.load(function () {
-        
+
             // Create the scene
-            var scene = new wesa.Scene('Scene');
-            
+            let scene = new wesa.Scene('Scene');
+
             addWall(scene, -400, 0, 'vertical');
             addWall(scene, 400, 0, 'vertical');
             addWall(scene, 0, -300, 'horizontal');
             addWall(scene, 0, 300, 'horizontal');
-            
+
             for (let i = 0; i < 10; i++) {
                 bubbles.push(addBubble(scene, 0, 0, 3 * Math.random(), 3 * Math.random()));
             }
 
             // Run the scene
-            var animate = function () {
+            let animate = function () {
                 requestAnimationFrame(animate);
                 let collisions = scene.getCollisions();
                 for (let i = 0; i < collisions.length; i++) {
@@ -154,11 +154,11 @@
                 scene.render();
             }
             animate();
-            
+
         });
 
     </script>
-    
+
 </body>
 
 </html>

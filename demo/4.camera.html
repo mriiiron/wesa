@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Hello WESA</title>
+    <link rel="stylesheet" type="text/css" href="./css/demo-iframe.css">
+</head>
+
+<body>
+
+    <div class="flex-wrapper">
+        <canvas id="canvas" width="640" height="480"></canvas>
+    </div>
+    <div class="dynamic-output" id="output">Drag to move camera.</div>
+
+    <script src="../js/wesa.js"></script>
+
+    <script>
+
+        let canvas = document.getElementById('canvas');
+        let mouseCam = { down: false, x: 0, y: 0, camx: 0, camy: 0 };
+
+        canvas.onmousedown = function (e) {
+            mouseCam.down = true;
+            mouseCam.x = e.pageX - canvas.offsetLeft - canvas.width / 2;
+            mouseCam.y = canvas.height / 2 - (e.pageY - canvas.offsetTop);
+            mouseCam.camx = wesa.camera.position.x;
+            mouseCam.camy = wesa.camera.position.y;
+        };
+
+        canvas.onmousemove = function (e) {
+            if (mouseCam.down) {
+                dx = (e.pageX - canvas.offsetLeft - canvas.width / 2) - mouseCam.x;
+                dy = (canvas.height / 2 - (e.pageY - canvas.offsetTop)) - mouseCam.y;
+                wesa.camera.position.x = mouseCam.camx - dx;
+                wesa.camera.position.y = mouseCam.camy - dy;
+            }
+        };
+
+        canvas.onmouseup = function (e) {
+            mouseCam.down = false;
+        };
+
+
+        // Initialize WESA
+        wesa.core.init(document.getElementById('canvas'));
+
+        // Adding assets ready for loading
+        wesa.assets.source.spriteSheetUrlArray.push('./assets/texture/megaman.png');
+        wesa.assets.source.objectJsonUrl = './assets/megaman.json';
+
+        // Load assets
+        wesa.assets.load(function () {
+
+            // Create the scene
+            let scene = new wesa.Scene('Scene');
+            let pos = [[100, 100], [100, -100], [-100, 100], [-100, -100]];
+            for (let i = 0; i < pos.length; i++) {
+                scene.addSpriteToLayer(0, new wesa.Sprite({
+                    object: wesa.assets.objectList[0],
+                    action: 0,
+                    team: 0,
+                    position: { x: pos[i][0], y: pos[i][1] },
+                    scale: 4
+                }));
+            }
+
+            // Run the scene
+            let animate = function () {
+                requestAnimationFrame(animate);
+                scene.update();
+                scene.render();
+            }
+            animate();
+
+        });
+
+    </script>
+
+</body>
+
+</html>

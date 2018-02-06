@@ -13,11 +13,11 @@
         <canvas id="canvas" style="width:100%;height:100%"></canvas>
     </div>
     <div class="dynamic-output" id="output">WESA Resize Demo (Try resizing canvas wrapper)</div>
-    
+
     <script src="../js/wesa.js"></script>
-    
+
     <script>
-    
+
         function resizeCanvas(canvas) {
             if (canvas.width != canvas.clientWidth || canvas.height != canvas.clientHeight) {
                 canvas.width = canvas.clientWidth;
@@ -25,22 +25,22 @@
                 wesa.core.canvasResize();
             }
         }
-    
+
         var canvas = document.getElementById('canvas');
         var sprite = null;
-        
+
         // Initialize WESA
         wesa.core.init(canvas);
-        
+
         // Adding assets ready for loading
-        wesa.assets.source.spriteSheetUrlArray.push('../assets/texture/megaman.png');
-        wesa.assets.source.objectJsonUrl = '../assets/megaman.json';
-        
+        wesa.assets.source.spriteSheetUrlArray.push('./assets/texture/megaman.png');
+        wesa.assets.source.objectJsonUrl = './assets/megaman.json';
+
         // Load assets
         wesa.assets.load(function () {
-        
+
             // Create the scene
-            var scene = new wesa.Scene('Scene');
+            let scene = new wesa.Scene('Scene');
             sprite = new wesa.Sprite({
                 object: wesa.assets.objectList[0],
                 action: 0,
@@ -51,18 +51,18 @@
             scene.addSpriteToLayer(0, sprite);
 
             // Run the scene
-            var animate = function () {
+            let animate = function () {
                 resizeCanvas(canvas);
                 requestAnimationFrame(animate);
                 scene.update();
                 scene.render();
             }
             animate();
-            
+
         });
 
     </script>
-    
+
 </body>
 
 </html>

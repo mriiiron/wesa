@@ -80,22 +80,6 @@
             return shaderProgram;
         }
 
-        function setProjection(gl, shader) {
-            let left = -gl.canvas.width / 2;
-            let right = gl.canvas.width / 2;
-            let bottom = -gl.canvas.height / 2;
-            let top = gl.canvas.height / 2;
-            let zNear = 0.1;
-            let zFar = 100.0;
-            let projectionMatrix = m4.ortho(left, right, bottom, top, zNear, zFar);
-            gl.uniformMatrix4fv(shader.uniformLocations.projectionMatrix, false, projectionMatrix);
-        }
-
-        function setModelView(gl, shader) {
-            let modelViewMatrix = m4.fromTranslation([0.0, 0.0, -6.0]);
-            gl.uniformMatrix4fv(shader.uniformLocations.modelViewMatrix, false, modelViewMatrix);
-        }
-
         function initWebGL(gl, shader) {
 
             // Set clearing options
@@ -107,13 +91,21 @@
             // Tell WebGL to use our program when drawing
             gl.useProgram(shader.program);
 
-            // Set the projection matrix:
+            // Set the initial projection matrix:
             // Create a orthogonal projection matrix for 480x640 viewport
-            setProjection(gl, shader);
+            let left = -gl.canvas.width / 2;
+            let right = gl.canvas.width / 2;
+            let bottom = -gl.canvas.height / 2;
+            let top = gl.canvas.height / 2;
+            let zNear = 0.1;
+            let zFar = 100.0;
+            let projectionMatrix = m4.ortho(left, right, bottom, top, zNear, zFar);
+            gl.uniformMatrix4fv(shader.uniformLocations.projectionMatrix, false, projectionMatrix);
 
-            // Set the model view matrix:
+            // Set the initial model view matrix:
             // Under change based on camera (TODO)
-            setModelView(gl, shader);
+            let modelViewMatrix = m4.fromTranslation([0.0, 0.0, -6.0]);
+            gl.uniformMatrix4fv(shader.uniformLocations.modelViewMatrix, false, modelViewMatrix);
 
             // Tell WebGL we want to affect texture unit 0 and bound the texture to texture unit 0 (gl.TEXTURE0)
             gl.activeTexture(gl.TEXTURE0);
@@ -333,6 +325,16 @@
 
             }
 
+        };
+
+        // wesa.camera objects
+
+        const wesaCamera = {
+            position: {
+                x: 0,
+                y: 0
+            },
+            zoom: 1
         };
 
 
@@ -820,6 +822,7 @@
             let shader = wesaCore.handle.shader;
             let buffer = wesaCore.handle.buffer;
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            gl.uniformMatrix4fv(shader.uniformLocations.modelViewMatrix, false, m4.fromTranslation([-wesaCamera.position.x, -wesaCamera.position.y, -6.0]));
             for (let i = 0; i < this.layerList.length; i++) {
                 if (this.layerList[i]) {
                     this.layerList[i].render(gl, shader, buffer);
@@ -843,6 +846,7 @@
             // Objects
             core: wesaCore,
             assets: wesaAssets,
+            camera: wesaCamera
 
         };
 
