@@ -1,336 +1,99 @@
 ﻿{
-  "spriteSheetsMeta": [
-    {
-      "rowCount": 10,
-      "colCount": 10,
-      "cellWidth": 16,
-      "cellHeight": 16
-    }
-  ],
-  "objects": [
-    {
-      "type": 0,
-      "name": "Star",
-      "frameLib": [
+    "spriteSheetsMeta": [
         {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 0,
-            "col": 9,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
+            "rowCount": 10,
+            "colCount": 10,
+            "cellWidth": 16,
+            "cellHeight": 16
         }
-      ],
-      "animList": [
+    ],
+    "objects": [
         {
-          "name": "Blink",
-          "next": 0,
-          "frameList": [
-            0, null
-          ],
-          "frameTimeList": [
-            60, 45
-          ]
+            "type": 0,
+            "name": "Star",
+            "frameList": [
+                {
+                    "loadMode": "single",
+                    "spriteSheet": 0,
+                    "id": 0,
+                    "cell": {
+                        "row": 0,
+                        "col": 9,
+                        "rowSpan": 1,
+                        "colSpan": 1
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ],
+            "animList": [
+                {
+                    "name": "Blink",
+                    "next": 0,
+                    "frameList": [0, null],
+                    "frameTimeList": [60, 45]
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "name": "Spacecraft",
+            "frameList": [
+                {
+                    "loadMode": "single",
+                    "spriteSheet": 0,
+                    "id": 0,
+                    "cell": {
+                        "row": 0,
+                        "col": 8,
+                        "rowSpan": 1,
+                        "colSpan": 1
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ],
+            "animList": [
+                {
+                    "name": "Flying",
+                    "next": 0,
+                    "frameList": [0],
+                    "frameTimeList": [10]
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "name": "Green Alien",
+            "frameList": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 0,
+                        "colStart": 0,
+                        "rowCount": 6,
+                        "colCount": 4
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ],
+            "animList": [
+                {
+                    "name": "Idle",
+                    "next": 0,
+                    "frameList": [0, 1, 4],
+                    "frameTimeList": [10, 10, 10]
+                }
+            ]
         }
-      ]
-    },
-    {
-      "type": 0,
-      "name": "Spacecraft",
-      "frameLib": [
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 0,
-            "col": 8,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        }
-      ],
-      "animList": [
-        {
-          "name": "Flying",
-          "next": 0,
-          "frameList": [
-            0
-          ],
-          "frameTimeList": [
-            10
-          ]
-        }
-      ]
-    },
-    {
-      "type": 0,
-      "name": "Green Alien",
-      "frameLib": [
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 0,
-            "col": 0,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 0,
-            "col": 1,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 1,
-            "col": 0,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 1,
-            "col": 1,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 1,
-            "col": 2,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 1,
-            "col": 3,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 2,
-            "col": 0,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 2,
-            "col": 1,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 2,
-            "col": 2,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 2,
-            "col": 3,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 3,
-            "col": 0,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 3,
-            "col": 1,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 3,
-            "col": 2,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 3,
-            "col": 3,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 4,
-            "col": 0,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 4,
-            "col": 1,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 4,
-            "col": 2,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        },
-        {
-          "spriteSheet": 0,
-          "cell": {
-            "row": 4,
-            "col": 3,
-            "rowSpan": 1,
-            "colSpan": 1
-          },
-          "center": {
-            "x": 8,
-            "y": 8
-          }
-        }
-      ],
-      "animList": [
-        {
-          "name": "Idle",
-          "next": 0,
-          "frameList": [
-            0, 1, 2
-          ],
-          "frameTimeList": [
-            10, 10, 10
-          ]
-        },
-        {
-          "name": "Fly_270",
-          "next": 1,
-          "frameList": [
-            2
-          ],
-          "frameTimeList": [
-            10
-          ]
-        }
-      ]
-    }
-  ]
+    ]
 }

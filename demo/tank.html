@@ -12,7 +12,7 @@
     <div class="flex-wrapper">
         <canvas id="canvas" width="640" height="480"></canvas>
     </div>
-    <div class="dynamic-output" id="output">WESA Basic Demo</div>
+    <div class="dynamic-output" id="output">WESA Tank</div>
 
     <script src="../js/wesa.js"></script>
 
@@ -20,11 +20,92 @@
 
         let playerTank = null;
 
+        let keyStatus = {
+            up: false,
+            down: false,
+            left: false,
+            right: false
+        };
+
+        let canvas = document.getElementById('canvas');
+
+        function takeControl(t, k) {
+            let spd = t.data.speed;
+            if (k.left && !k.right) {
+                t.changeAction(5, true);
+                t.velocity.x = -spd;
+                t.velocity.y = 0;
+            }
+            else if (!k.left && k.right) {
+                t.changeAction(7, true);
+                t.velocity.x = spd;
+                t.velocity.y = 0;
+            }
+            else if (k.up && !k.down) {
+                t.changeAction(4, true);
+                t.velocity.x = 0;
+                t.velocity.y = spd;
+            }
+            else if (!k.up && k.down) {
+                t.changeAction(6, true);
+                t.velocity.x = 0;
+                t.velocity.y = -spd;
+            }
+            else {
+                if (t.action >= 4 && t.action <= 7) {
+                    t.changeAction(t.action - 4, true);
+                    t.velocity.x = 0;
+                    t.velocity.y = 0;
+                }
+            }
+        }
+
+        document.onkeydown = function (e) {
+            switch (e.key) {
+                case 'ArrowUp':
+                    keyStatus.up = true;
+                    break;
+                case 'ArrowDown':
+                    keyStatus.down = true;
+                    break;
+                case 'ArrowLeft':
+                    keyStatus.left = true;
+                    break;
+                case 'ArrowRight':
+                    keyStatus.right = true;
+                    break;
+                default:
+                    break;
+             }
+        }
+
+        document.onkeyup = function (e) {
+            switch (e.key) {
+                case 'ArrowUp':
+                    keyStatus.up = false;
+                    break;
+                case 'ArrowDown':
+                    keyStatus.down = false;
+                    break;
+                case 'ArrowLeft':
+                    keyStatus.left = false;
+                    break;
+                case 'ArrowRight':
+                    keyStatus.right = false;
+                    break;
+                default:
+                    break;
+             }
+        }
+
         // Initialize WESA
         wesa.core.init(document.getElementById('canvas'));
 
         // Adding assets ready for loading
-        wesa.assets.source.spriteSheetUrlArray.push('./assets/texture/tank.png');
+        wesa.assets.source.spriteSheetUrlArray = [
+            './assets/texture/bc_0.png',
+            './assets/texture/bc_1.png'
+        ];
         wesa.assets.source.objectJsonUrl = './assets/tank.json';
 
         // Load assets
@@ -32,17 +113,36 @@
 
             // Create the scene
             let scene = new wesa.Scene('Scene');
-            scene.addSpriteToLayer(0, new wesa.Sprite({
+
+            playerTank = new wesa.Sprite({
                 object: wesa.assets.objectList[0],
-                action: 4,
+                action: 0,
                 team: 0,
                 position: { x: 0, y: 0 },
                 scale: 2
-            }));
+            });
+            playerTank.data = {
+                speed: 1
+            };
+            scene.addSpriteToLayer(0, playerTank);
+
+            let pos = [[64, 32], [80, 32], [64, 48], [80, 48]];
+            for (let i = 0; i < pos.length; i++) {
+                scene.addSpriteToLayer(0, new wesa.Sprite({
+                    object: wesa.assets.objectList[1],
+                    action: 0,
+                    team: 0,
+                    position: { x: pos[i][0], y: pos[i][1] },
+                    scale: 2
+                }));
+            }
 
             // Run the scene
             let animate = function () {
                 requestAnimationFrame(animate);
+                takeControl(playerTank, keyStatus);
+                wesa.camera.position.x = playerTank.position.x;
+                wesa.camera.position.y = playerTank.position.y;
                 scene.update();
                 scene.render();
             }

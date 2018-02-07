@@ -1,114 +1,32 @@
 ﻿{
     "spriteSheetsMeta": [
         {
-            "rowCount": 16,
+            "rowCount": 18,
             "colCount": 16,
             "cellWidth": 16,
             "cellHeight": 16
+        },
+        {
+            "rowCount": 2,
+            "colCount": 6,
+            "cellWidth": 8,
+            "cellHeight": 8
         }
     ],
     "objects": [
         {
             "type": 0,
-            "name": "Gold",
-            "frameLib": [
+            "name": "Tank",
+            "frameList": [
                 {
+                    "loadMode": "array",
                     "spriteSheet": 0,
-                    "cell": {
-                        "row": 0,
-                        "col": 0,
-                        "rowSpan": 1,
-                        "colSpan": 1
-                    },
-                    "center": {
-                        "x": 8,
-                        "y": 8
-                    }
-                },
-                {
-                    "spriteSheet": 0,
-                    "cell": {
-                        "row": 0,
-                        "col": 1,
-                        "rowSpan": 1,
-                        "colSpan": 1
-                    },
-                    "center": {
-                        "x": 8,
-                        "y": 8
-                    }
-                },
-                {
-                    "spriteSheet": 0,
-                    "cell": {
-                        "row": 0,
-                        "col": 2,
-                        "rowSpan": 1,
-                        "colSpan": 1
-                    },
-                    "center": {
-                        "x": 8,
-                        "y": 8
-                    }
-                },
-                {
-                    "spriteSheet": 0,
-                    "cell": {
-                        "row": 0,
-                        "col": 3,
-                        "rowSpan": 1,
-                        "colSpan": 1
-                    },
-                    "center": {
-                        "x": 8,
-                        "y": 8
-                    }
-                },{
-                    "spriteSheet": 0,
-                    "cell": {
-                        "row": 0,
-                        "col": 4,
-                        "rowSpan": 1,
-                        "colSpan": 1
-                    },
-                    "center": {
-                        "x": 8,
-                        "y": 8
-                    }
-                },
-                {
-                    "spriteSheet": 0,
-                    "cell": {
-                        "row": 0,
-                        "col": 5,
-                        "rowSpan": 1,
-                        "colSpan": 1
-                    },
-                    "center": {
-                        "x": 8,
-                        "y": 8
-                    }
-                },
-                {
-                    "spriteSheet": 0,
-                    "cell": {
-                        "row": 0,
-                        "col": 6,
-                        "rowSpan": 1,
-                        "colSpan": 1
-                    },
-                    "center": {
-                        "x": 8,
-                        "y": 8
-                    }
-                },
-                {
-                    "spriteSheet": 0,
-                    "cell": {
-                        "row": 0,
-                        "col": 7,
-                        "rowSpan": 1,
-                        "colSpan": 1
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 0,
+                        "colStart": 0,
+                        "rowCount": 16,
+                        "colCount": 16
                     },
                     "center": {
                         "x": 8,
@@ -118,8 +36,23 @@
             ],
             "animList": [
                 {
-                    "name": "Idle",
+                    "name": "Idle Up",
                     "frameList": [0],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Idle Left",
+                    "frameList": [2],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Idle Down",
+                    "frameList": [4],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Idle Right",
+                    "frameList": [6],
                     "frameTimeList": [10]
                 },
                 {
@@ -141,6 +74,34 @@
                     "name": "Move Right",
                     "frameList": [6, 7],
                     "frameTimeList": [4, 4]
+                }
+            ]
+        },
+        {
+            "type": 1,
+            "name": "Forest",
+            "frameList": [
+                {
+                    "loadMode": "single",
+                    "spriteSheet": 1,
+                    "id": 0,
+                    "cell": {
+                        "row": 0,
+                        "col": 3,
+                        "rowSpan": 1,
+                        "colSpan": 1
+                    },
+                    "center": {
+                        "x": 4,
+                        "y": 4
+                    }
+                }
+            ],
+            "animList": [
+                {
+                    "name": "Idle",
+                    "frameList": [0],
+                    "frameTimeList": [10]
                 }
             ]
         }

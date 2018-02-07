@@ -103,7 +103,6 @@
             gl.uniformMatrix4fv(shader.uniformLocations.projectionMatrix, false, projectionMatrix);
 
             // Set the initial model view matrix:
-            // Under change based on camera (TODO)
             let modelViewMatrix = m4.fromTranslation([0.0, 0.0, -6.0]);
             gl.uniformMatrix4fv(shader.uniformLocations.modelViewMatrix, false, modelViewMatrix);
 
@@ -134,13 +133,13 @@
 
             load: function (callback) {
 
-                let _self = this;
+                let me = this;
 
-                if (_self.source.spriteSheetUrlArray.length == 0) {
+                if (me.source.spriteSheetUrlArray.length == 0) {
                     console.error('WESA Loader: No sprite sheet added.');
                     return;
                 }
-                if (!_self.source.objectJsonUrl) {
+                if (!me.source.objectJsonUrl) {
                     console.error('WESA Loader: No object added.');
                     return;
                 }
@@ -151,7 +150,7 @@
                 var loadedImages = [];
                 var loadedObjectJson = null;
 
-                let imageUrls = _self.source.spriteSheetUrlArray;
+                let imageUrls = me.source.spriteSheetUrlArray;
 
                 function onAssetLoaded(type) {
                     if (type == 'image') {
@@ -175,7 +174,7 @@
                                 cellHeight: ssMeta.cellHeight
                             });
                             ss.loadTextureFromImage(wesaCore.handle.gl, loadedImages[i]);
-                            _self.spriteSheetList.push(ss);
+                            me.spriteSheetList.push(ss);
                         }
 
                         // Load Objects
@@ -186,14 +185,41 @@
                                 type: objData.type,
                                 name: objData.name
                             });
-                            let fArr = [];
-                            for (let j = 0; j < objData.frameLib.length; j++) {
-                                let f = objData.frameLib[j];
-                                fArr.push(new WESAFrame({
-                                    spriteSheet: _self.spriteSheetList[f.spriteSheet],
-                                    cell: { row: f.cell.row, col: f.cell.col, rowSpan: f.cell.rowSpan, colSpan: f.cell.colSpan },
-                                    center: { x: f.center.x, y: f.center.y }
-                                }));
+                            let fArr = obj.frameList;
+                            for (let j = 0; j < objData.frameList.length; j++) {
+                                let f = objData.frameList[j];
+                                if (f.loadMode == 'array') {
+                                    for (let i = 0; i < f.cells.rowCount * f.cells.colCount; i++) {
+                                        let fid = f.idStart + i;
+                                        if (fArr[fid]) {
+                                            console.error('wesaAssets.load(): WESAFrame conflicts on WESAObject "' + obj.name + '". Frame #"' + fid + '".');
+                                        }
+                                        else {
+                                            let row = f.cells.rowStart + Math.floor(i / f.cells.colCount);
+                                            let col = f.cells.colStart + i % f.cells.colCount;
+                                            fArr[fid] = new WESAFrame({
+                                                spriteSheet: me.spriteSheetList[f.spriteSheet],
+                                                cell: { row: row, col: col, rowSpan: 1, colSpan: 1 },
+                                                center: { x: f.center.x, y: f.center.y }
+                                            });
+                                        }
+                                    }
+                                }
+                                else if (f.loadMode == 'single') {
+                                    if (fArr[f.id]) {
+                                        console.error('wesaAssets.load(): WESAFrame conflicts on WESAObject "' + obj.name + '". Frame #"' + f.id + '".');
+                                    }
+                                    else {
+                                        fArr[f.id] = new WESAFrame({
+                                            spriteSheet: me.spriteSheetList[f.spriteSheet],
+                                            cell: { row: f.cell.row, col: f.cell.col, rowSpan: f.cell.rowSpan, colSpan: f.cell.colSpan },
+                                            center: { x: f.center.x, y: f.center.y }
+                                        });
+                                    }
+                                }
+                                else {
+                                    console.error('wesaAssets.load(): Missing frame loading mode when loading frames for "' + obj.name + '". Got "' + f.loadMode + '".');
+                                }
                             }
                             for (let j = 0; j < objData.animList.length; j++) {
                                 let a = objData.animList[j];
@@ -205,7 +231,7 @@
                                 anim.setFrames(Array.from(a.frameList, x => (x == null ? null : fArr[x])), a.frameTimeList.slice());
                                 obj.addAnimation(j, anim);
                             }
-                            _self.objectList.push(obj);
+                            me.objectList.push(obj);
                         }
 
                         callback();
@@ -279,8 +305,16 @@
             },
 
             canvasResize: function() {
-                var gl = this.handle.gl;
-                setProjection(gl, this.handle.shader);
+                let gl = this.handle.gl;
+                let shader = this.handle.shader;
+                let left = -gl.canvas.width / 2;
+                let right = gl.canvas.width / 2;
+                let bottom = -gl.canvas.height / 2;
+                let top = gl.canvas.height / 2;
+                let zNear = 0.1;
+                let zFar = 100.0;
+                let projectionMatrix = m4.ortho(left, right, bottom, top, zNear, zFar);
+                gl.uniformMatrix4fv(shader.uniformLocations.projectionMatrix, false, projectionMatrix);
                 gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
             },
 
@@ -430,6 +464,7 @@
             this.oid = desc.oid;
             this.type = desc.type;
             this.name = desc.name;
+            this.frameList = [];
             this.animList = [];
         }
 
@@ -481,7 +516,8 @@
             return this.object.animList[this.action].frameList[this.frameNum];
         };
 
-        WESASprite.prototype.changeAction = function (newAction) {
+        WESASprite.prototype.changeAction = function (newAction, isSmart = false) {
+            if (isSmart && this.action == newAction) { return; }
             this.action = newAction;
             this.time = 0;
             this.frameNum = 0;
