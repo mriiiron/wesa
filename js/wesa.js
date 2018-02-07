@@ -200,7 +200,7 @@
                                 let anim = new WESAAnimation({
                                     aid: j,
                                     name: a.name,
-                                    next: a.next
+                                    next: a.next === undefined ? j : a.next
                                 });
                                 anim.setFrames(Array.from(a.frameList, x => (x == null ? null : fArr[x])), a.frameTimeList.slice());
                                 obj.addAnimation(j, anim);

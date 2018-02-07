@@ -37,20 +37,110 @@
                         "x": 8,
                         "y": 8
                     }
+                },
+                {
+                    "spriteSheet": 0,
+                    "cell": {
+                        "row": 0,
+                        "col": 2,
+                        "rowSpan": 1,
+                        "colSpan": 1
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "spriteSheet": 0,
+                    "cell": {
+                        "row": 0,
+                        "col": 3,
+                        "rowSpan": 1,
+                        "colSpan": 1
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },{
+                    "spriteSheet": 0,
+                    "cell": {
+                        "row": 0,
+                        "col": 4,
+                        "rowSpan": 1,
+                        "colSpan": 1
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "spriteSheet": 0,
+                    "cell": {
+                        "row": 0,
+                        "col": 5,
+                        "rowSpan": 1,
+                        "colSpan": 1
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "spriteSheet": 0,
+                    "cell": {
+                        "row": 0,
+                        "col": 6,
+                        "rowSpan": 1,
+                        "colSpan": 1
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "spriteSheet": 0,
+                    "cell": {
+                        "row": 0,
+                        "col": 7,
+                        "rowSpan": 1,
+                        "colSpan": 1
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
                 }
             ],
             "animList": [
                 {
                     "name": "Idle",
-                    "next": 0,
                     "frameList": [0],
                     "frameTimeList": [10]
                 },
                 {
                     "name": "Move Up",
-                    "next": 1,
                     "frameList": [0, 1],
-                    "frameTimeList": [3, 3]
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Move Left",
+                    "frameList": [2, 3],
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Move Down",
+                    "frameList": [4, 5],
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Move Right",
+                    "frameList": [6, 7],
+                    "frameTimeList": [4, 4]
                 }
             ]
         }
