@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <title>Hello WESA</title>
-    <link rel="stylesheet" type="text/css" href="./css/demo-iframe.css">
+    <link rel="stylesheet" type="text/css" href="../css/demo-iframe.css">
 </head>
 
 <body>
@@ -14,7 +14,7 @@
     </div>
     <div class="dynamic-output" id="output">WESA Galaxian Plus</div>
 
-    <script src="../js/wesa.js"></script>
+    <script src="../../js/wesa.js"></script>
 
     <script>
 
@@ -101,8 +101,8 @@
         wesa.core.init(document.getElementById('canvas'));
 
         // Adding assets ready for loading
-        wesa.assets.source.spriteSheetUrlArray.push('./assets/texture/galaxian.png');
-        wesa.assets.source.objectJsonUrl = './assets/galaxian.json';
+        wesa.assets.source.spriteSheetUrlArray.push('./galaxian.png');
+        wesa.assets.source.objectJsonUrl = './galaxian.json';
 
         // Load assets
         wesa.assets.load(function () {

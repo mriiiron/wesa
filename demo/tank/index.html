@@ -3,8 +3,8 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <title>Hello WESA</title>
-    <link rel="stylesheet" type="text/css" href="./css/demo-iframe.css">
+    <title>Tank</title>
+    <link rel="stylesheet" type="text/css" href="../css/demo-iframe.css">
 </head>
 
 <body>
@@ -12,11 +12,16 @@
     <div class="flex-wrapper">
         <canvas id="canvas" width="640" height="480"></canvas>
     </div>
-    <div class="dynamic-output" id="output">WESA Tank</div>
+    <div class="dynamic-output" id="output"><img src="./assets/map.png" id="map" /></div>
 
-    <script src="../js/wesa.js"></script>
+    <script src="../../js/wesa.js"></script>
+    <script src="./js/tank.js"></script>
 
     <script>
+
+        let map = new tank.Map({ imgID: 'map' });
+
+        debugger;
 
         let playerTank = null;
 
@@ -103,8 +108,8 @@
 
         // Adding assets ready for loading
         wesa.assets.source.spriteSheetUrlArray = [
-            './assets/texture/bc_0.png',
-            './assets/texture/bc_1.png'
+            './assets/bc_0.png',
+            './assets/bc_1.png'
         ];
         wesa.assets.source.objectJsonUrl = './assets/tank.json';
 
@@ -114,28 +119,17 @@
             // Create the scene
             let scene = new wesa.Scene('Scene');
 
-            playerTank = new wesa.Sprite({
-                object: wesa.assets.objectList[0],
-                action: 0,
-                team: 0,
-                position: { x: 0, y: 0 },
-                scale: 2
-            });
-            playerTank.data = {
-                speed: 1
-            };
-            scene.addSpriteToLayer(0, playerTank);
-
-            let pos = [[64, 32], [80, 32], [64, 48], [80, 48]];
-            for (let i = 0; i < pos.length; i++) {
-                scene.addSpriteToLayer(0, new wesa.Sprite({
-                    object: wesa.assets.objectList[1],
-                    action: 0,
-                    team: 0,
-                    position: { x: pos[i][0], y: pos[i][1] },
-                    scale: 2
-                }));
-            }
+            // playerTank = new wesa.Sprite({
+            //     object: wesa.assets.objectList[0],
+            //     action: 0,
+            //     team: 0,
+            //     position: { x: 0, y: 0 },
+            //     scale: 2
+            // });
+            // playerTank.data = {
+            //     speed: 1
+            // };
+            // scene.addSpriteToLayer(0, playerTank);
 
             // Run the scene
             let animate = function () {
