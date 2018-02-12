@@ -12,16 +12,18 @@
     <div class="flex-wrapper">
         <canvas id="canvas" width="640" height="480"></canvas>
     </div>
-    <div class="dynamic-output" id="output"><img src="./assets/map.png" id="map" /></div>
+    <div class="dynamic-output" id="output"><img src="./assets/map2.png" id="map" /></div>
 
     <script src="../../js/wesa.js"></script>
     <script src="./js/tank.js"></script>
 
     <script>
 
-        let map = new tank.Map({ imgID: 'map' });
-
-        debugger;
+        let map = new tank.Map({
+            imgID: 'map',
+            tileWidth: 16,
+            tileHeight: 16
+        });
 
         let playerTank = null;
 
@@ -119,17 +121,19 @@
             // Create the scene
             let scene = new wesa.Scene('Scene');
 
-            // playerTank = new wesa.Sprite({
-            //     object: wesa.assets.objectList[0],
-            //     action: 0,
-            //     team: 0,
-            //     position: { x: 0, y: 0 },
-            //     scale: 2
-            // });
-            // playerTank.data = {
-            //     speed: 1
-            // };
-            // scene.addSpriteToLayer(0, playerTank);
+            playerTank = new wesa.Sprite({
+                object: wesa.assets.objectList[0],
+                action: 0,
+                team: 0,
+                position: { x: 0, y: 0 },
+                scale: 2
+            });
+            playerTank.data = {
+                speed: 1
+            };
+            scene.addSpriteToLayer(0, playerTank);
+
+            map.draw(scene);
 
             // Run the scene
             let animate = function () {

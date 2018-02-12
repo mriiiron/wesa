@@ -556,6 +556,10 @@
                 }
             }
             let anim = this.object.animList[this.action];
+            if (!anim) {
+                console.error('WESASprite: No animation for action #' + this.action + '. Object: "' + this.object.name + '"');
+                return;
+            }
             let animFrameCount = anim.frameList.length;
             this.time++;
             if (this.time >= anim.endTimeList[this.frameNum]) {

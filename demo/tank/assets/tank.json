@@ -79,17 +79,17 @@
         },
         {
             "type": 1,
-            "name": "Forest",
+            "name": "Stationary",
             "frameList": [
                 {
-                    "loadMode": "single",
+                    "loadMode": "array",
                     "spriteSheet": 1,
-                    "id": 0,
-                    "cell": {
-                        "row": 0,
-                        "col": 3,
-                        "rowSpan": 1,
-                        "colSpan": 1
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 0,
+                        "colStart": 2,
+                        "rowCount": 2,
+                        "colCount": 4
                     },
                     "center": {
                         "x": 4,
@@ -99,8 +99,38 @@
             ],
             "animList": [
                 {
-                    "name": "Idle",
+                    "name": "Null",
+                    "frameList": [null],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Steel",
                     "frameList": [0],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Forest",
+                    "frameList": [1],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Ice",
+                    "frameList": [2],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Water",
+                    "frameList": [4, 5, 6],
+                    "frameTimeList": [20, 20, 20]
+                },
+                {
+                    "name": "Brick_A",
+                    "frameList": [3],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Brick_B",
+                    "frameList": [7],
                     "frameTimeList": [10]
                 }
             ]
