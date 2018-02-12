@@ -491,6 +491,7 @@
             this.state = 0;
             this.time = 0;
             this.deadFlag = false;
+            this.delayedActionChange = null;
             this.collision = {
                 mode: WESASprite.CollisionMode.BY_SPRITE,
                 hit: null,
@@ -516,11 +517,16 @@
             return this.object.animList[this.action].frameList[this.frameNum];
         };
 
-        WESASprite.prototype.changeAction = function (newAction, isSmart = false) {
+        WESASprite.prototype.changeAction = function (newAction, isSmart = false, isImmediate = true) {
             if (isSmart && this.action == newAction) { return; }
-            this.action = newAction;
-            this.time = 0;
-            this.frameNum = 0;
+            if (isImmediate) {
+                this.action = newAction;
+                this.time = 0;
+                this.frameNum = 0;
+            }
+            else {
+                this.delayedActionChange = newAction;
+            }
         };
 
         WESASprite.prototype.setTime = function (time) {
@@ -549,6 +555,10 @@
             this.ai = ai;
         }
 
+        WESASprite.prototype.kill = function () {
+            this.deadFlag = true;
+        }
+
         WESASprite.prototype.update = function () {
             if (this.ai) {
                 if (typeof this.ai.execute == 'function') {
@@ -571,11 +581,11 @@
                     this.frameNum = 0;
                     if (anim.next != null) {
                         if (anim.next != this.action) {
-                            this.changeAction(anim.next);
+                            this.changeAction(anim.next, false, true);
                         }
                     }
                     else {
-                        this.deadFlag = true;
+                        this.kill();
                     }
                 }
             }
@@ -583,6 +593,10 @@
             this.position.y += this.velocity.y;
             this.velocity.x += this.acceleration.x;
             this.velocity.y += this.acceleration.y;
+            if (this.delayedActionChange) {
+                this.changeAction(this.delayedActionChange, false, true);
+                this.delayedActionChange = null;
+            }
         };
 
 
@@ -751,11 +765,10 @@
                 for (let j = 0; j < allSprites.length; j++) {
                     if (i == j) { continue; }
                     let si = allSprites[i], sj = allSprites[j];
-                    if (si.collision && sj.collision) {
+                    if (si.collision.hit && sj.collision.hurt) {
                         let iHitbox = {}, jHurtbox = {};
                         if (si.collision.mode == WESASprite.CollisionMode.BY_SPRITE) {
                             let hit = si.collision.hit;
-                            if (!hit) { continue; }
                             iHitbox.shape = hit.shape;
                             if (iHitbox.shape == WESASprite.CollisionShape.CIRCLE) {
                                 iHitbox.center = { x: si.position.x + hit.centerRelative.x, y: si.position.y + hit.centerRelative.y };
@@ -773,7 +786,6 @@
                         }
                         if (sj.collision.mode == WESASprite.CollisionMode.BY_SPRITE) {
                             let hurt = sj.collision.hurt;
-                            if (!hurt) { continue; }
                             jHurtbox.shape = hurt.shape;
                             if (jHurtbox.shape == WESASprite.CollisionShape.CIRCLE) {
                                 jHurtbox.center = { x: sj.position.x + hurt.centerRelative.x, y: sj.position.y + hurt.centerRelative.y };
@@ -841,7 +853,13 @@
                             // TODO
                         }
                         else if (iHitbox.shape == WESASprite.CollisionShape.RECT && jHurtbox.shape == WESASprite.CollisionShape.RECT) {
-                            // TODO
+                            if (iHitbox.x1 <= jHurtbox.x2 && iHitbox.y1 <= jHurtbox.y2 && iHitbox.x2 >= jHurtbox.x1 && iHitbox.y2 >= jHurtbox.y1) {
+                                collisions.push({
+                                    hitter: si,
+                                    hurter: sj,
+                                    collisionPoint: { x: (iHitbox.x1 + iHitbox.x2 + jHurtbox.x1 + jHurtbox.x2) / 4, y: (iHitbox.y1 + iHitbox.y2 + jHurtbox.y1 + jHurtbox.y2) / 4 }
+                                });
+                            }
                         }
                     }
                 }

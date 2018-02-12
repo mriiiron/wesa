@@ -16,7 +16,7 @@
     "objects": [
         {
             "type": 0,
-            "name": "Tank",
+            "name": "Player Tank",
             "frameList": [
                 {
                     "loadMode": "array",
@@ -25,8 +25,8 @@
                     "cells": {
                         "rowStart": 0,
                         "colStart": 0,
-                        "rowCount": 16,
-                        "colCount": 16
+                        "rowCount": 4,
+                        "colCount": 8
                     },
                     "center": {
                         "x": 8,
@@ -109,7 +109,7 @@
                     "frameTimeList": [10]
                 },
                 {
-                    "name": "Forest",
+                    "name": "Woods",
                     "frameList": [1],
                     "frameTimeList": [10]
                 },
@@ -124,14 +124,181 @@
                     "frameTimeList": [20, 20, 20]
                 },
                 {
-                    "name": "Brick_A",
+                    "name": "Brick A",
                     "frameList": [3],
                     "frameTimeList": [10]
                 },
                 {
-                    "name": "Brick_B",
+                    "name": "Brick B",
                     "frameList": [7],
                     "frameTimeList": [10]
+                }
+            ]
+        },
+        {
+            "type": 2,
+            "name": "Mobile",
+            "frameList": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 1,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 0,
+                        "colStart": 0,
+                        "rowCount": 2,
+                        "colCount": 2
+                    },
+                    "center": {
+                        "x": 4,
+                        "y": 4
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 4,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 10,
+                        "rowCount": 2,
+                        "colCount": 2
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "single",
+                    "spriteSheet": 0,
+                    "id": 8,
+                    "cell": {
+                        "row": 16,
+                        "col": 12,
+                        "rowSpan": 2,
+                        "colSpan": 2
+                    },
+                    "center": {
+                        "x": 16,
+                        "y": 16
+                    }
+                },
+                {
+                    "loadMode": "single",
+                    "spriteSheet": 0,
+                    "id": 9,
+                    "cell": {
+                        "row": 16,
+                        "col": 14,
+                        "rowSpan": 2,
+                        "colSpan": 2
+                    },
+                    "center": {
+                        "x": 16,
+                        "y": 16
+                    }
+                }
+            ],
+            "animList": [
+                {
+                    "name": "Bullet Up",
+                    "next": null,
+                    "frameList": [0],
+                    "frameTimeList": [150]
+                },
+                {
+                    "name": "Bullet Left",
+                    "next": null,
+                    "frameList": [1],
+                    "frameTimeList": [150]
+                },
+                {
+                    "name": "Bullet Down",
+                    "next": null,
+                    "frameList": [2],
+                    "frameTimeList": [150]
+                },
+                {
+                    "name": "Bullet Right",
+                    "next": null,
+                    "frameList": [3],
+                    "frameTimeList": [150]
+                },
+                {
+                    "name": "Explosion Small",
+                    "next": null,
+                    "frameList": [5, 6, 7],
+                    "frameTimeList": [3, 3, 3]
+                },
+                {
+                    "name": "Explosion",
+                    "next": null,
+                    "frameList": [5, 6, 7, 8, 9, 7],
+                    "frameTimeList": [5, 5, 5, 5, 5, 5]
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "name": "Light Tank",
+            "frameList": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 4,
+                        "colStart": 8,
+                        "rowCount": 1,
+                        "colCount": 8
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ],
+            "animList": [
+                {
+                    "name": "Idle Up",
+                    "frameList": [0],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Idle Left",
+                    "frameList": [2],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Idle Down",
+                    "frameList": [4],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Idle Right",
+                    "frameList": [6],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Move Up",
+                    "frameList": [0, 1],
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Move Left",
+                    "frameList": [2, 3],
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Move Down",
+                    "frameList": [4, 5],
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Move Right",
+                    "frameList": [6, 7],
+                    "frameTimeList": [4, 4]
                 }
             ]
         }

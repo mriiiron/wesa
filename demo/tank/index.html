@@ -10,20 +10,14 @@
 <body>
 
     <div class="flex-wrapper">
-        <canvas id="canvas" width="640" height="480"></canvas>
+        <canvas id="canvas" width="640" height="640"></canvas>
     </div>
-    <div class="dynamic-output" id="output"><img src="./assets/map2.png" id="map" /></div>
+    <div class="dynamic-output" id="output"><img src="./assets/testmap.png" id="map" /></div>
 
     <script src="../../js/wesa.js"></script>
-    <script src="./js/tank.js"></script>
+    <script src="./js/bc.js"></script>
 
     <script>
-
-        let map = new tank.Map({
-            imgID: 'map',
-            tileWidth: 16,
-            tileHeight: 16
-        });
 
         let playerTank = null;
 
@@ -31,39 +25,45 @@
             up: false,
             down: false,
             left: false,
-            right: false
+            right: false,
+            fire: false
         };
 
         let canvas = document.getElementById('canvas');
 
         function takeControl(t, k) {
-            let spd = t.data.speed;
+            let s = t.sprite;
             if (k.left && !k.right) {
-                t.changeAction(5, true);
-                t.velocity.x = -spd;
-                t.velocity.y = 0;
+                s.changeAction(5, true, true);
+                s.velocity.x = -t.speed;
+                s.velocity.y = 0;
             }
             else if (!k.left && k.right) {
-                t.changeAction(7, true);
-                t.velocity.x = spd;
-                t.velocity.y = 0;
+                s.changeAction(7, true, true);
+                s.velocity.x = t.speed;
+                s.velocity.y = 0;
             }
             else if (k.up && !k.down) {
-                t.changeAction(4, true);
-                t.velocity.x = 0;
-                t.velocity.y = spd;
+                s.changeAction(4, true, true);
+                s.velocity.x = 0;
+                s.velocity.y = t.speed;
             }
             else if (!k.up && k.down) {
-                t.changeAction(6, true);
-                t.velocity.x = 0;
-                t.velocity.y = -spd;
+                s.changeAction(6, true, true);
+                s.velocity.x = 0;
+                s.velocity.y = -t.speed;
             }
             else {
-                if (t.action >= 4 && t.action <= 7) {
-                    t.changeAction(t.action - 4, true);
-                    t.velocity.x = 0;
-                    t.velocity.y = 0;
+                if (s.action >= 4 && s.action <= 7) {
+                    s.changeAction(s.action - 4, true, true);
+                    s.velocity.x = 0;
+                    s.velocity.y = 0;
                 }
+            }
+            if (t.cooldown > 0) { t.cooldown--; }
+            if (t.cooldown == 0 && k.fire) {
+                t.fire();
+                t.cooldown = 50;
             }
         }
 
@@ -80,6 +80,9 @@
                     break;
                 case 'ArrowRight':
                     keyStatus.right = true;
+                    break;
+                case 'z':
+                    keyStatus.fire = true;
                     break;
                 default:
                     break;
@@ -100,9 +103,50 @@
                 case 'ArrowRight':
                     keyStatus.right = false;
                     break;
+                case 'z':
+                    keyStatus.fire = false;
+                    break;
                 default:
                     break;
              }
+        }
+
+        function processCollision(collisions) {
+            for (let i = 0; i < collisions.length; i++) {
+                let hitter = collisions[i].hitter, hurter = collisions[i].hurter;
+                if (hitter.team == hurter.team) { continue; }
+                if (hitter.object.type == 1 && hurter.object.type == 0) {
+                    hurter.velocity.x = 0;
+                    hurter.velocity.y = 0;
+                }
+                else if (hitter.object.type == 2) {
+                    if (hitter.action <= 3) {
+                        hitter.velocity.x = 0;
+                        hitter.velocity.y = 0;
+                        hitter.collision.hit = {
+                            shape: wesa.Sprite.CollisionShape.CIRCLE,
+                            centerRelative: { x: 0, y: 0 },
+                            radius: 6
+                        };
+                        hitter.changeAction(4, false, false);
+                        if (hurter.object.type == 0) {
+                            hurter.scene.addSpriteToLayer(3, new wesa.Sprite({
+                                object: wesa.assets.objectList[2],
+                                action: 5,
+                                team: 0,
+                                position: { x: hurter.position.x, y: hurter.position.y },
+                                scale: 2
+                            }));
+                            hurter.kill();
+                        }
+                    }
+                    else if (hitter.action == 4 && hurter.object.type == 1) {
+                        if (hurter.action == 5 || hurter.action == 6) {
+                            hurter.kill();
+                        }
+                    }
+                }
+            }
         }
 
         // Initialize WESA
@@ -121,28 +165,41 @@
             // Create the scene
             let scene = new wesa.Scene('Scene');
 
-            playerTank = new wesa.Sprite({
-                object: wesa.assets.objectList[0],
-                action: 0,
-                team: 0,
+            let playerTank = new BC.Tank({
+                scene: scene,
+                type: BC.Tank.Type.Player,
+                team: BC.Tank.Team.Player,
                 position: { x: 0, y: 0 },
-                scale: 2
-            });
-            playerTank.data = {
                 speed: 1
-            };
-            scene.addSpriteToLayer(0, playerTank);
+            });
+            playerTank.draw();
 
-            map.draw(scene);
+            let enemyTank = new BC.Tank({
+                scene: scene,
+                type: BC.Tank.Type.Light,
+                team: BC.Tank.Team.Enemy,
+                position: { x: 64, y: -64 },
+                speed: 1
+            });
+            enemyTank.draw();
+
+            let map = new BC.Map({
+                scene: scene,
+                imgID: 'map',
+                tileWidth: 16,
+                tileHeight: 16
+            });
+            map.draw();
 
             // Run the scene
             let animate = function () {
                 requestAnimationFrame(animate);
                 takeControl(playerTank, keyStatus);
-                wesa.camera.position.x = playerTank.position.x;
-                wesa.camera.position.y = playerTank.position.y;
+                processCollision(scene.getCollisions());
                 scene.update();
                 scene.render();
+                wesa.camera.position.x = playerTank.sprite.position.x;
+                wesa.camera.position.y = playerTank.sprite.position.y;
             }
             animate();
 
