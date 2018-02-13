@@ -179,15 +179,15 @@
 
                         // Load Objects
                         for (let i = 0; i < parsed.objects.length; i++) {
-                            let objData = parsed.objects[i];
+                            let o = parsed.objects[i];
                             let obj = new wesa.StoredObject({
                                 oid: i,
-                                type: objData.type,
-                                name: objData.name
+                                type: o.type,
+                                name: o.name
                             });
                             let fArr = obj.frameList;
-                            for (let j = 0; j < objData.frameList.length; j++) {
-                                let f = objData.frameList[j];
+                            for (let j = 0; j < o.frameList.length; j++) {
+                                let f = o.frameList[j];
                                 if (f.loadMode == 'array') {
                                     for (let i = 0; i < f.cells.rowCount * f.cells.colCount; i++) {
                                         let fid = f.idStart + i;
@@ -221,19 +221,26 @@
                                     console.error('wesaAssets.load(): Missing frame loading mode when loading frames for "' + obj.name + '". Got "' + f.loadMode + '".');
                                 }
                             }
-                            for (let j = 0; j < objData.animList.length; j++) {
-                                let a = objData.animList[j];
+                            for (let j = 0; j < o.animList.length; j++) {
+                                let a = o.animList[j];
                                 let anim = new WESAAnimation({
                                     aid: j,
                                     name: a.name,
-                                    next: a.next === undefined ? j : a.next
+                                    next: a.hasOwnProperty('next') ? a.next : j
                                 });
+                                if (a.hasOwnProperty('collision')) {
+                                    anim.collision.hit = a.collision.hasOwnProperty('hit') ? a.collision.hit : null;
+                                    anim.collision.hurt = a.collision.hasOwnProperty('hurt') ? a.collision.hurt : null;
+                                }
+                                else if (o.hasOwnProperty('defaultCollision')) {
+                                    anim.collision.hit = o.defaultCollision.hasOwnProperty('hit') ? o.defaultCollision.hit : null;
+                                    anim.collision.hurt = o.defaultCollision.hasOwnProperty('hurt') ? o.defaultCollision.hurt : null;
+                                }
                                 anim.setFrames(Array.from(a.frameList, x => (x == null ? null : fArr[x])), a.frameTimeList.slice());
                                 obj.addAnimation(j, anim);
                             }
                             me.objectList.push(obj);
                         }
-
                         callback();
                     }
                 }
@@ -447,6 +454,10 @@
             this.next = desc.next;
             this.frameList = [];
             this.endTimeList = [];
+            this.collision = {
+                hit: null,
+                hurt: null
+            };
         }
 
         WESAAnimation.prototype.setFrames = function (frameArr, frameTimeArr) {
@@ -483,6 +494,7 @@
             this.team = desc.team;
             this.position = { x: desc.position.x, y: desc.position.y };
             this.scale = desc.scale;
+            this.prevPosition = { x: 0, y: 0 };
             this.ai = null;
             this.velocity = { x: 0, y: 0 };
             this.acceleration = { x: 0, y: 0 };
@@ -501,6 +513,7 @@
 
         WESASprite.CollisionMode = Object.freeze({
             BY_SPRITE: 'BY_SPRITE',
+            BY_ANIMATION: 'BY_ANIMATION',
             BY_FRAME: 'BY_FRAME'
         });
 
@@ -589,6 +602,8 @@
                     }
                 }
             }
+            this.prevPosition.x = this.position.x;
+            this.prevPosition.y = this.position.y;
             this.position.x += this.velocity.x;
             this.position.y += this.velocity.y;
             this.velocity.x += this.acceleration.x;
@@ -765,41 +780,46 @@
                 for (let j = 0; j < allSprites.length; j++) {
                     if (i == j) { continue; }
                     let si = allSprites[i], sj = allSprites[j];
-                    if (si.collision.hit && sj.collision.hurt) {
-                        let iHitbox = {}, jHurtbox = {};
-                        if (si.collision.mode == WESASprite.CollisionMode.BY_SPRITE) {
-                            let hit = si.collision.hit;
-                            iHitbox.shape = hit.shape;
-                            if (iHitbox.shape == WESASprite.CollisionShape.CIRCLE) {
-                                iHitbox.center = { x: si.position.x + hit.centerRelative.x, y: si.position.y + hit.centerRelative.y };
-                                iHitbox.radius = hit.radius;
-                            }
-                            else if (iHitbox.shape == WESASprite.CollisionShape.RECT) {
-                                iHitbox.x1 = si.position.x + hit.x1Relative;
-                                iHitbox.x2 = si.position.x + hit.x2Relative;
-                                iHitbox.y1 = si.position.y + hit.y1Relative;
-                                iHitbox.y2 = si.position.y + hit.y2Relative;
-                            }
+                    let hit, hurt;
+                    if (si.collision.mode == WESASprite.CollisionMode.BY_SPRITE) {
+                        hit = si.collision.hit;
+                    }
+                    else if (si.collision.mode == WESASprite.CollisionMode.BY_ANIMATION) {
+                        hit = si.getCurrentAnim().collision.hit;
+                    }
+                    else if (si.collision.mode == WESASprite.CollisionMode.BY_FRAME) {
+                        // TODO
+                    }
+                    if (sj.collision.mode == WESASprite.CollisionMode.BY_SPRITE) {
+                        hurt = sj.collision.hurt;
+                    }
+                    else if (sj.collision.mode == WESASprite.CollisionMode.BY_ANIMATION) {
+                        hurt = sj.getCurrentAnim().collision.hurt;
+                    }
+                    else if (sj.collision.mode == WESASprite.CollisionMode.BY_FRAME) {
+                        // TODO
+                    }
+                    if (hit && hurt) {
+                        let iHitbox = { shape: hit.shape }, jHurtbox = { shape: hurt.shape };
+                        if (iHitbox.shape == WESASprite.CollisionShape.CIRCLE) {
+                            iHitbox.center = { x: si.position.x + hit.centerRelative.x, y: si.position.y + hit.centerRelative.y };
+                            iHitbox.radius = hit.radius;
                         }
-                        else if (si.collision.mode == WESASprite.CollisionMode.BY_FRAME) {
-                            // TODO
+                        else if (iHitbox.shape == WESASprite.CollisionShape.RECT) {
+                            iHitbox.x1 = si.position.x + hit.x1Relative;
+                            iHitbox.x2 = si.position.x + hit.x2Relative;
+                            iHitbox.y1 = si.position.y + hit.y1Relative;
+                            iHitbox.y2 = si.position.y + hit.y2Relative;
                         }
-                        if (sj.collision.mode == WESASprite.CollisionMode.BY_SPRITE) {
-                            let hurt = sj.collision.hurt;
-                            jHurtbox.shape = hurt.shape;
-                            if (jHurtbox.shape == WESASprite.CollisionShape.CIRCLE) {
-                                jHurtbox.center = { x: sj.position.x + hurt.centerRelative.x, y: sj.position.y + hurt.centerRelative.y };
-                                jHurtbox.radius = hurt.radius;
-                            }
-                            else if (jHurtbox.shape == WESASprite.CollisionShape.RECT) {
-                                jHurtbox.x1 = sj.position.x + hurt.x1Relative;
-                                jHurtbox.x2 = sj.position.x + hurt.x2Relative;
-                                jHurtbox.y1 = sj.position.y + hurt.y1Relative;
-                                jHurtbox.y2 = sj.position.y + hurt.y2Relative;
-                            }
+                        if (jHurtbox.shape == WESASprite.CollisionShape.CIRCLE) {
+                            jHurtbox.center = { x: sj.position.x + hurt.centerRelative.x, y: sj.position.y + hurt.centerRelative.y };
+                            jHurtbox.radius = hurt.radius;
                         }
-                        else if (sj.collision.mode == WESASprite.CollisionMode.BY_FRAME) {
-                            // TODO
+                        else if (jHurtbox.shape == WESASprite.CollisionShape.RECT) {
+                            jHurtbox.x1 = sj.position.x + hurt.x1Relative;
+                            jHurtbox.x2 = sj.position.x + hurt.x2Relative;
+                            jHurtbox.y1 = sj.position.y + hurt.y1Relative;
+                            jHurtbox.y2 = sj.position.y + hurt.y2Relative;
                         }
                         if (iHitbox.shape == WESASprite.CollisionShape.CIRCLE && jHurtbox.shape == WESASprite.CollisionShape.CIRCLE) {
                             let x1 = iHitbox.center.x, x2 = jHurtbox.center.x;

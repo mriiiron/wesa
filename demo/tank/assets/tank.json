@@ -32,6 +32,21 @@
                         "x": 8,
                         "y": 8
                     }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 32,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 2,
+                        "rowCount": 1,
+                        "colCount": 4
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
                 }
             ],
             "animList": [
@@ -74,8 +89,26 @@
                     "name": "Move Right",
                     "frameList": [6, 7],
                     "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Spawn",
+                    "next": 0,
+                    "frameList": [32, 33, 34, 35, 34, 33, 32, 33, 34, 35, 34, 33, 32, 33, 34, 35],
+                    "frameTimeList": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+                    "collision": {
+                        "hurt": null
+                    }
                 }
-            ]
+            ],
+            "defaultCollision": {
+                "hurt": {
+                    "shape": "RECT",
+                    "x1Relative": -14,
+                    "x2Relative": 14,
+                    "y1Relative": -14,
+                    "y2Relative": 14
+                }
+            }
         },
         {
             "type": 1,
@@ -229,7 +262,17 @@
                     "name": "Explosion Small",
                     "next": null,
                     "frameList": [5, 6, 7],
-                    "frameTimeList": [3, 3, 3]
+                    "frameTimeList": [3, 3, 3],
+                    "collision": {
+                        "hit" : {
+                            "shape": "CIRCLE",
+                            "centerRelative": {
+                                "x": 0,
+                                "y": 0
+                            },
+                            "radius": 10
+                        }
+                    }
                 },
                 {
                     "name": "Explosion",
@@ -237,7 +280,17 @@
                     "frameList": [5, 6, 7, 8, 9, 7],
                     "frameTimeList": [5, 5, 5, 5, 5, 5]
                 }
-            ]
+            ],
+            "defaultCollision": {
+                "hit": {
+                    "shape": "CIRCLE",
+                    "centerRelative": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "radius": 3
+                }
+            }
         },
         {
             "type": 0,
@@ -252,6 +305,21 @@
                         "colStart": 8,
                         "rowCount": 1,
                         "colCount": 8
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 8,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 2,
+                        "rowCount": 1,
+                        "colCount": 4
                     },
                     "center": {
                         "x": 8,
@@ -299,8 +367,86 @@
                     "name": "Move Right",
                     "frameList": [6, 7],
                     "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Spawn",
+                    "next": 0,
+                    "frameList": [8, 9, 10, 11, 10, 9, 8, 9, 10, 11, 10, 9, 8, 9, 10, 11],
+                    "frameTimeList": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+                    "collision": {
+                        "hurt": null
+                    }
                 }
-            ]
+            ],
+            "defaultCollision": {
+                "hurt": {
+                    "shape": "RECT",
+                    "x1Relative": -14,
+                    "x2Relative": 14,
+                    "y1Relative": -14,
+                    "y2Relative": 14
+                }
+            }
+        },
+        {
+            "type": 0,
+            "name": "Agile Tank",
+            "frameList": [],
+            "animList": []
+        },
+        {
+            "type": 0,
+            "name": "Power Tank",
+            "frameList": [],
+            "animList": []
+        },
+        {
+            "type": 0,
+            "name": "Heavy Tank",
+            "frameList": [],
+            "animList": []
+        },
+        {
+            "type": 0,
+            "name": "Eagle Core",
+            "frameList": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 0,
+                        "rowCount": 1,
+                        "colCount": 2
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ],
+            "animList": [
+                {
+                    "name": "Idle",
+                    "frameList": [0],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Destroyed",
+                    "frameList": [1],
+                    "frameTimeList": [10]
+                }
+            ],
+            "defaultCollision": {
+                "hurt": {
+                    "shape": "RECT",
+                    "x1Relative": -14,
+                    "x2Relative": 14,
+                    "y1Relative": -14,
+                    "y2Relative": 14
+                }
+            }
         }
     ]
 }

@@ -3,6 +3,29 @@
 
     function BC() {
 
+        let BCTeam = Object.freeze({
+            Null: 0,
+            Player: 1,
+            Enemy: 2
+        });
+
+        let BCTankType = Object.freeze({
+            Player: 0,
+            Light: 3,
+            Agile: 4,
+            Power: 5,
+            Heavy: 6
+        });
+
+        let BCTileType = Object.freeze({
+            Null: 0,
+            Steel: 1,
+            Woods: 2,
+            Ice: 3,
+            Water: 4,
+            Brick: 5
+        });
+
         function BCMap(desc) {
             let img = document.getElementById(desc.imgID);
             let canvas = document.createElement('canvas');
@@ -21,33 +44,24 @@
             }
         }
 
-        BCMap.TileType = Object.freeze({
-            Null: 0,
-            Steel: 1,
-            Woods: 2,
-            Ice: 3,
-            Water: 4,
-            Brick: 5
-        });
-
         BCMap.decode = function (r, g, b) {
             if (r == 255 && g == 255 && b == 255) {
-                return BCMap.TileType.Steel;
+                return BCTileType.Steel;
             }
             else if (r == 0 && g == 127 && b == 0) {
-                return BCMap.TileType.Woods;
+                return BCTileType.Woods;
             }
             else if (r == 127 && g == 127 && b == 127) {
-                return BCMap.TileType.Ice;
+                return BCTileType.Ice;
             }
             else if (r == 0 && g == 127 && b == 255) {
-                return BCMap.TileType.Water;
+                return BCTileType.Water;
             }
             else if (r == 127 && g == 0 && b == 0) {
-                return BCMap.TileType.Brick;
+                return BCTileType.Brick;
             }
             else {
-                return BCMap.TileType.Null;
+                return BCTileType.Null;
             }
         };
 
@@ -60,7 +74,7 @@
                 let col = i % w;
                 let cx = tw * (col - 0.5 * (w - 1));
                 let cy = th * (0.5 * (h - 1) - row);
-                if (tile == BCMap.TileType.Brick) {
+                if (tile == BCTileType.Brick) {
                     let brickPos = [[cx - tw / 4, cy - th / 4], [cx + tw / 4, cy - th / 4], [cx - tw / 4, cy + th / 4], [cx + tw / 4, cy + th / 4]];
                     let brickAct = [5, 6, 6, 5];
                     for (let j = 0; j < brickPos.length; j++) {
@@ -71,6 +85,13 @@
                             position: { x: brickPos[j][0], y: brickPos[j][1] },
                             scale: 2
                         });
+                        brickBit.collision.hit = {
+                            shape: wesa.Sprite.CollisionShape.RECT,
+                            x1Relative: -4,
+                            x2Relative: 4,
+                            y1Relative: -4,
+                            y2Relative: 4
+                        };
                         brickBit.collision.hurt = {
                             shape: wesa.Sprite.CollisionShape.RECT,
                             x1Relative: -4,
@@ -81,10 +102,10 @@
                         this.scene.addSpriteToLayer(0, brickBit);
                     }
                 }
-                else if (tile == BCMap.TileType.Steel) {
+                else if (tile == BCTileType.Steel) {
                     let steelBit = new wesa.Sprite({
                         object: wesa.assets.objectList[1],
-                        action: BCMap.TileType.Steel,
+                        action: BCTileType.Steel,
                         team: 0,
                         position: { x: cx, y: cy },
                         scale: 2
@@ -105,34 +126,41 @@
                     };
                     this.scene.addSpriteToLayer(0, steelBit);
                 }
-                else if (tile == BCMap.TileType.Woods) {
+                else if (tile == BCTileType.Woods) {
                     this.scene.addSpriteToLayer(2, new wesa.Sprite({
                         object: wesa.assets.objectList[1],
-                        action: BCMap.TileType.Woods,
+                        action: BCTileType.Woods,
                         team: 0,
                         position: { x: cx, y: cy },
                         scale: 2
                     }));
                 }
-                else if (tile == BCMap.TileType.Water) {
+                else if (tile == BCTileType.Water) {
+                    let waterBit = new wesa.Sprite({
+                        object: wesa.assets.objectList[1],
+                        action: BCTileType.Water,
+                        team: 0,
+                        position: { x: cx, y: cy },
+                        scale: 2
+                    });
+                    waterBit.collision.hit = {
+                        shape: wesa.Sprite.CollisionShape.RECT,
+                        x1Relative: -8,
+                        x2Relative: 8,
+                        y1Relative: -8,
+                        y2Relative: 8
+                    };
+                    this.scene.addSpriteToLayer(0, waterBit);
+                }
+                else if (tile == BCTileType.Ice) {
                     this.scene.addSpriteToLayer(0, new wesa.Sprite({
                         object: wesa.assets.objectList[1],
-                        action: BCMap.TileType.Water,
+                        action: BCTileType.Ice,
                         team: 0,
                         position: { x: cx, y: cy },
                         scale: 2
                     }));
                 }
-                else if (tile == BCMap.TileType.Ice) {
-                    this.scene.addSpriteToLayer(0, new wesa.Sprite({
-                        object: wesa.assets.objectList[1],
-                        action: BCMap.TileType.Ice,
-                        team: 0,
-                        position: { x: cx, y: cy },
-                        scale: 2
-                    }));
-                }
-
             }
         };
 
@@ -142,35 +170,45 @@
             this.speed = desc.speed;
             this.sprite = new wesa.Sprite({
                 object: wesa.assets.objectList[desc.type],
-                action: 0,
+                action: 8,
                 team: desc.team,
                 position: { x: desc.position.x, y: desc.position.y },
                 scale: 2
             });
-            this.sprite.collision.hurt = {
-                shape: wesa.Sprite.CollisionShape.RECT,
-                x1Relative: -14,
-                x2Relative: 14,
-                y1Relative: -14,
-                y2Relative: 14
-            };
+            switch (desc.type) {
+                case BCTankType.Player:
+
+                    break;
+                case BCTankType.Light:
+                    this.sprite.addAI(function () {
+                        let dx = this.self.position.x, dy = this.self.position.y;
+                        let r = Math.random();
+                        if (r >= 0.8) {
+
+                        }
+                        else {
+
+                        }
+                    });
+                    break;
+                case BCTankType.Agile:
+
+                    break;
+                case BCTankType.Power:
+
+                    break;
+                case BCTankType.Heavy:
+
+                    break;
+                default:
+                    break;
+            }
+            this.sprite.backref = this;
+            this.sprite.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
             this.cooldown = 0;
         }
 
-        BCTank.Type = Object.freeze({
-            Player: 0,
-            Light: 3,
-            Agile: 4,
-            Power: 5,
-            Heavy: 6
-        });
-
-        BCTank.Team = Object.freeze({
-            Player: 1,
-            Enemy: 2
-        });
-
-        BCTank.prototype.fire = function (scene) {
+        BCTank.prototype.fire = function () {
             let s = this.sprite;
             let dir = s.action % 4;
             let posOffset, act, v;
@@ -194,31 +232,78 @@
                 posOffset = [10, 0];
                 v = [5, 0];
             }
-            let warhead = new wesa.Sprite({
+            let bullet = new wesa.Sprite({
                 object: wesa.assets.objectList[2],
                 action: act,
                 team: this.sprite.team,
                 position: { x: s.position.x + posOffset[0], y: s.position.y + posOffset[1] },
                 scale: 2
             });
-            warhead.velocity.x = v[0];
-            warhead.velocity.y = v[1];
-            warhead.collision.hit = {
-                shape: wesa.Sprite.CollisionShape.CIRCLE,
-                centerRelative: { x: 0, y: 0 },
-                radius: 3
-            };
-            this.scene.addSpriteToLayer(1, warhead);
+            bullet.velocity.x = v[0];
+            bullet.velocity.y = v[1];
+            bullet.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
+            this.scene.addSpriteToLayer(1, bullet);
         };
 
-        BCTank.prototype.draw = function () {
+        BCTank.prototype.die = function () {
+            let s = this.sprite;
+            s.scene.addSpriteToLayer(3, new wesa.Sprite({
+                object: wesa.assets.objectList[2],
+                action: 5,
+                team: 0,
+                position: { x: s.position.x, y: s.position.y },
+                scale: 2
+            }));
+            s.kill();
+        }
+
+        BCTank.prototype.spawn = function () {
+            this.scene.addSpriteToLayer(1, this.sprite);
+        }
+
+
+        function BCEagle(desc) {
+            this.scene = desc.scene;
+            this.sprite = new wesa.Sprite({
+                object: wesa.assets.objectList[7],
+                action: 0,
+                team: BCTeam.Enemy,
+                position: { x: desc.position.x, y: desc.position.y },
+                scale: 2
+            });
+            this.sprite.backref = this;
+            this.sprite.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
+            this.cooldown = 0;
+        }
+
+        BCEagle.prototype.die = function () {
+            let s = this.sprite;
+            s.scene.addSpriteToLayer(3, new wesa.Sprite({
+                object: wesa.assets.objectList[2],
+                action: 5,
+                team: 0,
+                position: { x: s.position.x, y: s.position.y },
+                scale: 2
+            }));
+            s.collision.hurt = null;
+            s.changeAction(1);
+        }
+
+        BCEagle.prototype.draw = function () {
             this.scene.addSpriteToLayer(1, this.sprite);
         }
 
 
         return {
+
             Map: BCMap,
-            Tank: BCTank
+            Tank: BCTank,
+            Eagle: BCEagle,
+
+            Team: BCTeam,
+            TankType: BCTankType,
+            TileType: BCTileType
+
         };
 
     }

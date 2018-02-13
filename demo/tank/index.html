@@ -12,7 +12,7 @@
     <div class="flex-wrapper">
         <canvas id="canvas" width="640" height="640"></canvas>
     </div>
-    <div class="dynamic-output" id="output"><img src="./assets/testmap.png" id="map" /></div>
+    <div class="dynamic-output" id="output"><img src="./assets/map.png" id="map" /></div>
 
     <script src="../../js/wesa.js"></script>
     <script src="./js/bc.js"></script>
@@ -116,28 +116,16 @@
                 let hitter = collisions[i].hitter, hurter = collisions[i].hurter;
                 if (hitter.team == hurter.team) { continue; }
                 if (hitter.object.type == 1 && hurter.object.type == 0) {
-                    hurter.velocity.x = 0;
-                    hurter.velocity.y = 0;
+                    hurter.position.x = hurter.prevPosition.x;
+                    hurter.position.y = hurter.prevPosition.y;
                 }
                 else if (hitter.object.type == 2) {
                     if (hitter.action <= 3) {
                         hitter.velocity.x = 0;
                         hitter.velocity.y = 0;
-                        hitter.collision.hit = {
-                            shape: wesa.Sprite.CollisionShape.CIRCLE,
-                            centerRelative: { x: 0, y: 0 },
-                            radius: 6
-                        };
                         hitter.changeAction(4, false, false);
                         if (hurter.object.type == 0) {
-                            hurter.scene.addSpriteToLayer(3, new wesa.Sprite({
-                                object: wesa.assets.objectList[2],
-                                action: 5,
-                                team: 0,
-                                position: { x: hurter.position.x, y: hurter.position.y },
-                                scale: 2
-                            }));
-                            hurter.kill();
+                            hurter.backref.die();
                         }
                     }
                     else if (hitter.action == 4 && hurter.object.type == 1) {
@@ -165,23 +153,29 @@
             // Create the scene
             let scene = new wesa.Scene('Scene');
 
+            let eagle = new BC.Eagle({
+                scene: scene,
+                position: { x: 0, y: 0 },
+            });
+            eagle.draw();
+
             let playerTank = new BC.Tank({
                 scene: scene,
-                type: BC.Tank.Type.Player,
-                team: BC.Tank.Team.Player,
-                position: { x: 0, y: 0 },
+                type: BC.TankType.Player,
+                team: BC.Team.Player,
+                position: { x: -56, y: 56 },
                 speed: 1
             });
-            playerTank.draw();
+            playerTank.spawn();
 
-            let enemyTank = new BC.Tank({
-                scene: scene,
-                type: BC.Tank.Type.Light,
-                team: BC.Tank.Team.Enemy,
-                position: { x: 64, y: -64 },
-                speed: 1
-            });
-            enemyTank.draw();
+            // let enemyTank = new BC.Tank({
+            //     scene: scene,
+            //     type: BC.TankType.Light,
+            //     team: BC.Team.Enemy,
+            //     position: { x: -144, y: 56 },
+            //     speed: 1
+            // });
+            // enemyTank.spawn();
 
             let map = new BC.Map({
                 scene: scene,
@@ -195,8 +189,8 @@
             let animate = function () {
                 requestAnimationFrame(animate);
                 takeControl(playerTank, keyStatus);
-                processCollision(scene.getCollisions());
                 scene.update();
+                processCollision(scene.getCollisions());
                 scene.render();
                 wesa.camera.position.x = playerTank.sprite.position.x;
                 wesa.camera.position.y = playerTank.sprite.position.y;
