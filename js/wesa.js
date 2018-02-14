@@ -495,7 +495,7 @@
             this.position = { x: desc.position.x, y: desc.position.y };
             this.scale = desc.scale;
             this.prevPosition = { x: 0, y: 0 };
-            this.ai = null;
+            this.aiList = [];
             this.velocity = { x: 0, y: 0 };
             this.acceleration = { x: 0, y: 0 };
             this.scene = null;
@@ -556,27 +556,18 @@
             }
         }
 
-        WESASprite.prototype.setAI = function (ai) {
+        WESASprite.prototype.addAI = function (ai) {
             ai.self = this;
-            this.ai = ai;
+            this.aiList.push(ai);
         };
-
-        WESASprite.prototype.addAI = function (aiExecuteFunction) {
-            let ai = new WESAAI();
-            ai.execute = aiExecuteFunction;
-            ai.self = this;
-            this.ai = ai;
-        }
 
         WESASprite.prototype.kill = function () {
             this.deadFlag = true;
         }
 
         WESASprite.prototype.update = function () {
-            if (this.ai) {
-                if (typeof this.ai.execute == 'function') {
-                    this.ai.execute();
-                }
+            for (let i = 0; i < this.aiList.length; i++) {
+                this.aiList[i].execute();
             }
             let anim = this.object.animList[this.action];
             if (!anim) {

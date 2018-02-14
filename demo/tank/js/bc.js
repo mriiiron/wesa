@@ -175,21 +175,41 @@
                 position: { x: desc.position.x, y: desc.position.y },
                 scale: 2
             });
+
+            let basicAI = new wesa.AI();
+            basicAI.execute = function () {
+                let s = this.self;
+                if (s.velocity.x < 0) {
+                    s.changeAction(5, true, true);
+                }
+                else if (s.velocity.x > 0) {
+                    s.changeAction(7, true, true);
+                }
+                else if (s.velocity.y < 0) {
+                    s.changeAction(6, true, true);
+                }
+                else if (s.velocity.y > 0) {
+                    s.changeAction(4, true, true);
+                }
+                else {
+                    s.changeAction(s.action % 4, true, true);
+                }
+            }
+            this.sprite.addAI(basicAI);
+
             switch (desc.type) {
                 case BCTankType.Player:
 
+                    let ai = new wesa.AI();
+                    ai.execute = function () {
+                        
+                    };
+                    this.sprite.addAI(ai);
+
+
                     break;
                 case BCTankType.Light:
-                    this.sprite.addAI(function () {
-                        let dx = this.self.position.x, dy = this.self.position.y;
-                        let r = Math.random();
-                        if (r >= 0.8) {
 
-                        }
-                        else {
-
-                        }
-                    });
                     break;
                 case BCTankType.Agile:
 

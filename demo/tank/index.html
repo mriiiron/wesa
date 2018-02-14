@@ -34,28 +34,23 @@
         function takeControl(t, k) {
             let s = t.sprite;
             if (k.left && !k.right) {
-                s.changeAction(5, true, true);
                 s.velocity.x = -t.speed;
                 s.velocity.y = 0;
             }
             else if (!k.left && k.right) {
-                s.changeAction(7, true, true);
                 s.velocity.x = t.speed;
                 s.velocity.y = 0;
             }
             else if (k.up && !k.down) {
-                s.changeAction(4, true, true);
                 s.velocity.x = 0;
                 s.velocity.y = t.speed;
             }
             else if (!k.up && k.down) {
-                s.changeAction(6, true, true);
                 s.velocity.x = 0;
                 s.velocity.y = -t.speed;
             }
             else {
                 if (s.action >= 4 && s.action <= 7) {
-                    s.changeAction(s.action - 4, true, true);
                     s.velocity.x = 0;
                     s.velocity.y = 0;
                 }
