@@ -10,9 +10,9 @@
 <body>
 
     <div class="flex-wrapper">
-        <canvas id="canvas" width="640" height="640"></canvas>
+        <canvas id="canvas" width="480" height="480"></canvas>
     </div>
-    <div class="dynamic-output" id="output"><img src="./assets/map.png" id="map" /></div>
+    <div class="dynamic-output" id="output"><img src="./assets/stage_1.png" id="map" /></div>
 
     <script src="../../js/wesa.js"></script>
     <script src="./js/bc.js"></script>
@@ -148,20 +148,25 @@
             // Create the scene
             let scene = new wesa.Scene('Scene');
 
-            let eagle = new BC.Eagle({
+            let map = new OC.Map({
                 scene: scene,
-                position: { x: 0, y: 0 },
+                imgID: 'map',
+                tileWidth: 16,
+                tileHeight: 16
             });
-            eagle.draw();
-
-            let playerTank = new BC.Tank({
+            map.draw();
+            map.spawn(new OC.Eagle({
                 scene: scene,
-                type: BC.TankType.Player,
-                team: BC.Team.Player,
-                position: { x: -56, y: 56 },
+                position: { x: 0, y: -192 }
+            }));
+            let playerTank = new OC.Tank({
+                scene: scene,
+                type: OC.TankType.Player,
+                team: OC.Team.Player,
+                position: { x: -64, y: -192 },
                 speed: 1
             });
-            playerTank.spawn();
+            map.spawn(playerTank);
 
             // let enemyTank = new BC.Tank({
             //     scene: scene,
@@ -172,14 +177,6 @@
             // });
             // enemyTank.spawn();
 
-            let map = new BC.Map({
-                scene: scene,
-                imgID: 'map',
-                tileWidth: 16,
-                tileHeight: 16
-            });
-            map.draw();
-
             // Run the scene
             let animate = function () {
                 requestAnimationFrame(animate);
@@ -187,8 +184,8 @@
                 scene.update();
                 processCollision(scene.getCollisions());
                 scene.render();
-                wesa.camera.position.x = playerTank.sprite.position.x;
-                wesa.camera.position.y = playerTank.sprite.position.y;
+                // wesa.camera.position.x = playerTank.sprite.position.x;
+                // wesa.camera.position.y = playerTank.sprite.position.y;
             }
             animate();
 
