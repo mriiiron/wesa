@@ -3,29 +3,40 @@
 
     function OpenCity () {
 
-        let OCTeam = Object.freeze({
-            Null: 0,
-            Player: 1,
-            Enemy: 2
+        const OCConfig = Object.freeze({
+            Team: {
+                Null: 0,
+                Player: 1,
+                Enemy: 2
+            },
+            TankType: {
+                Player: 0,
+                Light: 3,
+                Agile: 4,
+                Power: 5,
+                Heavy: 6
+            },
+            TileType: {
+                Null: 0,
+                Steel: 1,
+                Woods: 2,
+                Ice: 3,
+                Water: 4,
+                Brick: 5,
+                Solid: 7
+            },
+            ObjectType: {
+                Tank: 0,
+                Stationary: 1,
+                Mobile: 2
+            },
+            CollisionMatrix: [
+                [true, true, false],
+                [false, false, false],
+                [true, true, true]
+            ]
         });
 
-        let OCTankType = Object.freeze({
-            Player: 0,
-            Light: 3,
-            Agile: 4,
-            Power: 5,
-            Heavy: 6
-        });
-
-        let OCTileType = Object.freeze({
-            Null: 0,
-            Steel: 1,
-            Woods: 2,
-            Ice: 3,
-            Water: 4,
-            Brick: 5,
-            Solid: 7
-        });
 
         function OCMap(desc) {
             let img = document.getElementById(desc.imgID);
@@ -47,25 +58,25 @@
 
         OCMap.decode = function (r, g, b) {
             if (r == 255 && g == 255 && b == 255) {
-                return OCTileType.Steel;
+                return OCConfig.TileType.Steel;
             }
             else if (r == 0 && g == 127 && b == 0) {
-                return OCTileType.Woods;
+                return OCConfig.TileType.Woods;
             }
             else if (r == 127 && g == 255 && b == 255) {
-                return OCTileType.Ice;
+                return OCConfig.TileType.Ice;
             }
             else if (r == 0 && g == 127 && b == 255) {
-                return OCTileType.Water;
+                return OCConfig.TileType.Water;
             }
             else if (r == 127 && g == 0 && b == 0) {
-                return OCTileType.Brick;
+                return OCConfig.TileType.Brick;
             }
             else if (r == 127 && g == 127 && b == 127) {
-                return OCTileType.Solid;
+                return OCConfig.TileType.Solid;
             }
             else {
-                return OCTileType.Null;
+                return OCConfig.TileType.Null;
             }
         };
 
@@ -83,7 +94,7 @@
                 let col = i % w;
                 let cx = tw * (col - 0.5 * (w - 1));
                 let cy = th * (0.5 * (h - 1) - row);
-                if (tile == OCTileType.Brick) {
+                if (tile == OCConfig.TileType.Brick) {
                     let brickPos = [[cx - tw / 4, cy - th / 4], [cx + tw / 4, cy - th / 4], [cx - tw / 4, cy + th / 4], [cx + tw / 4, cy + th / 4]];
                     let brickAct = [5, 6, 6, 5];
                     for (let j = 0; j < brickPos.length; j++) {
@@ -94,105 +105,60 @@
                             position: { x: brickPos[j][0], y: brickPos[j][1] },
                             scale: 2
                         });
-                        brickBit.collision.hit = {
-                            shape: wesa.Sprite.CollisionShape.RECT,
-                            x1Relative: -4,
-                            x2Relative: 4,
-                            y1Relative: -4,
-                            y2Relative: 4
-                        };
-                        brickBit.collision.hurt = {
-                            shape: wesa.Sprite.CollisionShape.RECT,
-                            x1Relative: -4,
-                            x2Relative: 4,
-                            y1Relative: -4,
-                            y2Relative: 4
-                        };
+                        brickBit.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
                         this.scene.addSpriteToLayer(0, brickBit);
                     }
                 }
-                else if (tile == OCTileType.Steel) {
+                else if (tile == OCConfig.TileType.Steel) {
                     let steelBit = new wesa.Sprite({
                         object: wesa.assets.objectList[1],
-                        action: OCTileType.Steel,
+                        action: OCConfig.TileType.Steel,
                         team: 0,
                         position: { x: cx, y: cy },
                         scale: 2
                     });
-                    steelBit.collision.hit = {
-                        shape: wesa.Sprite.CollisionShape.RECT,
-                        x1Relative: -8,
-                        x2Relative: 8,
-                        y1Relative: -8,
-                        y2Relative: 8
-                    };
-                    steelBit.collision.hurt = {
-                        shape: wesa.Sprite.CollisionShape.RECT,
-                        x1Relative: -8,
-                        x2Relative: 8,
-                        y1Relative: -8,
-                        y2Relative: 8
-                    };
+                    steelBit.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
                     this.scene.addSpriteToLayer(0, steelBit);
                 }
-                else if (tile == OCTileType.Woods) {
+                else if (tile == OCConfig.TileType.Woods) {
                     this.scene.addSpriteToLayer(2, new wesa.Sprite({
                         object: wesa.assets.objectList[1],
-                        action: OCTileType.Woods,
+                        action: OCConfig.TileType.Woods,
                         team: 0,
                         position: { x: cx, y: cy },
                         scale: 2
                     }));
                 }
-                else if (tile == OCTileType.Water) {
+                else if (tile == OCConfig.TileType.Water) {
                     let waterBit = new wesa.Sprite({
                         object: wesa.assets.objectList[1],
-                        action: OCTileType.Water,
+                        action: OCConfig.TileType.Water,
                         team: 0,
                         position: { x: cx, y: cy },
                         scale: 2
                     });
-                    waterBit.collision.hit = {
-                        shape: wesa.Sprite.CollisionShape.RECT,
-                        x1Relative: -8,
-                        x2Relative: 8,
-                        y1Relative: -8,
-                        y2Relative: 8
-                    };
+                    waterBit.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
                     this.scene.addSpriteToLayer(0, waterBit);
                 }
-                else if (tile == OCTileType.Ice) {
+                else if (tile == OCConfig.TileType.Ice) {
                     this.scene.addSpriteToLayer(0, new wesa.Sprite({
                         object: wesa.assets.objectList[1],
-                        action: OCTileType.Ice,
+                        action: OCConfig.TileType.Ice,
                         team: 0,
                         position: { x: cx, y: cy },
                         scale: 2
                     }));
                 }
-                else if (tile == OCTileType.Solid) {
+                else if (tile == OCConfig.TileType.Solid) {
                     let solidBit = new wesa.Sprite({
                         object: wesa.assets.objectList[1],
-                        action: OCTileType.Solid,
+                        action: OCConfig.TileType.Solid,
                         team: 0,
                         position: { x: cx, y: cy },
                         scale: 2
                     });
                     this.scene.addSpriteToLayer(0, solidBit);
-                    solidBit.collision.hit = {
-                        shape: wesa.Sprite.CollisionShape.RECT,
-                        x1Relative: -8,
-                        x2Relative: 8,
-                        y1Relative: -8,
-                        y2Relative: 8
-                    };
-                    solidBit.collision.hurt = {
-                        shape: wesa.Sprite.CollisionShape.RECT,
-                        x1Relative: -8,
-                        x2Relative: 8,
-                        y1Relative: -8,
-                        y2Relative: 8
-                    };
+                    solidBit.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
                 }
             }
         };
@@ -213,29 +179,43 @@
             basicAI.execute = function () {
                 let s = this.self;
                 if (s.velocity.x < 0) {
-                    s.changeAction(5, true, true);
+                    s.changeAction(5, {
+                        isSmart: true,
+                        isImmediate: true
+                    });
                     s.position.y = Math.round(s.position.y / me.map.tileHeight) * me.map.tileHeight;
                 }
                 else if (s.velocity.x > 0) {
-                    s.changeAction(7, true, true);
+                    s.changeAction(7, {
+                        isSmart: true,
+                        isImmediate: true
+                    });
                     s.position.y = Math.round(s.position.y / me.map.tileHeight) * me.map.tileHeight;
                 }
                 else if (s.velocity.y < 0) {
-                    s.changeAction(6, true, true);
+                    s.changeAction(6, {
+                        isSmart: true,
+                        isImmediate: true
+                    });
                     s.position.x = Math.round(s.position.x / me.map.tileWidth) * me.map.tileWidth;
                 }
                 else if (s.velocity.y > 0) {
-                    s.changeAction(4, true, true);
+                    s.changeAction(4, {
+                        isSmart: true,
+                        isImmediate: true
+                    });
                     s.position.x = Math.round(s.position.x / me.map.tileWidth) * me.map.tileWidth;
                 }
                 else if (s.action < 8) {
-                    s.changeAction(s.action % 4, true, true);
+                    s.changeAction(s.action % 4, {
+                        isSmart: true,
+                        isImmediate: true
+                    });
                 }
             }
             me.sprite.addAI(basicAI);
-
             switch (desc.type) {
-                case OCTankType.Player:
+                case OCConfig.TankType.Player:
 
                     let ai = new wesa.AI();
                     ai.execute = function () {
@@ -245,16 +225,16 @@
 
 
                     break;
-                case OCTankType.Light:
+                case OCConfig.TankType.Light:
 
                     break;
-                case OCTankType.Agile:
+                case OCConfig.TankType.Agile:
 
                     break;
-                case OCTankType.Power:
+                case OCConfig.TankType.Power:
 
                     break;
-                case OCTankType.Heavy:
+                case OCConfig.TankType.Heavy:
 
                     break;
                 default:
@@ -289,17 +269,14 @@
                 posOffset = [10, 0];
                 v = [5, 0];
             }
-            let bullet = new wesa.Sprite({
-                object: wesa.assets.objectList[2],
+            let bullet = new OCBullet({
                 action: act,
                 team: this.sprite.team,
-                position: { x: s.position.x + posOffset[0], y: s.position.y + posOffset[1] },
-                scale: 2
-            });
-            bullet.velocity.x = v[0];
-            bullet.velocity.y = v[1];
-            bullet.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
-            s.scene.addSpriteToLayer(1, bullet);
+                position: { x: s.position.x + posOffset[0], y: s.position.y + posOffset[1] }
+            })
+            bullet.sprite.velocity.x = v[0];
+            bullet.sprite.velocity.y = v[1];
+            s.scene.addSpriteToLayer(1, bullet.sprite);
         };
 
         OCTank.prototype.die = function () {
@@ -314,11 +291,12 @@
             s.kill();
         }
 
+
         function OCEagle(desc) {
             this.sprite = new wesa.Sprite({
                 object: wesa.assets.objectList[7],
                 action: 0,
-                team: OCTeam.Enemy,
+                team: OCConfig.Team.Enemy,
                 position: { x: desc.position.x, y: desc.position.y },
                 scale: 2
             });
@@ -341,15 +319,41 @@
         }
 
 
+        function OCBullet(desc) {
+            this.sprite = new wesa.Sprite({
+                object: wesa.assets.objectList[2],
+                action: desc.action,
+                team: desc.team,
+                position: { x: desc.position.x, y: desc.position.y },
+                scale: 2
+            });
+            this.sprite.backref = this;
+            this.sprite.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
+        }
+
+        OCBullet.prototype.hit = function () {
+            let s = this.sprite;
+            s.scene.addSpriteToLayer(3, new wesa.Sprite({
+                object: wesa.assets.objectList[2],
+                action: 4,
+                team: 0,
+                position: { x: s.position.x, y: s.position.y },
+                scale: 2
+            }));
+            s.changeAction(s.action % 2 + 6, {
+                isSmart: false,
+                isImmediate: false
+            });
+        }
+
+
         return {
 
             Map: OCMap,
             Tank: OCTank,
             Eagle: OCEagle,
 
-            Team: OCTeam,
-            TankType: OCTankType,
-            TileType: OCTileType
+            config: OCConfig
 
         };
 

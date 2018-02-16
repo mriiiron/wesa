@@ -107,6 +107,13 @@
                     "x2Relative": 14,
                     "y1Relative": -14,
                     "y2Relative": 14
+                },
+                "hit": {
+                    "shape": "RECT",
+                    "x1Relative": -14,
+                    "x2Relative": 14,
+                    "y1Relative": -14,
+                    "y2Relative": 14
                 }
             }
         },
@@ -139,7 +146,16 @@
                 {
                     "name": "Steel",
                     "frameList": [0],
-                    "frameTimeList": [10]
+                    "frameTimeList": [10],
+                    "collision": {
+                        "hurt" : {
+                            "shape": "RECT",
+                            "x1Relative": -8,
+                            "x2Relative": 8,
+                            "y1Relative": -8,
+                            "y2Relative": 8
+                        }
+                    }
                 },
                 {
                     "name": "Woods",
@@ -154,22 +170,58 @@
                 {
                     "name": "Water",
                     "frameList": [5, 6, 7],
-                    "frameTimeList": [20, 20, 20]
+                    "frameTimeList": [20, 20, 20],
+                    "collision": {
+                        "hurt" : {
+                            "shape": "RECT",
+                            "x1Relative": -8,
+                            "x2Relative": 8,
+                            "y1Relative": -8,
+                            "y2Relative": 8
+                        }
+                    }
                 },
                 {
                     "name": "Brick A",
                     "frameList": [3],
-                    "frameTimeList": [10]
+                    "frameTimeList": [10],
+                    "collision": {
+                        "hurt" : {
+                            "shape": "RECT",
+                            "x1Relative": -4,
+                            "x2Relative": 4,
+                            "y1Relative": -4,
+                            "y2Relative": 4
+                        }
+                    }
                 },
                 {
                     "name": "Brick B",
                     "frameList": [8],
-                    "frameTimeList": [10]
+                    "frameTimeList": [10],
+                    "collision": {
+                        "hurt" : {
+                            "shape": "RECT",
+                            "x1Relative": -4,
+                            "x2Relative": 4,
+                            "y1Relative": -4,
+                            "y2Relative": 4
+                        }
+                    }
                 },
                 {
                     "name": "Solid",
                     "frameList": [4],
-                    "frameTimeList": [10]
+                    "frameTimeList": [10],
+                    "collision": {
+                        "hurt" : {
+                            "shape": "RECT",
+                            "x1Relative": -8,
+                            "x2Relative": 8,
+                            "y1Relative": -8,
+                            "y2Relative": 8
+                        }
+                    }
                 }
             ]
         },
@@ -267,23 +319,43 @@
                     "name": "Explosion Small",
                     "next": null,
                     "frameList": [5, 6, 7],
-                    "frameTimeList": [3, 3, 3],
+                    "frameTimeList": [3, 3, 3]
+                },
+                {
+                    "name": "Explosion Large",
+                    "next": null,
+                    "frameList": [5, 6, 7, 8, 9, 7],
+                    "frameTimeList": [5, 5, 5, 5, 5, 5]
+                },
+                {
+                    "name": "Wall Hitter Horizontal",
+                    "next": null,
+                    "frameList": [null],
+                    "frameTimeList": [3],
                     "collision": {
                         "hit" : {
-                            "shape": "CIRCLE",
-                            "centerRelative": {
-                                "x": 0,
-                                "y": 0
-                            },
-                            "radius": 10
+                            "shape": "RECT",
+                            "x1Relative": -8,
+                            "x2Relative": 8,
+                            "y1Relative": -1,
+                            "y2Relative": 1
                         }
                     }
                 },
                 {
-                    "name": "Explosion",
+                    "name": "Wall Hitter Vertical",
                     "next": null,
-                    "frameList": [5, 6, 7, 8, 9, 7],
-                    "frameTimeList": [5, 5, 5, 5, 5, 5]
+                    "frameList": [null],
+                    "frameTimeList": [3],
+                    "collision": {
+                        "hit" : {
+                            "shape": "RECT",
+                            "x1Relative": -1,
+                            "x2Relative": 1,
+                            "y1Relative": -8,
+                            "y2Relative": 8
+                        }
+                    }
                 }
             ],
             "defaultCollision": {

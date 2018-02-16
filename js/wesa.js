@@ -278,6 +278,14 @@
         }
 
 
+        // "wesa.stat" objects
+
+        const wesaStat = {
+            fps: 0,
+            collisionChecks: 0
+        }
+
+
         // "wesa.core" object
 
         const wesaCore = {
@@ -530,9 +538,9 @@
             return this.object.animList[this.action].frameList[this.frameNum];
         };
 
-        WESASprite.prototype.changeAction = function (newAction, isSmart = false, isImmediate = true) {
-            if (isSmart && this.action == newAction) { return; }
-            if (isImmediate) {
+        WESASprite.prototype.changeAction = function (newAction, options) {
+            if (options.isSmart && this.action == newAction) { return; }
+            if (options.isImmediate) {
                 this.action = newAction;
                 this.time = 0;
                 this.frameNum = 0;
@@ -585,7 +593,10 @@
                     this.frameNum = 0;
                     if (anim.next != null) {
                         if (anim.next != this.action) {
-                            this.changeAction(anim.next, false, true);
+                            this.changeAction(anim.next, {
+                                isSmart: false,
+                                isImmediate: true
+                            });
                         }
                     }
                     else {
@@ -600,7 +611,10 @@
             this.velocity.x += this.acceleration.x;
             this.velocity.y += this.acceleration.y;
             if (this.delayedActionChange) {
-                this.changeAction(this.delayedActionChange, false, true);
+                this.changeAction(this.delayedActionChange, {
+                    isSmart: false,
+                    isImmediate: true
+                });
                 this.delayedActionChange = null;
             }
         };
@@ -749,9 +763,9 @@
             sprite.scene = this;
         };
 
-        WESAScene.prototype.getCollisions = function (layerIndexes = null) {
+        WESAScene.prototype.getCollisions = function (options) {
             let listOfSpriteList = [];
-            if (layerIndexes) {
+            if (options.layerIndexes) {
                 for (let i = 0; i < layerIndexes.length; i++) {
                     if (this.layerList[layerIndexes[i]]) {
                         listOfSpriteList.push(this.layerList[layerIndexes[i]].spriteList);
@@ -766,11 +780,12 @@
                 }
             }
             let allSprites = [].concat.apply([], listOfSpriteList);
-            let collisions = [];
+            let collisions = [], count = 0;
             for (let i = 0; i < allSprites.length; i++) {
                 for (let j = 0; j < allSprites.length; j++) {
                     if (i == j) { continue; }
                     let si = allSprites[i], sj = allSprites[j];
+                    if (options.collisionMatrix && !options.collisionMatrix[si.object.type][sj.object.type]) { continue; }
                     let hit, hurt;
                     if (si.collision.mode == WESASprite.CollisionMode.BY_SPRITE) {
                         hit = si.collision.hit;
@@ -872,9 +887,11 @@
                                 });
                             }
                         }
+                        count++;
                     }
                 }
             }
+            wesaStat.collisionChecks = count;
             return collisions;
         };
 
@@ -915,7 +932,8 @@
             // Objects
             core: wesaCore,
             assets: wesaAssets,
-            camera: wesaCamera
+            camera: wesaCamera,
+            stat: wesaStat
 
         };
 

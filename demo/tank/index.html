@@ -110,20 +110,20 @@
             for (let i = 0; i < collisions.length; i++) {
                 let hitter = collisions[i].hitter, hurter = collisions[i].hurter;
                 if (hitter.team == hurter.team) { continue; }
-                if (hitter.object.type == 1 && hurter.object.type == 0) {
-                    hurter.position.x = hurter.prevPosition.x;
-                    hurter.position.y = hurter.prevPosition.y;
+                if (hitter.object.type == OC.config.ObjectType.Tank && hurter.object.type == OC.config.ObjectType.Stationary) {
+                    hitter.position.x = hitter.prevPosition.x;
+                    hitter.position.y = hitter.prevPosition.y;
                 }
-                else if (hitter.object.type == 2) {
+                else if (hitter.object.type == OC.config.ObjectType.Mobile) {
                     if (hitter.action <= 3) {
                         hitter.velocity.x = 0;
                         hitter.velocity.y = 0;
-                        hitter.changeAction(4, false, false);
-                        if (hurter.object.type == 0) {
+                        hitter.backref.hit();
+                        if (hurter.object.type == OC.config.ObjectType.Tank) {
                             hurter.backref.die();
                         }
                     }
-                    else if (hitter.action == 4 && hurter.object.type == 1) {
+                    else if (hitter.action >= 6 && hurter.object.type == OC.config.ObjectType.Stationary) {
                         if (hurter.action == 5 || hurter.action == 6) {
                             hurter.kill();
                         }
@@ -160,9 +160,8 @@
                 position: { x: 0, y: -192 }
             }));
             let playerTank = new OC.Tank({
-                scene: scene,
-                type: OC.TankType.Player,
-                team: OC.Team.Player,
+                type: OC.config.TankType.Player,
+                team: OC.config.Team.Player,
                 position: { x: -64, y: -192 },
                 speed: 1
             });
@@ -182,7 +181,10 @@
                 requestAnimationFrame(animate);
                 takeControl(playerTank, keyStatus);
                 scene.update();
-                processCollision(scene.getCollisions());
+                processCollision(scene.getCollisions({
+                    collisionMatrix: OC.config.CollisionMatrix
+                }));
+                document.getElementById('output').innerText = wesa.stat.collisionChecks;
                 scene.render();
                 // wesa.camera.position.x = playerTank.sprite.position.x;
                 // wesa.camera.position.y = playerTank.sprite.position.y;
