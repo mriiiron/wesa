@@ -46,6 +46,18 @@
             this.width = canvas.width = img.naturalWidth;
             this.height = canvas.height = img.naturalHeight;
             this.data = [];
+            this.eagleSpawnPoint = {
+                x: 12,
+                y: 0
+            };
+            this.playerSpawnPoint = [
+                { x: 8, y: 0 },
+            ];
+            this.enemySpawnPoint = [
+                { x: 0, y: 24 },
+                { x: 12, y: 24 },
+                { x: 24, y: 24 },
+            ];
             this.tileWidth = desc.tileWidth;
             this.tileHeight = desc.tileHeight;
             context.drawImage(img, 0, 0);
@@ -88,6 +100,8 @@
         OCMap.prototype.draw = function () {
             let w = this.width, h = this.height;
             let tw = this.tileWidth, th = this.tileHeight;
+
+            // Draw tiles
             for (let i = 0; i < this.data.length; i++) {
                 let tile = this.data[i];
                 let row = Math.floor(i / w);
@@ -161,6 +175,42 @@
                     solidBit.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
                 }
             }
+
+            // Draw walls
+            let wallPos = [[0, th * (h + 2) / 2], [0, -th * (h + 2) / 2], [tw * (w + 2) / 2, 0], [-tw * (w + 2) / 2, 0]];
+            let wallScale = [[30, 2], [30, 2], [2, 30], [2, 30]];
+            let wallColl = [[tw * w / 2, th], [tw * w / 2, th], [tw, th * h / 2], [tw, th * h / 2]];
+            for (let i = 0; i < wallPos.length; i++) {
+                let wall = new wesa.Sprite({
+                    object: wesa.assets.objectList[1],
+                    action: 7,
+                    team: 0,
+                    position: { x: wallPos[i][0], y: wallPos[i][1] },
+                    scale: { x: wallScale[i][0], y: wallScale[i][1] }
+                });
+                wall.collision.hurt = {
+                    shape: wesa.Sprite.CollisionShape.RECT,
+                    x1Relative: -wallColl[i][0],
+                    x2Relative: wallColl[i][0],
+                    y1Relative: -wallColl[i][1],
+                    y2Relative: wallColl[i][1]
+                };
+                this.scene.addSpriteToLayer(0, wall);
+            }
+
+            // Spawn
+            // map.spawn(new OC.Eagle({
+            //     scene: scene,
+            //     position: { x: 0, y: -192 }
+            // }));
+            // let playerTank = new OC.Tank({
+            //     type: OC.config.TankType.Player,
+            //     team: OC.config.Team.Player,
+            //     position: { x: -64, y: -192 },
+            //     speed: 1
+            // });
+            // map.spawn(playerTank);
+
         };
 
 
@@ -174,7 +224,16 @@
                 position: { x: desc.position.x, y: desc.position.y },
                 scale: 2
             });
-
+            let snap = function (val, gridSize, tolerance) {
+                let norm = val / gridSize;
+                let frac = norm - Math.floor(norm);
+                if (frac >= tolerance / gridSize && frac <= 1 - tolerance / gridSize) {
+                    return val;
+                }
+                else {
+                    return Math.round(val / gridSize) * gridSize;
+                }
+            };
             let basicAI = new wesa.AI();
             basicAI.execute = function () {
                 let s = this.self;
@@ -183,28 +242,28 @@
                         isSmart: true,
                         isImmediate: true
                     });
-                    s.position.y = Math.round(s.position.y / me.map.tileHeight) * me.map.tileHeight;
+                    s.position.y = snap(s.position.y, me.map.tileHeight, me.map.tileHeight / 4);
                 }
                 else if (s.velocity.x > 0) {
                     s.changeAction(7, {
                         isSmart: true,
                         isImmediate: true
                     });
-                    s.position.y = Math.round(s.position.y / me.map.tileHeight) * me.map.tileHeight;
+                    s.position.y = snap(s.position.y, me.map.tileHeight, me.map.tileHeight / 4);
                 }
                 else if (s.velocity.y < 0) {
                     s.changeAction(6, {
                         isSmart: true,
                         isImmediate: true
                     });
-                    s.position.x = Math.round(s.position.x / me.map.tileWidth) * me.map.tileWidth;
+                    s.position.x = snap(s.position.x, me.map.tileWidth, me.map.tileWidth / 4);
                 }
                 else if (s.velocity.y > 0) {
                     s.changeAction(4, {
                         isSmart: true,
                         isImmediate: true
                     });
-                    s.position.x = Math.round(s.position.x / me.map.tileWidth) * me.map.tileWidth;
+                    s.position.x = snap(s.position.x, me.map.tileWidth, me.map.tileWidth / 4);
                 }
                 else if (s.action < 8) {
                     s.changeAction(s.action % 4, {

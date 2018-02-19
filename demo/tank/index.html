@@ -155,17 +155,6 @@
                 tileHeight: 16
             });
             map.draw();
-            map.spawn(new OC.Eagle({
-                scene: scene,
-                position: { x: 0, y: -192 }
-            }));
-            let playerTank = new OC.Tank({
-                type: OC.config.TankType.Player,
-                team: OC.config.Team.Player,
-                position: { x: -64, y: -192 },
-                speed: 1
-            });
-            map.spawn(playerTank);
 
             // let enemyTank = new BC.Tank({
             //     scene: scene,

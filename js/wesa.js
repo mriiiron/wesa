@@ -501,7 +501,7 @@
             this.action = desc.action;
             this.team = desc.team;
             this.position = { x: desc.position.x, y: desc.position.y };
-            this.scale = desc.scale;
+            this.scale = (typeof(desc.scale) == "number" ? { x: desc.scale, y: desc.scale } : { x: desc.scale.x, y: desc.scale.y });
             this.prevPosition = { x: 0, y: 0 };
             this.aiList = [];
             this.velocity = { x: 0, y: 0 };
@@ -627,43 +627,6 @@
         }
 
 
-        function WESATiledSprite(desc) {
-            this.object = desc.object;
-            this.action = desc.action;
-            this.position = { x: desc.position.x, y: desc.position.y };
-            this.scale = desc.scale;
-            this.width = desc.width;
-            this.height = desc.height;
-            this.texOffset = { x: 0.0, y: 0.0 };
-            this.scene = null;
-            this.frameNum = 0;
-            this.time = 0;
-        }
-
-        WESATiledSprite.prototype.getCurrentAnim = function () {
-            return this.object.animList[this.action];
-        };
-
-        WESATiledSprite.prototype.getCurrentFrame = function () {
-            return this.object.animList[this.action].frameList[this.frameNum];
-        };
-
-        WESATiledSprite.prototype.update = function () {
-            let anim = this.object.animList[this.action];
-            let animFrameCount = anim.frameList.length;
-            this.time++;
-            if (this.time >= anim.endTimeList[this.frameNum]) {
-                this.frameNum++;
-                if (this.time >= anim.endTimeList[animFrameCount - 1]) {
-                    this.time = 0;
-                }
-                if (this.frameNum >= animFrameCount) {
-                    this.frameNum = 0;
-                }
-            }
-        };
-
-
         function WESALayer(desc) {
             this.lid = desc.lid;
             this.spriteList = [];
@@ -700,10 +663,10 @@
                         let ssid = frame.spriteSheet.ssid;
                         let x1, x2, y1, y2, texClip;
                         if (sprite instanceof WESASprite) {
-                            x1 = sprite.position.x - frame.center.x * sprite.scale;
-                            x2 = x1 + frame.width * sprite.scale;
-                            y1 = sprite.position.y - frame.center.y * sprite.scale;
-                            y2 = y1 + frame.height * sprite.scale;
+                            x1 = sprite.position.x - frame.center.x * sprite.scale.x;
+                            x2 = x1 + frame.width * sprite.scale.x;
+                            y1 = sprite.position.y - frame.center.y * sprite.scale.y;
+                            y2 = y1 + frame.height * sprite.scale.y;
                             texClip = frame.spriteSheet.getTextureClipByPosition(frame.cell.row, frame.cell.col, frame.cell.rowSpan, frame.cell.colSpan);
                         }
                         else {
@@ -925,7 +888,6 @@
             Animation: WESAAnimation,
             StoredObject: WESAObject,
             Sprite: WESASprite,
-            TiledSprite: WESATiledSprite,
             AI: WESAAI,
             Scene: WESAScene,
 

@@ -8,7 +8,7 @@
         },
         {
             "rowCount": 2,
-            "colCount": 7,
+            "colCount": 6,
             "cellWidth": 8,
             "cellHeight": 8
         }
@@ -103,17 +103,17 @@
             "defaultCollision": {
                 "hurt": {
                     "shape": "RECT",
-                    "x1Relative": -14,
-                    "x2Relative": 14,
-                    "y1Relative": -14,
-                    "y2Relative": 14
+                    "x1Relative": -15,
+                    "x2Relative": 15,
+                    "y1Relative": -15,
+                    "y2Relative": 15
                 },
                 "hit": {
                     "shape": "RECT",
-                    "x1Relative": -14,
-                    "x2Relative": 14,
-                    "y1Relative": -14,
-                    "y2Relative": 14
+                    "x1Relative": -15,
+                    "x2Relative": 15,
+                    "y1Relative": -15,
+                    "y2Relative": 15
                 }
             }
         },
@@ -129,11 +129,26 @@
                         "rowStart": 0,
                         "colStart": 2,
                         "rowCount": 2,
-                        "colCount": 5
+                        "colCount": 4
                     },
                     "center": {
                         "x": 4,
                         "y": 4
+                    }
+                },
+                {
+                    "loadMode": "single",
+                    "spriteSheet": 0,
+                    "id": 8,
+                    "cell": {
+                        "row": 16,
+                        "col": 10,
+                        "rowSpan": 1,
+                        "colSpan": 1
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
                     }
                 }
             ],
@@ -169,7 +184,7 @@
                 },
                 {
                     "name": "Water",
-                    "frameList": [5, 6, 7],
+                    "frameList": [4, 5, 6],
                     "frameTimeList": [20, 20, 20],
                     "collision": {
                         "hurt" : {
@@ -197,7 +212,7 @@
                 },
                 {
                     "name": "Brick B",
-                    "frameList": [8],
+                    "frameList": [7],
                     "frameTimeList": [10],
                     "collision": {
                         "hurt" : {
@@ -210,18 +225,9 @@
                     }
                 },
                 {
-                    "name": "Solid",
-                    "frameList": [4],
-                    "frameTimeList": [10],
-                    "collision": {
-                        "hurt" : {
-                            "shape": "RECT",
-                            "x1Relative": -8,
-                            "x2Relative": 8,
-                            "y1Relative": -8,
-                            "y2Relative": 8
-                        }
-                    }
+                    "name": "Wall",
+                    "frameList": [8],
+                    "frameTimeList": [10]
                 }
             ]
         },
@@ -337,8 +343,8 @@
                             "shape": "RECT",
                             "x1Relative": -8,
                             "x2Relative": 8,
-                            "y1Relative": -1,
-                            "y2Relative": 1
+                            "y1Relative": -2,
+                            "y2Relative": 2
                         }
                     }
                 },
@@ -350,8 +356,8 @@
                     "collision": {
                         "hit" : {
                             "shape": "RECT",
-                            "x1Relative": -1,
-                            "x2Relative": 1,
+                            "x1Relative": -2,
+                            "x2Relative": 2,
                             "y1Relative": -8,
                             "y2Relative": 8
                         }
@@ -458,10 +464,10 @@
             "defaultCollision": {
                 "hurt": {
                     "shape": "RECT",
-                    "x1Relative": -14,
-                    "x2Relative": 14,
-                    "y1Relative": -14,
-                    "y2Relative": 14
+                    "x1Relative": -15,
+                    "x2Relative": 15,
+                    "y1Relative": -15,
+                    "y2Relative": 15
                 }
             }
         },
@@ -518,10 +524,10 @@
             "defaultCollision": {
                 "hurt": {
                     "shape": "RECT",
-                    "x1Relative": -14,
-                    "x2Relative": 14,
-                    "y1Relative": -14,
-                    "y2Relative": 14
+                    "x1Relative": -15,
+                    "x2Relative": 15,
+                    "y1Relative": -15,
+                    "y2Relative": 15
                 }
             }
         }
