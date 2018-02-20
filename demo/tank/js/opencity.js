@@ -37,6 +37,45 @@
             ]
         });
 
+        const OCReference = {
+            player: null,
+            keyStatus: {
+                up: false,
+                down: false,
+                left: false,
+                right: false,
+                fire: false
+            }
+        };
+
+        const OCFunctions = {
+            processCollision: function (collisions) {
+                for (let i = 0; i < collisions.length; i++) {
+                    let hitter = collisions[i].hitter, hurter = collisions[i].hurter;
+                    if (hitter.team == hurter.team) { continue; }
+                    if (hitter.object.type == OC.config.ObjectType.Tank && hurter.object.type == OC.config.ObjectType.Stationary) {
+                        hitter.position.x = hitter.prevPosition.x;
+                        hitter.position.y = hitter.prevPosition.y;
+                    }
+                    else if (hitter.object.type == OC.config.ObjectType.Mobile) {
+                        if (hitter.action <= 3) {
+                            hitter.velocity.x = 0;
+                            hitter.velocity.y = 0;
+                            hitter.backref.hit();
+                            if (hurter.object.type == OC.config.ObjectType.Tank) {
+                                hurter.backref.die();
+                            }
+                        }
+                        else if (hitter.action >= 6 && hurter.object.type == OC.config.ObjectType.Stationary) {
+                            if (hurter.action == 5 || hurter.action == 6) {
+                                hurter.kill();
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
 
         function OCMap(desc) {
             let img = document.getElementById(desc.imgID);
@@ -46,17 +85,12 @@
             this.width = canvas.width = img.naturalWidth;
             this.height = canvas.height = img.naturalHeight;
             this.data = [];
-            this.eagleSpawnPoint = {
-                x: 12,
-                y: 0
-            };
-            this.playerSpawnPoint = [
-                { x: 8, y: 0 },
-            ];
+            this.eagleSpawnPoint = { row: 0, col: 12 };
+            this.playerSpawnPoint = { row: 0, col: 8 };
             this.enemySpawnPoint = [
-                { x: 0, y: 24 },
-                { x: 12, y: 24 },
-                { x: 24, y: 24 },
+                { row: 24, col: 0 },
+                { row: 24, col: 12 },
+                { row: 24, col: 24 },
             ];
             this.tileWidth = desc.tileWidth;
             this.tileHeight = desc.tileHeight;
@@ -198,27 +232,28 @@
                 this.scene.addSpriteToLayer(0, wall);
             }
 
-            // Spawn
-            // map.spawn(new OC.Eagle({
-            //     scene: scene,
-            //     position: { x: 0, y: -192 }
-            // }));
-            // let playerTank = new OC.Tank({
-            //     type: OC.config.TankType.Player,
-            //     team: OC.config.Team.Player,
-            //     position: { x: -64, y: -192 },
-            //     speed: 1
-            // });
-            // map.spawn(playerTank);
+            // Spawn Things
+            this.spawn(new OCEagle({
+                scene: this.scene,
+                position: { x: tw * (1 + this.eagleSpawnPoint.col - w / 2), y: th * (1 + this.eagleSpawnPoint.row - h / 2) }
+            }));
+            OCReference.player = new OCTank({
+                type: OCConfig.TankType.Player,
+                team: OCConfig.Team.Player,
+                position: { x: tw * (1 + this.playerSpawnPoint.col - w / 2), y: th * (1 + this.playerSpawnPoint.row - h / 2) },
+                speed: 1
+            });
+            this.spawn(OCReference.player);
 
         };
 
 
         function OCTank(desc) {
             let me = this;
+            me.type = desc.type;
             me.speed = desc.speed;
             me.sprite = new wesa.Sprite({
-                object: wesa.assets.objectList[desc.type],
+                object: wesa.assets.objectList[me.type],
                 action: 8,
                 team: desc.team,
                 position: { x: desc.position.x, y: desc.position.y },
@@ -273,28 +308,18 @@
                 }
             }
             me.sprite.addAI(basicAI);
-            switch (desc.type) {
-                case OCConfig.TankType.Player:
-
-                    let ai = new wesa.AI();
-                    ai.execute = function () {
-
-                    };
-                    this.sprite.addAI(ai);
-
-
-                    break;
+            switch (me.type) {
                 case OCConfig.TankType.Light:
-
+                    // TODO
                     break;
                 case OCConfig.TankType.Agile:
-
+                    // TODO
                     break;
                 case OCConfig.TankType.Power:
-
+                    // TODO
                     break;
                 case OCConfig.TankType.Heavy:
-
+                    // TODO
                     break;
                 default:
                     break;
@@ -303,6 +328,39 @@
             this.sprite.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
             this.cooldown = 0;
         }
+
+        OCTank.prototype.takeControl = function (keyStatus) {
+            if (this.type == OCConfig.TankType.Player && this.sprite.action < 8) {
+                let s = this.sprite;
+                if (keyStatus.left && !keyStatus.right) {
+                    s.velocity.x = -this.speed;
+                    s.velocity.y = 0;
+                }
+                else if (!keyStatus.left && keyStatus.right) {
+                    s.velocity.x = this.speed;
+                    s.velocity.y = 0;
+                }
+                else if (keyStatus.up && !keyStatus.down) {
+                    s.velocity.x = 0;
+                    s.velocity.y = this.speed;
+                }
+                else if (!keyStatus.up && keyStatus.down) {
+                    s.velocity.x = 0;
+                    s.velocity.y = -this.speed;
+                }
+                else {
+                    if (s.action >= 4 && s.action <= 7) {
+                        s.velocity.x = 0;
+                        s.velocity.y = 0;
+                    }
+                }
+                if (this.cooldown > 0) { this.cooldown--; }
+                if (this.cooldown == 0 && keyStatus.fire) {
+                    this.fire();
+                    this.cooldown = 40;
+                }
+            }
+        };
 
         OCTank.prototype.fire = function () {
             let s = this.sprite;
@@ -374,7 +432,10 @@
                 scale: 2
             }));
             s.collision.hurt = null;
-            s.changeAction(1);
+            s.changeAction(1, {
+                isSmart: true,
+                isImmediate: true
+            });
         }
 
 
@@ -407,13 +468,12 @@
 
 
         return {
-
             Map: OCMap,
             Tank: OCTank,
             Eagle: OCEagle,
-
-            config: OCConfig
-
+            config: OCConfig,
+            ref: OCReference,
+            func: OCFunctions
         };
 
     }

@@ -15,69 +15,26 @@
     <div class="dynamic-output" id="output"><img src="./assets/stage_1.png" id="map" /></div>
 
     <script src="../../js/wesa.js"></script>
-    <script src="./js/bc.js"></script>
+    <script src="./js/opencity.js"></script>
 
     <script>
-
-        let playerTank = null;
-
-        let keyStatus = {
-            up: false,
-            down: false,
-            left: false,
-            right: false,
-            fire: false
-        };
-
-        let canvas = document.getElementById('canvas');
-
-        function takeControl(t, k) {
-            let s = t.sprite;
-            if (k.left && !k.right) {
-                s.velocity.x = -t.speed;
-                s.velocity.y = 0;
-            }
-            else if (!k.left && k.right) {
-                s.velocity.x = t.speed;
-                s.velocity.y = 0;
-            }
-            else if (k.up && !k.down) {
-                s.velocity.x = 0;
-                s.velocity.y = t.speed;
-            }
-            else if (!k.up && k.down) {
-                s.velocity.x = 0;
-                s.velocity.y = -t.speed;
-            }
-            else {
-                if (s.action >= 4 && s.action <= 7) {
-                    s.velocity.x = 0;
-                    s.velocity.y = 0;
-                }
-            }
-            if (t.cooldown > 0) { t.cooldown--; }
-            if (t.cooldown == 0 && k.fire) {
-                t.fire();
-                t.cooldown = 50;
-            }
-        }
 
         document.onkeydown = function (e) {
             switch (e.key) {
                 case 'ArrowUp':
-                    keyStatus.up = true;
+                    OC.ref.keyStatus.up = true;
                     break;
                 case 'ArrowDown':
-                    keyStatus.down = true;
+                    OC.ref.keyStatus.down = true;
                     break;
                 case 'ArrowLeft':
-                    keyStatus.left = true;
+                    OC.ref.keyStatus.left = true;
                     break;
                 case 'ArrowRight':
-                    keyStatus.right = true;
+                    OC.ref.keyStatus.right = true;
                     break;
                 case 'z':
-                    keyStatus.fire = true;
+                    OC.ref.keyStatus.fire = true;
                     break;
                 default:
                     break;
@@ -87,49 +44,23 @@
         document.onkeyup = function (e) {
             switch (e.key) {
                 case 'ArrowUp':
-                    keyStatus.up = false;
+                    OC.ref.keyStatus.up = false;
                     break;
                 case 'ArrowDown':
-                    keyStatus.down = false;
+                    OC.ref.keyStatus.down = false;
                     break;
                 case 'ArrowLeft':
-                    keyStatus.left = false;
+                    OC.ref.keyStatus.left = false;
                     break;
                 case 'ArrowRight':
-                    keyStatus.right = false;
+                    OC.ref.keyStatus.right = false;
                     break;
                 case 'z':
-                    keyStatus.fire = false;
+                    OC.ref.keyStatus.fire = false;
                     break;
                 default:
                     break;
              }
-        }
-
-        function processCollision(collisions) {
-            for (let i = 0; i < collisions.length; i++) {
-                let hitter = collisions[i].hitter, hurter = collisions[i].hurter;
-                if (hitter.team == hurter.team) { continue; }
-                if (hitter.object.type == OC.config.ObjectType.Tank && hurter.object.type == OC.config.ObjectType.Stationary) {
-                    hitter.position.x = hitter.prevPosition.x;
-                    hitter.position.y = hitter.prevPosition.y;
-                }
-                else if (hitter.object.type == OC.config.ObjectType.Mobile) {
-                    if (hitter.action <= 3) {
-                        hitter.velocity.x = 0;
-                        hitter.velocity.y = 0;
-                        hitter.backref.hit();
-                        if (hurter.object.type == OC.config.ObjectType.Tank) {
-                            hurter.backref.die();
-                        }
-                    }
-                    else if (hitter.action >= 6 && hurter.object.type == OC.config.ObjectType.Stationary) {
-                        if (hurter.action == 5 || hurter.action == 6) {
-                            hurter.kill();
-                        }
-                    }
-                }
-            }
         }
 
         // Initialize WESA
@@ -148,6 +79,7 @@
             // Create the scene
             let scene = new wesa.Scene('Scene');
 
+            // Create the map on the scene
             let map = new OC.Map({
                 scene: scene,
                 imgID: 'map',
@@ -156,27 +88,14 @@
             });
             map.draw();
 
-            // let enemyTank = new BC.Tank({
-            //     scene: scene,
-            //     type: BC.TankType.Light,
-            //     team: BC.Team.Enemy,
-            //     position: { x: -144, y: 56 },
-            //     speed: 1
-            // });
-            // enemyTank.spawn();
-
             // Run the scene
             let animate = function () {
                 requestAnimationFrame(animate);
-                takeControl(playerTank, keyStatus);
+                OC.ref.player.takeControl(OC.ref.keyStatus);
                 scene.update();
-                processCollision(scene.getCollisions({
-                    collisionMatrix: OC.config.CollisionMatrix
-                }));
+                OC.func.processCollision(scene.getCollisions({ collisionMatrix: OC.config.CollisionMatrix }));
                 document.getElementById('output').innerText = wesa.stat.collisionChecks;
                 scene.render();
-                // wesa.camera.position.x = playerTank.sprite.position.x;
-                // wesa.camera.position.y = playerTank.sprite.position.y;
             }
             animate();
 
