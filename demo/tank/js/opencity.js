@@ -245,10 +245,51 @@
             });
             this.spawn(OCReference.player);
 
+            this.spawn(new OCTank({
+                type: OCConfig.TankType.Light,
+                team: OCConfig.Team.Enemy,
+                position: { x: tw * (1 + this.enemySpawnPoint[0].col - w / 2), y: th * (1 + this.enemySpawnPoint[0].row - h / 2) },
+                speed: 1
+            }));
+
         };
 
 
         function OCTank(desc) {
+
+            function snap(val, gridSize, tolerance) {
+                let norm = val / gridSize;
+                let frac = norm - Math.floor(norm);
+                if (frac >= tolerance / gridSize && frac <= 1 - tolerance / gridSize) {
+                    return val;
+                }
+                else {
+                    return Math.round(val / gridSize) * gridSize;
+                }
+            }
+
+            function move(t, p) {
+                for (let i = 1; i <= 3; i++) { p[i] += p[i - 1]; }
+                let s = t.sprite;
+                let r = Math.random();
+                if (r < p[0]) {
+                    s.velocity.x = 0;
+                    s.velocity.y = t.speed;
+                }
+                else if (r < p[1]) {
+                    s.velocity.x = -t.speed;
+                    s.velocity.y = 0;
+                }
+                else if (r < p[2]) {
+                    s.velocity.x = 0;
+                    s.velocity.y = -t.speed;
+                }
+                else if (r < p[3]) {
+                    s.velocity.x = t.speed;
+                    s.velocity.y = 0;
+                }
+            }
+
             let me = this;
             me.type = desc.type;
             me.speed = desc.speed;
@@ -259,18 +300,8 @@
                 position: { x: desc.position.x, y: desc.position.y },
                 scale: 2
             });
-            let snap = function (val, gridSize, tolerance) {
-                let norm = val / gridSize;
-                let frac = norm - Math.floor(norm);
-                if (frac >= tolerance / gridSize && frac <= 1 - tolerance / gridSize) {
-                    return val;
-                }
-                else {
-                    return Math.round(val / gridSize) * gridSize;
-                }
-            };
-            let basicAI = new wesa.AI();
-            basicAI.execute = function () {
+            me.sprite.backref = this;
+            me.sprite.addAIWithExecFunc(function () {
                 let s = this.self;
                 if (s.velocity.x < 0) {
                     s.changeAction(5, {
@@ -306,11 +337,26 @@
                         isImmediate: true
                     });
                 }
-            }
-            me.sprite.addAI(basicAI);
+            });
             switch (me.type) {
                 case OCConfig.TankType.Light:
-                    // TODO
+
+                    let ai = new wesa.AI();
+                    ai.tick = 0;
+                    ai.execute = function () {
+                        let s = this.self;
+                        if (ai.tick == 0) {
+                            if (s.action < 8) {
+                                move(s.backref, [0.25, 0.25, 0.25, 0.25]);
+                            }
+                            ai.tick = 30;
+                        }
+                        else {
+                            ai.tick--;
+                        }
+                    };
+                    me.sprite.addAI(ai);
+
                     break;
                 case OCConfig.TankType.Agile:
                     // TODO
@@ -324,7 +370,6 @@
                 default:
                     break;
             }
-            this.sprite.backref = this;
             this.sprite.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
             this.cooldown = 0;
         }

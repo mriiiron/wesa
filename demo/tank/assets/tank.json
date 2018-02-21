@@ -101,14 +101,14 @@
                 }
             ],
             "defaultCollision": {
-                "hurt": {
+                "hit": {
                     "shape": "RECT",
                     "x1Relative": -15,
                     "x2Relative": 15,
                     "y1Relative": -15,
                     "y2Relative": 15
                 },
-                "hit": {
+                "hurt": {
                     "shape": "RECT",
                     "x1Relative": -15,
                     "x2Relative": 15,
@@ -462,6 +462,13 @@
                 }
             ],
             "defaultCollision": {
+                "hit": {
+                    "shape": "RECT",
+                    "x1Relative": -15,
+                    "x2Relative": 15,
+                    "y1Relative": -15,
+                    "y2Relative": 15
+                },
                 "hurt": {
                     "shape": "RECT",
                     "x1Relative": -15,

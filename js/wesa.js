@@ -562,16 +562,27 @@
                     break;
                 }
             }
-        }
+        };
 
         WESASprite.prototype.addAI = function (ai) {
             ai.self = this;
             this.aiList.push(ai);
         };
 
+        WESASprite.prototype.addAIWithExecFunc = function (exec) {
+            if (typeof(exec) != "function") {
+                console.error('WESASprite: Parameter of addAIWithExecFunc() must be function. Object: "' + this.object.name + '"');
+                return;
+            }
+            let ai = new WESAAI();
+            ai.execute = exec;
+            ai.self = this;
+            this.aiList.push(ai);
+        };
+
         WESASprite.prototype.kill = function () {
             this.deadFlag = true;
-        }
+        };
 
         WESASprite.prototype.update = function () {
             for (let i = 0; i < this.aiList.length; i++) {
