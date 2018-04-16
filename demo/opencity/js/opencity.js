@@ -204,7 +204,6 @@
                 }
                 for (let i = 0; i < collisions.length; i++) {
                     let hitter = collisions[i].hitter, hurter = collisions[i].hurter;
-                    if (hitter.team == hurter.team) { continue; }
 
                     // Tank collides with stationary
                     if (hitter.object.type == OCConfig.ObjectType.Tank && hurter.object.type == OCConfig.ObjectType.Stationary) {
@@ -218,7 +217,7 @@
                         hitter.position.y = hitter.prevPosition.y;
                     }
 
-                    else if (hitter.object.type == OCConfig.ObjectType.Mobile) {
+                    else if (hitter.team != hurter.team && hitter.object.type == OCConfig.ObjectType.Mobile) {
 
                         // Bullet (action < 4) hits
                         if (hitter.action < 4) {
@@ -379,7 +378,7 @@
             }
         };
 
-        OCMap.prototype.draw = function () {
+        OCMap.prototype.reset = function () {
             let w = this.width, h = this.height;
             let tw = this.tileWidth, th = this.tileHeight;
 
@@ -479,6 +478,10 @@
                 };
                 this.scene.addSpriteToLayer(0, wall);
             }
+
+            // Clear references
+            OCReference.enemies = [];
+            OCReference.enemySpawners = [];
 
             // Spawn Things
             this.spawnEagle();
