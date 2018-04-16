@@ -94,10 +94,7 @@
                     "name": "Spawn",
                     "next": 0,
                     "frameList": [32, 33, 34, 35, 34, 33, 32, 33, 34, 35, 34, 33, 32, 33, 34, 35],
-                    "frameTimeList": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-                    "collision": {
-                        "hurt": null
-                    }
+                    "frameTimeList": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
                 }
             ],
             "defaultCollision": {
@@ -362,10 +359,32 @@
                             "y2Relative": 8
                         }
                     }
+                },
+                {
+                    "name": "Enemy Spawner",
+                    "frameList": [null],
+                    "frameTimeList": [10],
+                    "collision": {
+                        "hit": {
+                            "shape": "RECT",
+                            "x1Relative": -15,
+                            "x2Relative": 15,
+                            "y1Relative": -15,
+                            "y2Relative": 15
+                        }
+                    }
                 }
             ],
             "defaultCollision": {
                 "hit": {
+                    "shape": "CIRCLE",
+                    "centerRelative": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "radius": 3
+                },
+                "hurt": {
                     "shape": "CIRCLE",
                     "centerRelative": {
                         "x": 0,
@@ -455,10 +474,7 @@
                     "name": "Spawn",
                     "next": 0,
                     "frameList": [8, 9, 10, 11, 10, 9, 8, 9, 10, 11, 10, 9, 8, 9, 10, 11],
-                    "frameTimeList": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-                    "collision": {
-                        "hurt": null
-                    }
+                    "frameTimeList": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
                 }
             ],
             "defaultCollision": {

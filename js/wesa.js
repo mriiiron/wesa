@@ -282,7 +282,8 @@
 
         const wesaStat = {
             fps: 0,
-            collisionChecks: 0
+            collisionChecks: 0,
+            collisionsDetected: 0
         }
 
 
@@ -649,7 +650,7 @@
         };
 
         WESALayer.prototype.update = function () {
-            var sList = this.spriteList;
+            let sList = this.spriteList;
             for (let i = 0; i < sList.length; i++) {
                 if (!sList[i].deadFlag) {
                     sList[i].update();
@@ -735,6 +736,10 @@
             this.layerList[layerIndex].addSprite(sprite);
             sprite.layer = this.layerList[layerIndex];
             sprite.scene = this;
+        };
+
+        WESAScene.prototype.clear = function () {
+            this.layerList = [];
         };
 
         WESAScene.prototype.getCollisions = function (options) {
@@ -866,6 +871,7 @@
                 }
             }
             wesaStat.collisionChecks = count;
+            wesaStat.collisionsDetected = collisions.length;
             return collisions;
         };
 

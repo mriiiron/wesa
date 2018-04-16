@@ -1,0 +1,55 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.wrapper {
+    margin: auto;
+}
+
+ul.maps {
+    padding: 0;
+}
+
+ul.maps li {
+    display: inline-block;
+    padding-bottom: 2px;
+    margin-right: 5px;
+    border-bottom: 1px dashed dimgray;
+    cursor: pointer;
+}
+
+ul.maps li:hover {
+    border-bottom: 1px dashed white;
+}
+
+ul.maps li.active {
+    border-bottom: 1px dashed white;
+}
+
+.dynamic-output {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    color: white;
+}
+
+#canvas {
+    border: 1px dashed grey;
+}
+
+a {
+    color: #9c4a00;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

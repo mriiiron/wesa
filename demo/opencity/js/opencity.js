@@ -39,6 +39,9 @@
 
         const OCReference = {
             player: null,
+            eagle: null,
+            enemies: [],
+            enemySpawners: [],
             keyStatus: {
                 up: false,
                 down: false,
@@ -48,29 +51,207 @@
             }
         };
 
+        function snap(val, gridSize, tolerance) {
+            let norm = val / gridSize;
+            let frac = norm - Math.floor(norm);
+            if (frac >= tolerance / gridSize && frac <= 1 - tolerance / gridSize) {
+                return val;
+            }
+            else {
+                return Math.round(val / gridSize) * gridSize;
+            }
+        }
+
+        function move(t, p) {
+            // up, down, left, right
+            for (let i = 1; i <= 3; i++) { p[i] += p[i - 1]; }
+            let s = t.sprite;
+            let r = Math.random();
+            if (r < p[0]) {
+                s.velocity.x = 0;
+                s.velocity.y = t.speed;
+            }
+            else if (r < p[1]) {
+                s.velocity.x = 0;
+                s.velocity.y = -t.speed;
+            }
+            else if (r < p[2]) {
+                s.velocity.x = -t.speed;
+                s.velocity.y = 0;
+            }
+            else if (r < p[3]) {
+                s.velocity.x = t.speed;
+                s.velocity.y = 0;
+            }
+        }
+
+        const OCAI = {
+            Universal: function () {
+                let ai = new wesa.AI();
+                ai.execute = function () {
+                    let s = this.self;
+                    let map = s.backref.map;
+                    if (s.velocity.x < 0) {
+                        s.changeAction(5, {
+                            isSmart: true,
+                            isImmediate: true
+                        });
+                        s.position.y = snap(s.position.y, map.tileHeight, map.tileHeight / 4);
+                    }
+                    else if (s.velocity.x > 0) {
+                        s.changeAction(7, {
+                            isSmart: true,
+                            isImmediate: true
+                        });
+                        s.position.y = snap(s.position.y, map.tileHeight, map.tileHeight / 4);
+                    }
+                    else if (s.velocity.y < 0) {
+                        s.changeAction(6, {
+                            isSmart: true,
+                            isImmediate: true
+                        });
+                        s.position.x = snap(s.position.x, map.tileWidth, map.tileWidth / 4);
+                    }
+                    else if (s.velocity.y > 0) {
+                        s.changeAction(4, {
+                            isSmart: true,
+                            isImmediate: true
+                        });
+                        s.position.x = snap(s.position.x, map.tileWidth, map.tileWidth / 4);
+                    }
+                    else if (s.action < 8) {
+                        s.changeAction(s.action % 4, {
+                            isSmart: true,
+                            isImmediate: true
+                        });
+                    }
+                };
+                return ai;
+            },
+            LightTank: function () {
+                let ai = new wesa.AI();
+                ai.tick = 2;
+                ai.reload = 30;
+                ai.target = OCReference.eagle.sprite;
+                ai.execute = function () {
+                    let self = this.self;
+
+                    // Movement control
+                    if ((self.prevPosition.x == self.position.x && self.prevPosition.y == self.position.y) || this.tick == 0) {
+                        let target = this.target;
+                        let dx = self.position.x - target.position.x;
+                        let dy = self.position.y - target.position.y;
+                        let xPortion = 0.2 + 0.6 * (Math.abs(dx) / (Math.abs(dx) + Math.abs(dy)));
+                        let yPortion = 1 - xPortion;
+                        let left, right, up, down;
+                        if (dx < 0) {
+                            right = 0.8 * xPortion;
+                            left = 0.2 * xPortion;
+                        }
+                        else {
+                            right = 0.2 * xPortion;
+                            left = 0.8 * xPortion;
+                        }
+                        if (dy < 0) {
+                            up = 0.8 * yPortion;
+                            down = 0.2 * yPortion;
+                        }
+                        else {
+                            up = 0.2 * yPortion;
+                            down = 0.8 * yPortion;
+                        }
+                        if (self.action < 8) {
+                            move(self.backref, [up, down, left, right]);
+                        }
+
+                        // Got stuck, try shoot a way out
+                        if (this.tick > 0) {
+                            if (this.reload < 15) {
+                                self.backref.fire();
+                                this.reload = 50;
+                            }
+                        }
+
+                        this.tick = 30;
+                    }
+                    else {
+                        this.tick--;
+                    }
+
+                    // Fire control
+                    if (this.reload == 0) {
+                        if (Math.random() < 0.6) {
+                            self.backref.fire();
+                            this.reload = 50;
+                        }
+                        else {
+                            this.reload = 15;
+                        }
+                    }
+                    else {
+                        this.reload--;
+                    }
+
+                };
+                return ai;
+            }
+        };
+
         const OCFunctions = {
             processCollision: function (collisions) {
+                for (let i = 0; i < OCReference.enemySpawners.length; i++) {
+                    OCReference.enemySpawners.isBlocked = false;
+                }
                 for (let i = 0; i < collisions.length; i++) {
                     let hitter = collisions[i].hitter, hurter = collisions[i].hurter;
                     if (hitter.team == hurter.team) { continue; }
-                    if (hitter.object.type == OC.config.ObjectType.Tank && hurter.object.type == OC.config.ObjectType.Stationary) {
+
+                    // Tank collides with stationary
+                    if (hitter.object.type == OCConfig.ObjectType.Tank && hurter.object.type == OCConfig.ObjectType.Stationary) {
                         hitter.position.x = hitter.prevPosition.x;
                         hitter.position.y = hitter.prevPosition.y;
                     }
-                    else if (hitter.object.type == OC.config.ObjectType.Mobile) {
-                        if (hitter.action <= 3) {
-                            hitter.velocity.x = 0;
-                            hitter.velocity.y = 0;
-                            hitter.backref.hit();
-                            if (hurter.object.type == OC.config.ObjectType.Tank) {
+
+                    // Tank collides with tank
+                    else if (hitter.object.type == OCConfig.ObjectType.Tank && hurter.object.type == OCConfig.ObjectType.Tank) {
+                        hitter.position.x = hitter.prevPosition.x;
+                        hitter.position.y = hitter.prevPosition.y;
+                    }
+
+                    else if (hitter.object.type == OCConfig.ObjectType.Mobile) {
+
+                        // Bullet (action < 4) hits
+                        if (hitter.action < 4) {
+
+                            // Ignores water
+                            if (!(hurter.object.type == OCConfig.ObjectType.Stationary && hurter.action == OCConfig.TileType.Water)) {
+                                hitter.velocity.x = 0;
+                                hitter.velocity.y = 0;
+                                hitter.backref.hit();
+                            }
+
+                            // Kills tank
+                            if (hurter.object.type == OCConfig.ObjectType.Tank && hurter.action < 8) {
                                 hurter.backref.die();
                             }
+
                         }
-                        else if (hitter.action >= 6 && hurter.object.type == OC.config.ObjectType.Stationary) {
+
+                        // Explosion of bullet hits stationary
+                        else if (hitter.action >= 6 && hitter.action <= 7 && hurter.object.type == OCConfig.ObjectType.Stationary) {
+
+                            // Brick wall is hit
                             if (hurter.action == 5 || hurter.action == 6) {
                                 hurter.kill();
                             }
+
                         }
+
+                        // Enemy Spawner is blocked by some tank
+                        else if (hitter.action == 8 && hurter.object.type == OCConfig.ObjectType.Tank) {
+                            hitter.backref.isBlocked = true;
+                        }
+
                     }
                 }
             }
@@ -78,13 +259,9 @@
 
 
         function OCMap(desc) {
-            let img = document.getElementById(desc.imgID);
-            let canvas = document.createElement('canvas');
-            let context = canvas.getContext('2d');
             this.scene = desc.scene;
-            this.width = canvas.width = img.naturalWidth;
-            this.height = canvas.height = img.naturalHeight;
-            this.data = [];
+            this.tileWidth = desc.tileWidth;
+            this.tileHeight = desc.tileHeight;
             this.eagleSpawnPoint = { row: 0, col: 12 };
             this.playerSpawnPoint = { row: 0, col: 8 };
             this.enemySpawnPoint = [
@@ -92,14 +269,6 @@
                 { row: 24, col: 12 },
                 { row: 24, col: 24 },
             ];
-            this.tileWidth = desc.tileWidth;
-            this.tileHeight = desc.tileHeight;
-            context.drawImage(img, 0, 0);
-            let imgData = context.getImageData(0, 0, img.width, img.height);
-            for (let i = 0; i < imgData.data.length; i += 4) {
-                let r = imgData.data[i], g = imgData.data[i + 1], b = imgData.data[i + 2], a = imgData.data[i + 3];
-                this.data.push(OCMap.decode(r, g, b));
-            }
         }
 
         OCMap.decode = function (r, g, b) {
@@ -126,10 +295,89 @@
             }
         };
 
-        OCMap.prototype.spawn = function (spawnee) {
-            spawnee.map = this;
-            this.scene.addSpriteToLayer(1, spawnee.sprite);
-        }
+        OCMap.prototype.load = function (img) {
+            let canvas = document.createElement('canvas');
+            let context = canvas.getContext('2d');
+            this.width = canvas.width = img.naturalWidth;
+            this.height = canvas.height = img.naturalHeight;
+            context.drawImage(img, 0, 0);
+            let imgData = context.getImageData(0, 0, img.width, img.height);
+            this.data = [];
+            for (let i = 0; i < imgData.data.length; i += 4) {
+                let r = imgData.data[i], g = imgData.data[i + 1], b = imgData.data[i + 2], a = imgData.data[i + 3];
+                this.data.push(OCMap.decode(r, g, b));
+            }
+        };
+
+        OCMap.prototype.spawnEagle = function () {
+            let w = this.width, h = this.height;
+            let tw = this.tileWidth, th = this.tileHeight;
+            let eagle = new OCEagle({
+                team: OCConfig.Team.Null,
+                position: { x: tw * (1 + this.eagleSpawnPoint.col - w / 2), y: th * (1 + this.eagleSpawnPoint.row - h / 2) }
+            });
+            eagle.map = this;
+            this.scene.addSpriteToLayer(1, eagle.sprite);
+            OCReference.eagle = eagle;
+        };
+
+        OCMap.prototype.spawnPlayer = function () {
+            let w = this.width, h = this.height;
+            let tw = this.tileWidth, th = this.tileHeight;
+            let player = new OCTank({
+                type: OCConfig.TankType.Player,
+                team: OCConfig.Team.Player,
+                position: { x: tw * (1 + this.playerSpawnPoint.col - w / 2), y: th * (1 + this.playerSpawnPoint.row - h / 2) },
+                speed: 1
+            });
+            player.map = this;
+            this.scene.addSpriteToLayer(1, player.sprite);
+            OCReference.player = player;
+        };
+
+        OCMap.prototype.spawnEnemy = function (enemyType, enemySpawnPoint) {
+            let w = this.width, h = this.height;
+            let tw = this.tileWidth, th = this.tileHeight;
+            let enemy = null;
+            switch (enemyType) {
+                case OCConfig.TankType.Light:
+                    enemy = new OCTank({
+                        type: enemyType,
+                        team: OCConfig.Team.Enemy,
+                        position: { x: tw * (1 + this.enemySpawnPoint[enemySpawnPoint].col - w / 2), y: th * (1 + this.enemySpawnPoint[enemySpawnPoint].row - h / 2) },
+                        speed: 1
+                    });
+                    break;
+                case OCConfig.TankType.Agile:
+
+                    break;
+                case OCConfig.TankType.Power:
+
+                    break;
+                case OCConfig.TankType.Heavy:
+
+                    break;
+                default:
+                    console.error('OpenCity: Unknown spawning enemy type.');
+                    return;
+            }
+            enemy.map = this;
+            this.scene.addSpriteToLayer(1, enemy.sprite);
+            OCReference.enemies.push(enemy);
+        };
+
+        OCMap.prototype.addEnemySpawners = function () {
+            let w = this.width, h = this.height;
+            let tw = this.tileWidth, th = this.tileHeight;
+            for (let i = 0; i < this.enemySpawnPoint.length; i++) {
+                let spawner = new OCEnemySpawner({
+                    position: { x: tw * (1 + this.enemySpawnPoint[i].col - w / 2), y: th * (1 + this.enemySpawnPoint[i].row - h / 2) },
+                    id: i
+                });
+                this.scene.addSpriteToLayer(1, spawner.sprite);
+                OCReference.enemySpawners.push(spawner);
+            }
+        };
 
         OCMap.prototype.draw = function () {
             let w = this.width, h = this.height;
@@ -233,63 +481,24 @@
             }
 
             // Spawn Things
-            this.spawn(new OCEagle({
-                scene: this.scene,
-                position: { x: tw * (1 + this.eagleSpawnPoint.col - w / 2), y: th * (1 + this.eagleSpawnPoint.row - h / 2) }
-            }));
-            OCReference.player = new OCTank({
-                type: OCConfig.TankType.Player,
-                team: OCConfig.Team.Player,
-                position: { x: tw * (1 + this.playerSpawnPoint.col - w / 2), y: th * (1 + this.playerSpawnPoint.row - h / 2) },
-                speed: 1
-            });
-            this.spawn(OCReference.player);
-
-            this.spawn(new OCTank({
-                type: OCConfig.TankType.Light,
-                team: OCConfig.Team.Enemy,
-                position: { x: tw * (1 + this.enemySpawnPoint[0].col - w / 2), y: th * (1 + this.enemySpawnPoint[0].row - h / 2) },
-                speed: 1
-            }));
+            this.spawnEagle();
+            this.spawnPlayer();
+            this.addSpawnDetectors();
 
         };
 
+        OCMap.prototype.trySpawnEnemy() {
+            if (OCReference.enemies.length < 4) {
+                let i = Math.floor(Math.random() * this.enemySpawnPoint.length);
+                if (!OCReference.enemySpawners[i].isBlocked) {
+                    this.spawnEnemy(OCConfig.TankType.Light, i)
+                }
+            }
+
+        }
+
 
         function OCTank(desc) {
-
-            function snap(val, gridSize, tolerance) {
-                let norm = val / gridSize;
-                let frac = norm - Math.floor(norm);
-                if (frac >= tolerance / gridSize && frac <= 1 - tolerance / gridSize) {
-                    return val;
-                }
-                else {
-                    return Math.round(val / gridSize) * gridSize;
-                }
-            }
-
-            function move(t, p) {
-                for (let i = 1; i <= 3; i++) { p[i] += p[i - 1]; }
-                let s = t.sprite;
-                let r = Math.random();
-                if (r < p[0]) {
-                    s.velocity.x = 0;
-                    s.velocity.y = t.speed;
-                }
-                else if (r < p[1]) {
-                    s.velocity.x = -t.speed;
-                    s.velocity.y = 0;
-                }
-                else if (r < p[2]) {
-                    s.velocity.x = 0;
-                    s.velocity.y = -t.speed;
-                }
-                else if (r < p[3]) {
-                    s.velocity.x = t.speed;
-                    s.velocity.y = 0;
-                }
-            }
-
             let me = this;
             me.type = desc.type;
             me.speed = desc.speed;
@@ -301,62 +510,10 @@
                 scale: 2
             });
             me.sprite.backref = this;
-            me.sprite.addAIWithExecFunc(function () {
-                let s = this.self;
-                if (s.velocity.x < 0) {
-                    s.changeAction(5, {
-                        isSmart: true,
-                        isImmediate: true
-                    });
-                    s.position.y = snap(s.position.y, me.map.tileHeight, me.map.tileHeight / 4);
-                }
-                else if (s.velocity.x > 0) {
-                    s.changeAction(7, {
-                        isSmart: true,
-                        isImmediate: true
-                    });
-                    s.position.y = snap(s.position.y, me.map.tileHeight, me.map.tileHeight / 4);
-                }
-                else if (s.velocity.y < 0) {
-                    s.changeAction(6, {
-                        isSmart: true,
-                        isImmediate: true
-                    });
-                    s.position.x = snap(s.position.x, me.map.tileWidth, me.map.tileWidth / 4);
-                }
-                else if (s.velocity.y > 0) {
-                    s.changeAction(4, {
-                        isSmart: true,
-                        isImmediate: true
-                    });
-                    s.position.x = snap(s.position.x, me.map.tileWidth, me.map.tileWidth / 4);
-                }
-                else if (s.action < 8) {
-                    s.changeAction(s.action % 4, {
-                        isSmart: true,
-                        isImmediate: true
-                    });
-                }
-            });
+            me.sprite.addAI(OCAI.Universal());
             switch (me.type) {
                 case OCConfig.TankType.Light:
-
-                    let ai = new wesa.AI();
-                    ai.tick = 0;
-                    ai.execute = function () {
-                        let s = this.self;
-                        if (ai.tick == 0) {
-                            if (s.action < 8) {
-                                move(s.backref, [0.25, 0.25, 0.25, 0.25]);
-                            }
-                            ai.tick = 30;
-                        }
-                        else {
-                            ai.tick--;
-                        }
-                    };
-                    me.sprite.addAI(ai);
-
+                    me.sprite.addAI(OCAI.LightTank());
                     break;
                 case OCConfig.TankType.Agile:
                     // TODO
@@ -409,6 +566,7 @@
 
         OCTank.prototype.fire = function () {
             let s = this.sprite;
+            if (s.action >= 8) { return; }
             let dir = s.action % 4;
             let posOffset, act, v;
             if (dir == 0) {
@@ -451,6 +609,9 @@
                 scale: 2
             }));
             s.kill();
+            let i = OCReference.enemies.indexOf(this);
+            OCReference.enemies.splice(i, 1);
+            console.log(OCReference.enemies);
         }
 
 
@@ -458,13 +619,12 @@
             this.sprite = new wesa.Sprite({
                 object: wesa.assets.objectList[7],
                 action: 0,
-                team: OCConfig.Team.Enemy,
+                team: desc.team,
                 position: { x: desc.position.x, y: desc.position.y },
                 scale: 2
             });
             this.sprite.backref = this;
             this.sprite.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
-            this.cooldown = 0;
         }
 
         OCEagle.prototype.die = function () {
@@ -481,6 +641,21 @@
                 isSmart: true,
                 isImmediate: true
             });
+        }
+
+
+        function OCEnemySpawner(desc) {
+            this.sprite = new wesa.Sprite({
+                object: wesa.assets.objectList[2],
+                action: 8,
+                team: OCConfig.Team.Null,
+                position: { x: desc.position.x, y: desc.position.y },
+                scale: 1
+            });
+            this.id = desc.id;
+            this.isBlocked = false;
+            this.sprite.backref = this;
+            this.sprite.collision.mode = wesa.Sprite.CollisionMode.BY_ANIMATION;
         }
 
 

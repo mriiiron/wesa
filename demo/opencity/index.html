@@ -4,15 +4,21 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <title>Tank</title>
-    <link rel="stylesheet" type="text/css" href="../css/demo-iframe.css">
+    <link rel="stylesheet" type="text/css" href="./css/opencity.css">
 </head>
 
 <body>
 
-    <div class="flex-wrapper">
-        <canvas id="canvas" width="480" height="480"></canvas>
+    <div class="wrapper">
+        <div><canvas id="canvas" width="480" height="480"></canvas></div>
+        <ul class="maps">
+            <li class="active"><img src="./assets/stage_1.png" /></li>
+            <li><img src="./assets/stage_2.png" /></li>
+            <li><img src="./assets/stage_3.png" /></li>
+            <li><img src="./assets/stage_4.png" /></li>
+        </ul>
     </div>
-    <div class="dynamic-output" id="output"><img src="./assets/stage_1.png" id="map" /></div>
+    <div class="dynamic-output"><p>OpenCity by mriiiron<br />Powered by <a href="http://caiyi.us/wesa/">wesa.js</a></p><p id="output"></p></div>
 
     <script src="../../js/wesa.js"></script>
     <script src="./js/opencity.js"></script>
@@ -82,11 +88,25 @@
             // Create the map on the scene
             let map = new OC.Map({
                 scene: scene,
-                imgID: 'map',
                 tileWidth: 16,
                 tileHeight: 16
             });
+            map.load(document.querySelector('ul.maps li.active img'));
             map.draw();
+
+            // Initialize map picker
+            let mapTags = document.querySelectorAll("ul.maps li");
+            for (let i = 0; i < mapTags.length; i++) {
+                mapTags[i].addEventListener("click", function (e) {
+                    for (let j = 0; j < mapTags.length; j++) {
+                        mapTags[j].className = '';
+                    }
+                    e.currentTarget.className = 'active';
+                    scene.clear();
+                    map.load(e.currentTarget.querySelector('img'));
+                    map.draw();
+                });
+            }
 
             // Run the scene
             let animate = function () {
@@ -94,7 +114,8 @@
                 OC.ref.player.takeControl(OC.ref.keyStatus);
                 scene.update();
                 OC.func.processCollision(scene.getCollisions({ collisionMatrix: OC.config.CollisionMatrix }));
-                document.getElementById('output').innerText = wesa.stat.collisionChecks;
+                map.trySpawnEnemy();
+                document.getElementById('output').innerHTML = 'Collision Checks: ' + wesa.stat.collisionChecks + '<br />Collisions Detected: ' + wesa.stat.collisionsDetected;
                 scene.render();
             }
             animate();
