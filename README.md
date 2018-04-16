@@ -13,7 +13,7 @@ WESA will always be fully open-sourced, for the sake of my personal passion on s
 
 ### Basic Example
 
-#### Include `wesa.js`
+#### Include WESA
 
 ```html
 <script src="./js/wesa.js"></script>
@@ -41,7 +41,7 @@ wesa.assets.load(function () {
 
     // Create the scene
     let scene = new wesa.Scene('Scene');
-    
+
     // Add a sprite
     scene.addSpriteToLayer(0, new wesa.Sprite({
         object: wesa.assets.objectList[0],
@@ -62,14 +62,14 @@ wesa.assets.load(function () {
 });
 ```
 
-[See full demo](https://github.com/mriiiron/wesa)
+[See full demo](http://caiyi.us/wesa)
 
 ### More Demos
 
-* [Canvas Resizable](https://github.com/mriiiron/wesa)
-* [Collisions](https://github.com/mriiiron/wesa)
-* [Camera Control](https://github.com/mriiiron/wesa)
-* [OpenCity (Open-sourced Battle City)](https://github.com/mriiiron/wesa)
+* [Canvas Resizable](http://caiyi.us/wesa/demo/#1.resize.html)
+* [Collisions](http://caiyi.us/wesa/demo/#2.collision.html)
+* [Camera Control](http://caiyi.us/wesa/demo/#3.camera.html)
+* [OpenCity (Open-sourced Battle City)](http://caiyi.us/wesa/demo/#opencity/index.html)
 
 ### License
 
