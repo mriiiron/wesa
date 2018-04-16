@@ -200,7 +200,7 @@
         const OCFunctions = {
             processCollision: function (collisions) {
                 for (let i = 0; i < OCReference.enemySpawners.length; i++) {
-                    OCReference.enemySpawners.isBlocked = false;
+                    OCReference.enemySpawners[i].isBlocked = false;
                 }
                 for (let i = 0; i < collisions.length; i++) {
                     let hitter = collisions[i].hitter, hurter = collisions[i].hurter;
@@ -483,19 +483,18 @@
             // Spawn Things
             this.spawnEagle();
             this.spawnPlayer();
-            this.addSpawnDetectors();
+            this.addEnemySpawners();
 
         };
 
-        OCMap.prototype.trySpawnEnemy() {
+        OCMap.prototype.trySpawnEnemy = function () {
             if (OCReference.enemies.length < 4) {
                 let i = Math.floor(Math.random() * this.enemySpawnPoint.length);
                 if (!OCReference.enemySpawners[i].isBlocked) {
                     this.spawnEnemy(OCConfig.TankType.Light, i)
                 }
             }
-
-        }
+        };
 
 
         function OCTank(desc) {
@@ -610,8 +609,7 @@
             }));
             s.kill();
             let i = OCReference.enemies.indexOf(this);
-            OCReference.enemies.splice(i, 1);
-            console.log(OCReference.enemies);
+            if (i >= 0) { OCReference.enemies.splice(i, 1); }
         }
 
 
