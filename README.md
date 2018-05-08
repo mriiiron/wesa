@@ -18,7 +18,7 @@ WESA will always be fully open-sourced, for the sake of my personal passion on s
 #### Include WESA
 
 ```html
-<script src="./js/wesa.js"></script>
+<script src="./js/wesa.min.js"></script>
 ```
 
 #### Prepare a Canvas
