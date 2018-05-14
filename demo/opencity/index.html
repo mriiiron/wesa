@@ -17,11 +17,11 @@
             <li><img src="./assets/stage_3.png" /></li>
             <li><img src="./assets/stage_4.png" /></li>
         </ul>
-        <p>Tip: Select map above. Arrow keys to move, Z to shoot.</p>
+        <p>Tip: Select map above. Arrow keys to move, Z to shoot, P to pause.</p>
     </div>
     <div class="dynamic-output"><p>OpenCity Stats</p><p id="output"></p></div>
 
-    <script src="../../dist/wesa.min.js"></script>
+    <script src="../../src/wesa.js"></script>
     <script src="./js/opencity.js"></script>
 
     <script>
@@ -42,6 +42,9 @@
                     break;
                 case 'z':
                     OC.ref.keyStatus.fire = true;
+                    break;
+                case 'p':
+                    wesa.core.pause();
                     break;
                 default:
                     break;

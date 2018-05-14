@@ -283,7 +283,8 @@
         const wesaStat = {
             fps: 0,
             collisionChecks: 0,
-            collisionsDetected: 0
+            collisionsDetected: 0,
+            paused: false
         }
 
 
@@ -335,18 +336,15 @@
             },
 
             init: function (canvas) {
-
                 if (!canvas || canvas.tagName != 'CANVAS') {
                     console.error('WESA Core: Canvas provided is invalid.');
                     return;
                 }
-
                 const gl = canvas.getContext("webgl");
                 if (!gl) {
                     console.error('WESA Core: Unable to initialize WebGL. Your browser or machine may not support it.');
                     return;
                 }
-
                 const shaderProgram = initShaderProgram(gl, this.config.shaderSource.vs, this.config.shaderSource.fs);
                 const shader = {
                     program: shaderProgram,
@@ -360,22 +358,23 @@
                         uSampler: gl.getUniformLocation(shaderProgram, 'uSampler')
                     }
                 }
-
                 const buffer = {
                     positions: gl.createBuffer(),
                     texCoords: gl.createBuffer(),
                     indices: gl.createBuffer()
                 };
-
                 initWebGL(gl, shader);
-
                 this.handle.gl = gl;
                 this.handle.shader = shader;
                 this.handle.buffer = buffer;
+            },
 
+            pause: function () {
+                wesaStat.paused = !wesaStat.paused;
             }
 
         };
+
 
         // wesa.camera objects
 
@@ -876,6 +875,7 @@
         };
 
         WESAScene.prototype.update = function () {
+            if (wesaStat.paused) { return; }
             for (let i = 0; i < this.layerList.length; i++) {
                 if (this.layerList[i]) {
                     this.layerList[i].update();

@@ -1,15 +1,11 @@
 WESA - WebGL-based Engine of Sprite Animation
 -----------------------------------------------
 
-### Simple and Light-weighted
-
 Perhaps the simplest and lightest (14KB, currently) solution for turning your brilliant idea into old-school style, pixel-friendly sprite animations being displayed on the web.
 
 You may consider to use fancy libs such as [PixiJS](http://www.pixijs.com) or even [ThreeJS](https://threejs.org), but WESA would be your simple but elegant start to learn to animate your favorite sprites in browser.
 
-### Free and Open-sourced
-
-WESA will always be fully open-sourced, for the sake of my personal passion on sprite animations and retro-style games.
+WesaJS will always be fully open-sourced, for the sake of my personal passion on sprite animations and retro-style games.
 
 ### Basic Example
 
@@ -80,7 +76,10 @@ WesaJS is a successor of my following college works:
 
 ### To-do
 
-[ ] Pausing
+- [x] Pausing
+- [ ] End Game Logic
+- [ ] Scoring
+- [ ] More Enemy Tank Types
 
 ### License
 
