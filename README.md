@@ -1,8 +1,6 @@
 WESA - WebGL-based Engine of Sprite Animation
 -----------------------------------------------
 
-A successor of [aero-engine-3d](https://github.com/mriiiron/aero-engine-d3d). From C++ to JavaScript, from DirectX to WebGL.
-
 ### Simple and Light-weighted
 
 Perhaps the simplest and lightest (14KB, currently) solution for turning your brilliant idea into old-school style, pixel-friendly sprite animations being displayed on the web.
@@ -72,6 +70,17 @@ wesa.assets.load(function () {
 * [Collisions](http://caiyi.us/wesa/demo/#2.collision.html)
 * [Camera Control](http://caiyi.us/wesa/demo/#3.camera.html)
 * [OpenCity (Open-sourced Battle City)](http://caiyi.us/wesa/demo/#opencity/index.html)
+
+### History
+
+WesaJS is a successor of my following college works:
+
+- [aero-engine-3d](https://github.com/mriiiron/aero-engine-d3d): C++ & DirectX;
+- [aero-engine-opengl](https://github.com/mriiiron/aero-engine-opengl): C++ & OpenGL.
+
+### To-do
+
+[ ] Pausing
 
 ### License
 
