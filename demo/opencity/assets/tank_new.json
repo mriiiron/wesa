@@ -1,0 +1,569 @@
+﻿{
+    "spriteSheetsMeta": [
+        {
+            "rowCount": 18,
+            "colCount": 16,
+            "cellWidth": 16,
+            "cellHeight": 16
+        },
+        {
+            "rowCount": 2,
+            "colCount": 6,
+            "cellWidth": 8,
+            "cellHeight": 8
+        }
+    ],
+    "objects": [
+        {
+            "id": 0,
+            "type": 0,
+            "name": "Tank",
+            "animList": [
+                {
+                    "name": "Idle Up",
+                    "frameList": [0],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Idle Left",
+                    "frameList": [2],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Idle Down",
+                    "frameList": [4],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Idle Right",
+                    "frameList": [6],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Move Up",
+                    "frameList": [0, 1],
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Move Left",
+                    "frameList": [2, 3],
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Move Down",
+                    "frameList": [4, 5],
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Move Right",
+                    "frameList": [6, 7],
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Spawn",
+                    "next": 0,
+                    "frameList": [50, 51, 52, 53, 52, 51, 50, 51, 52, 53, 52, 51, 50, 51, 52, 53],
+                    "frameTimeList": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+                }
+            ],
+            "defaultCollision": {
+                "hit": {
+                    "shape": "RECT",
+                    "x1Relative": -15,
+                    "x2Relative": 15,
+                    "y1Relative": -15,
+                    "y2Relative": 15
+                },
+                "hurt": {
+                    "shape": "RECT",
+                    "x1Relative": -15,
+                    "x2Relative": 15,
+                    "y1Relative": -15,
+                    "y2Relative": 15
+                }
+            }
+        },
+        {
+            "id": 1,
+            "inherits": 0,
+            "type": 0,
+            "name": "Player Tank",
+            "frameList": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 0,
+                        "colStart": 0,
+                        "rowCount": 4,
+                        "colCount": 8
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 50,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 2,
+                        "rowCount": 1,
+                        "colCount": 4
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ]
+        },
+
+
+
+
+        {
+            "type": 1,
+            "name": "Stationary",
+            "frameList": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 1,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 0,
+                        "colStart": 2,
+                        "rowCount": 2,
+                        "colCount": 4
+                    },
+                    "center": {
+                        "x": 4,
+                        "y": 4
+                    }
+                },
+                {
+                    "loadMode": "single",
+                    "spriteSheet": 0,
+                    "id": 8,
+                    "cell": {
+                        "row": 16,
+                        "col": 10,
+                        "rowSpan": 1,
+                        "colSpan": 1
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ],
+            "animList": [
+                {
+                    "name": "Null",
+                    "frameList": [null],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Steel",
+                    "frameList": [0],
+                    "frameTimeList": [10],
+                    "collision": {
+                        "hurt" : {
+                            "shape": "RECT",
+                            "x1Relative": -8,
+                            "x2Relative": 8,
+                            "y1Relative": -8,
+                            "y2Relative": 8
+                        }
+                    }
+                },
+                {
+                    "name": "Woods",
+                    "frameList": [1],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Ice",
+                    "frameList": [2],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Water",
+                    "frameList": [4, 5, 6],
+                    "frameTimeList": [20, 20, 20],
+                    "collision": {
+                        "hurt" : {
+                            "shape": "RECT",
+                            "x1Relative": -8,
+                            "x2Relative": 8,
+                            "y1Relative": -8,
+                            "y2Relative": 8
+                        }
+                    }
+                },
+                {
+                    "name": "Brick A",
+                    "frameList": [3],
+                    "frameTimeList": [10],
+                    "collision": {
+                        "hurt" : {
+                            "shape": "RECT",
+                            "x1Relative": -4,
+                            "x2Relative": 4,
+                            "y1Relative": -4,
+                            "y2Relative": 4
+                        }
+                    }
+                },
+                {
+                    "name": "Brick B",
+                    "frameList": [7],
+                    "frameTimeList": [10],
+                    "collision": {
+                        "hurt" : {
+                            "shape": "RECT",
+                            "x1Relative": -4,
+                            "x2Relative": 4,
+                            "y1Relative": -4,
+                            "y2Relative": 4
+                        }
+                    }
+                },
+                {
+                    "name": "Wall",
+                    "frameList": [8],
+                    "frameTimeList": [10]
+                }
+            ]
+        },
+        {
+            "type": 2,
+            "name": "Mobile",
+            "frameList": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 1,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 0,
+                        "colStart": 0,
+                        "rowCount": 2,
+                        "colCount": 2
+                    },
+                    "center": {
+                        "x": 4,
+                        "y": 4
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 4,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 10,
+                        "rowCount": 2,
+                        "colCount": 2
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "single",
+                    "spriteSheet": 0,
+                    "id": 8,
+                    "cell": {
+                        "row": 16,
+                        "col": 12,
+                        "rowSpan": 2,
+                        "colSpan": 2
+                    },
+                    "center": {
+                        "x": 16,
+                        "y": 16
+                    }
+                },
+                {
+                    "loadMode": "single",
+                    "spriteSheet": 0,
+                    "id": 9,
+                    "cell": {
+                        "row": 16,
+                        "col": 14,
+                        "rowSpan": 2,
+                        "colSpan": 2
+                    },
+                    "center": {
+                        "x": 16,
+                        "y": 16
+                    }
+                }
+            ],
+            "animList": [
+                {
+                    "name": "Bullet Up",
+                    "next": null,
+                    "frameList": [0],
+                    "frameTimeList": [150]
+                },
+                {
+                    "name": "Bullet Left",
+                    "next": null,
+                    "frameList": [1],
+                    "frameTimeList": [150]
+                },
+                {
+                    "name": "Bullet Down",
+                    "next": null,
+                    "frameList": [2],
+                    "frameTimeList": [150]
+                },
+                {
+                    "name": "Bullet Right",
+                    "next": null,
+                    "frameList": [3],
+                    "frameTimeList": [150]
+                },
+                {
+                    "name": "Explosion Small",
+                    "next": null,
+                    "frameList": [5, 6, 7],
+                    "frameTimeList": [3, 3, 3]
+                },
+                {
+                    "name": "Explosion Large",
+                    "next": null,
+                    "frameList": [5, 6, 7, 8, 9, 7],
+                    "frameTimeList": [5, 5, 5, 5, 5, 5]
+                },
+                {
+                    "name": "Wall Hitter Horizontal",
+                    "next": null,
+                    "frameList": [null],
+                    "frameTimeList": [3],
+                    "collision": {
+                        "hit" : {
+                            "shape": "RECT",
+                            "x1Relative": -8,
+                            "x2Relative": 8,
+                            "y1Relative": -2,
+                            "y2Relative": 2
+                        }
+                    }
+                },
+                {
+                    "name": "Wall Hitter Vertical",
+                    "next": null,
+                    "frameList": [null],
+                    "frameTimeList": [3],
+                    "collision": {
+                        "hit" : {
+                            "shape": "RECT",
+                            "x1Relative": -2,
+                            "x2Relative": 2,
+                            "y1Relative": -8,
+                            "y2Relative": 8
+                        }
+                    }
+                },
+                {
+                    "name": "Enemy Spawner",
+                    "frameList": [null],
+                    "frameTimeList": [10],
+                    "collision": {
+                        "hit": {
+                            "shape": "RECT",
+                            "x1Relative": -15,
+                            "x2Relative": 15,
+                            "y1Relative": -15,
+                            "y2Relative": 15
+                        }
+                    }
+                }
+            ],
+            "defaultCollision": {
+                "hit": {
+                    "shape": "CIRCLE",
+                    "centerRelative": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "radius": 3
+                },
+                "hurt": {
+                    "shape": "CIRCLE",
+                    "centerRelative": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "radius": 3
+                }
+            }
+        },
+        {
+            "type": 0,
+            "name": "Light Tank",
+            "frameList": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 4,
+                        "colStart": 8,
+                        "rowCount": 1,
+                        "colCount": 8
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 8,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 2,
+                        "rowCount": 1,
+                        "colCount": 4
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ],
+            "animList": [
+                {
+                    "name": "Idle Up",
+                    "frameList": [0],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Idle Left",
+                    "frameList": [2],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Idle Down",
+                    "frameList": [4],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Idle Right",
+                    "frameList": [6],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Move Up",
+                    "frameList": [0, 1],
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Move Left",
+                    "frameList": [2, 3],
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Move Down",
+                    "frameList": [4, 5],
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Move Right",
+                    "frameList": [6, 7],
+                    "frameTimeList": [4, 4]
+                },
+                {
+                    "name": "Spawn",
+                    "next": 0,
+                    "frameList": [8, 9, 10, 11, 10, 9, 8, 9, 10, 11, 10, 9, 8, 9, 10, 11],
+                    "frameTimeList": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+                }
+            ],
+            "defaultCollision": {
+                "hit": {
+                    "shape": "RECT",
+                    "x1Relative": -15,
+                    "x2Relative": 15,
+                    "y1Relative": -15,
+                    "y2Relative": 15
+                },
+                "hurt": {
+                    "shape": "RECT",
+                    "x1Relative": -15,
+                    "x2Relative": 15,
+                    "y1Relative": -15,
+                    "y2Relative": 15
+                }
+            }
+        },
+        {
+            "type": 0,
+            "name": "Agile Tank",
+            "frameList": [],
+            "animList": []
+        },
+        {
+            "type": 0,
+            "name": "Power Tank",
+            "frameList": [],
+            "animList": []
+        },
+        {
+            "type": 0,
+            "name": "Heavy Tank",
+            "frameList": [],
+            "animList": []
+        },
+        {
+            "type": 0,
+            "name": "Eagle",
+            "frameList": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 0,
+                        "rowCount": 1,
+                        "colCount": 2
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ],
+            "animList": [
+                {
+                    "name": "Idle",
+                    "frameList": [0],
+                    "frameTimeList": [10]
+                },
+                {
+                    "name": "Destroyed",
+                    "frameList": [1],
+                    "frameTimeList": [10]
+                }
+            ],
+            "defaultCollision": {
+                "hurt": {
+                    "shape": "RECT",
+                    "x1Relative": -15,
+                    "x2Relative": 15,
+                    "y1Relative": -15,
+                    "y2Relative": 15
+                }
+            }
+        }
+    ]
+}
