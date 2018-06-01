@@ -15,85 +15,207 @@
     ],
     "objects": [
         {
+            "id": 0,
             "type": 0,
-            "name": "Player Tank",
-            "frameList": [
+            "name": "Enemy Tank",
+            "animations": [
                 {
-                    "loadMode": "array",
-                    "spriteSheet": 0,
-                    "idStart": 0,
-                    "cells": {
-                        "rowStart": 0,
-                        "colStart": 0,
-                        "rowCount": 4,
-                        "colCount": 8
-                    },
-                    "center": {
-                        "x": 8,
-                        "y": 8
-                    }
-                },
-                {
-                    "loadMode": "array",
-                    "spriteSheet": 0,
-                    "idStart": 32,
-                    "cells": {
-                        "rowStart": 16,
-                        "colStart": 2,
-                        "rowCount": 1,
-                        "colCount": 4
-                    },
-                    "center": {
-                        "x": 8,
-                        "y": 8
-                    }
-                }
-            ],
-            "animList": [
-                {
+                    "id": 0,
                     "name": "Idle Up",
-                    "frameList": [0],
+                    "frameList": [8],
                     "frameTimeList": [10]
                 },
                 {
+                    "id": 1,
                     "name": "Idle Left",
-                    "frameList": [2],
+                    "frameList": [10],
                     "frameTimeList": [10]
                 },
                 {
+                    "id": 2,
                     "name": "Idle Down",
-                    "frameList": [4],
+                    "frameList": [12],
                     "frameTimeList": [10]
                 },
                 {
+                    "id": 3,
                     "name": "Idle Right",
-                    "frameList": [6],
+                    "frameList": [14],
                     "frameTimeList": [10]
                 },
                 {
+                    "id": 4,
                     "name": "Move Up",
-                    "frameList": [0, 1],
-                    "frameTimeList": [4, 4]
+                    "frameList": [8, 9],
+                    "frameTimeList": [3, 3]
                 },
                 {
+                    "id": 5,
                     "name": "Move Left",
-                    "frameList": [2, 3],
-                    "frameTimeList": [4, 4]
+                    "frameList": [10, 11],
+                    "frameTimeList": [3, 3]
                 },
                 {
+                    "id": 6,
                     "name": "Move Down",
-                    "frameList": [4, 5],
-                    "frameTimeList": [4, 4]
+                    "frameList": [12, 13],
+                    "frameTimeList": [3, 3]
                 },
                 {
+                    "id": 7,
                     "name": "Move Right",
-                    "frameList": [6, 7],
-                    "frameTimeList": [4, 4]
+                    "frameList": [14, 15],
+                    "frameTimeList": [3, 3]
                 },
                 {
+                    "id": 10,
+                    "name": "Idle Up Armor 1",
+                    "frameList": [8, 0, 16],
+                    "frameTimeList": [1, 1, 1]
+                },
+                {
+                    "id": 11,
+                    "name": "Idle Left Armor 1",
+                    "frameList": [10, 2, 18],
+                    "frameTimeList": [1, 1, 1]
+                },
+                {
+                    "id": 12,
+                    "name": "Idle Down Armor 1",
+                    "frameList": [12, 4, 20],
+                    "frameTimeList": [1, 1, 1]
+                },
+                {
+                    "id": 13,
+                    "name": "Idle Right Armor 1",
+                    "frameList": [14, 6, 22],
+                    "frameTimeList": [1, 1, 1]
+                },
+                {
+                    "id": 14,
+                    "name": "Move Up Armor 1",
+                    "frameList": [8, 0, 16, 9, 1, 17],
+                    "frameTimeList": [1, 1, 1, 1, 1, 1]
+                },
+                {
+                    "id": 15,
+                    "name": "Move Left Armor 1",
+                    "frameList": [10, 2, 18, 11, 3, 19],
+                    "frameTimeList": [1, 1, 1, 1, 1, 1]
+                },
+                {
+                    "id": 16,
+                    "name": "Move Down Armor 1",
+                    "frameList": [12, 4, 20, 13, 5, 21],
+                    "frameTimeList": [1, 1, 1, 1, 1, 1]
+                },
+                {
+                    "id": 17,
+                    "name": "Move Right Armor 1",
+                    "frameList": [14, 6, 22, 15, 7, 23],
+                    "frameTimeList": [1, 1, 1, 1, 1, 1]
+                },
+                {
+                    "id": 20,
+                    "name": "Idle Up Armor 2",
+                    "frameList": [8, 0],
+                    "frameTimeList": [1, 1]
+                },
+                {
+                    "id": 21,
+                    "name": "Idle Left Armor 2",
+                    "frameList": [10, 2],
+                    "frameTimeList": [1, 1]
+                },
+                {
+                    "id": 22,
+                    "name": "Idle Down Armor 2",
+                    "frameList": [12, 4],
+                    "frameTimeList": [1, 1]
+                },
+                {
+                    "id": 23,
+                    "name": "Idle Right Armor 2",
+                    "frameList": [14, 6],
+                    "frameTimeList": [1, 1]
+                },
+                {
+                    "id": 24,
+                    "name": "Move Up Armor 2",
+                    "frameList": [8, 0, 8, 1, 9, 1],
+                    "frameTimeList": [1, 1, 1, 1, 1, 1]
+                },
+                {
+                    "id": 25,
+                    "name": "Move Left Armor 2",
+                    "frameList": [10, 2, 10, 3, 11, 3],
+                    "frameTimeList": [1, 1, 1, 1, 1, 1]
+                },
+                {
+                    "id": 26,
+                    "name": "Move Down Armor 2",
+                    "frameList": [12, 4, 12, 5, 13, 5],
+                    "frameTimeList": [1, 1, 1, 1, 1, 1]
+                },
+                {
+                    "id": 27,
+                    "name": "Move Right Armor 2",
+                    "frameList": [14, 6, 14, 7, 15, 7],
+                    "frameTimeList": [1, 1, 1, 1, 1, 1]
+                },
+                {
+                    "id": 30,
+                    "name": "Idle Up Armor 3",
+                    "frameList": [8, 16],
+                    "frameTimeList": [1, 1]
+                },
+                {
+                    "id": 31,
+                    "name": "Idle Left Armor 3",
+                    "frameList": [10, 18],
+                    "frameTimeList": [1, 1]
+                },
+                {
+                    "id": 32,
+                    "name": "Idle Down Armor 3",
+                    "frameList": [12, 20],
+                    "frameTimeList": [1, 1]
+                },
+                {
+                    "id": 33,
+                    "name": "Idle Right Armor 3",
+                    "frameList": [14, 22],
+                    "frameTimeList": [1, 1]
+                },
+                {
+                    "id": 34,
+                    "name": "Move Up Armor 3",
+                    "frameList": [8, 16, 8, 17, 9, 17],
+                    "frameTimeList": [1, 1, 1, 1, 1, 1]
+                },
+                {
+                    "id": 35,
+                    "name": "Move Left Armor 3",
+                    "frameList": [10, 18, 10, 19, 11, 19],
+                    "frameTimeList": [1, 1, 1, 1, 1, 1]
+                },
+                {
+                    "id": 36,
+                    "name": "Move Down Armor 3",
+                    "frameList": [12, 20, 12, 21, 13, 21],
+                    "frameTimeList": [1, 1, 1, 1, 1, 1]
+                },
+                {
+                    "id": 37,
+                    "name": "Move Right Armor 3",
+                    "frameList": [14, 22, 14, 23, 15, 23],
+                    "frameTimeList": [1, 1, 1, 1, 1, 1]
+                },
+                {
+                    "id": 40,
                     "name": "Spawn",
                     "next": 0,
-                    "frameList": [32, 33, 34, 35, 34, 33, 32, 33, 34, 35, 34, 33, 32, 33, 34, 35],
+                    "frameList": [50, 51, 52, 53, 52, 51, 50, 51, 52, 53, 52, 51, 50, 51, 52, 53],
                     "frameTimeList": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
                 }
             ],
@@ -114,10 +236,382 @@
                 }
             }
         },
+
         {
+            "id": 1,
+            "type": 0,
+            "name": "Light Enemy Tank",
+            "inherits": 0,
+            "frames": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 4,
+                        "colStart": 0,
+                        "rowCount": 1,
+                        "colCount": 16
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 16,
+                    "cells": {
+                        "rowStart": 12,
+                        "colStart": 0,
+                        "rowCount": 1,
+                        "colCount": 16
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 50,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 2,
+                        "rowCount": 1,
+                        "colCount": 4
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "type": 0,
+            "name": "Fast Enemy Tank",
+            "inherits": 0,
+            "frames": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 5,
+                        "colStart": 0,
+                        "rowCount": 1,
+                        "colCount": 16
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 16,
+                    "cells": {
+                        "rowStart": 13,
+                        "colStart": 0,
+                        "rowCount": 1,
+                        "colCount": 16
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 50,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 2,
+                        "rowCount": 1,
+                        "colCount": 4
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "type": 0,
+            "name": "Power Enemy Tank",
+            "inherits": 0,
+            "frames": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 6,
+                        "colStart": 0,
+                        "rowCount": 1,
+                        "colCount": 16
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 16,
+                    "cells": {
+                        "rowStart": 14,
+                        "colStart": 0,
+                        "rowCount": 1,
+                        "colCount": 16
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 50,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 2,
+                        "rowCount": 1,
+                        "colCount": 4
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "type": 0,
+            "name": "Armored Enemy Tank",
+            "inherits": 0,
+            "frames": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 7,
+                        "colStart": 0,
+                        "rowCount": 1,
+                        "colCount": 16
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 16,
+                    "cells": {
+                        "rowStart": 15,
+                        "colStart": 0,
+                        "rowCount": 1,
+                        "colCount": 16
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 50,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 2,
+                        "rowCount": 1,
+                        "colCount": 4
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ]
+        },
+
+        {
+            "id": 10,
+            "type": 0,
+            "name": "Player Tank",
+            "frames": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 0,
+                        "colStart": 0,
+                        "rowCount": 1,
+                        "colCount": 8
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 50,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 2,
+                        "rowCount": 1,
+                        "colCount": 4
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ],
+            "animations": [
+                {
+                    "id": 0,
+                    "name": "Idle Up",
+                    "frameList": [0],
+                    "frameTimeList": [10]
+                },
+                {
+                    "id": 1,
+                    "name": "Idle Left",
+                    "frameList": [2],
+                    "frameTimeList": [10]
+                },
+                {
+                    "id": 2,
+                    "name": "Idle Down",
+                    "frameList": [4],
+                    "frameTimeList": [10]
+                },
+                {
+                    "id": 3,
+                    "name": "Idle Right",
+                    "frameList": [6],
+                    "frameTimeList": [10]
+                },
+                {
+                    "id": 4,
+                    "name": "Move Up",
+                    "frameList": [0, 1],
+                    "frameTimeList": [3, 3]
+                },
+                {
+                    "id": 5,
+                    "name": "Move Left",
+                    "frameList": [2, 3],
+                    "frameTimeList": [3, 3]
+                },
+                {
+                    "id": 6,
+                    "name": "Move Down",
+                    "frameList": [4, 5],
+                    "frameTimeList": [3, 3]
+                },
+                {
+                    "id": 7,
+                    "name": "Move Right",
+                    "frameList": [6, 7],
+                    "frameTimeList": [3, 3]
+                },
+                {
+                    "id": 40,
+                    "name": "Spawn",
+                    "next": 0,
+                    "frameList": [50, 51, 52, 53, 52, 51, 50, 51, 52, 53, 52, 51, 50, 51, 52, 53],
+                    "frameTimeList": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+                }
+            ],
+            "defaultCollision": {
+                "hit": {
+                    "shape": "RECT",
+                    "x1Relative": -15,
+                    "x2Relative": 15,
+                    "y1Relative": -15,
+                    "y2Relative": 15
+                },
+                "hurt": {
+                    "shape": "RECT",
+                    "x1Relative": -15,
+                    "x2Relative": 15,
+                    "y1Relative": -15,
+                    "y2Relative": 15
+                }
+            }
+        },
+
+        {
+            "id": 20,
+            "type": 0,
+            "name": "Eagle",
+            "frames": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 0,
+                        "rowCount": 1,
+                        "colCount": 2
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ],
+            "animations": [
+                {
+                    "id": 0,
+                    "name": "Idle",
+                    "frameList": [0],
+                    "frameTimeList": [10]
+                },
+                {
+                    "id": 1,
+                    "name": "Destroyed",
+                    "frameList": [1],
+                    "frameTimeList": [10]
+                }
+            ],
+            "defaultCollision": {
+                "hurt": {
+                    "shape": "RECT",
+                    "x1Relative": -15,
+                    "x2Relative": 15,
+                    "y1Relative": -15,
+                    "y2Relative": 15
+                }
+            }
+        },
+
+        {
+            "id": 100,
             "type": 1,
             "name": "Stationary",
-            "frameList": [
+            "frames": [
                 {
                     "loadMode": "array",
                     "spriteSheet": 1,
@@ -149,13 +643,15 @@
                     }
                 }
             ],
-            "animList": [
+            "animations": [
                 {
+                    "id": 0,
                     "name": "Null",
                     "frameList": [null],
                     "frameTimeList": [10]
                 },
                 {
+                    "id": 1,
                     "name": "Steel",
                     "frameList": [0],
                     "frameTimeList": [10],
@@ -170,16 +666,19 @@
                     }
                 },
                 {
+                    "id": 2,
                     "name": "Woods",
                     "frameList": [1],
                     "frameTimeList": [10]
                 },
                 {
+                    "id": 3,
                     "name": "Ice",
                     "frameList": [2],
                     "frameTimeList": [10]
                 },
                 {
+                    "id": 4,
                     "name": "Water",
                     "frameList": [4, 5, 6],
                     "frameTimeList": [20, 20, 20],
@@ -194,6 +693,7 @@
                     }
                 },
                 {
+                    "id": 5,
                     "name": "Brick A",
                     "frameList": [3],
                     "frameTimeList": [10],
@@ -208,6 +708,7 @@
                     }
                 },
                 {
+                    "id": 6,
                     "name": "Brick B",
                     "frameList": [7],
                     "frameTimeList": [10],
@@ -222,6 +723,7 @@
                     }
                 },
                 {
+                    "id": 7,
                     "name": "Wall",
                     "frameList": [8],
                     "frameTimeList": [10]
@@ -229,9 +731,10 @@
             ]
         },
         {
+            "id": 101,
             "type": 2,
             "name": "Mobile",
-            "frameList": [
+            "frames": [
                 {
                     "loadMode": "array",
                     "spriteSheet": 1,
@@ -293,44 +796,51 @@
                     }
                 }
             ],
-            "animList": [
+            "animations": [
                 {
+                    "id": 0,
                     "name": "Bullet Up",
                     "next": null,
                     "frameList": [0],
                     "frameTimeList": [150]
                 },
                 {
+                    "id": 1,
                     "name": "Bullet Left",
                     "next": null,
                     "frameList": [1],
                     "frameTimeList": [150]
                 },
                 {
+                    "id": 2,
                     "name": "Bullet Down",
                     "next": null,
                     "frameList": [2],
                     "frameTimeList": [150]
                 },
                 {
+                    "id": 3,
                     "name": "Bullet Right",
                     "next": null,
                     "frameList": [3],
                     "frameTimeList": [150]
                 },
                 {
+                    "id": 4,
                     "name": "Explosion Small",
                     "next": null,
                     "frameList": [5, 6, 7],
                     "frameTimeList": [3, 3, 3]
                 },
                 {
+                    "id": 5,
                     "name": "Explosion Large",
                     "next": null,
                     "frameList": [5, 6, 7, 8, 9, 7],
                     "frameTimeList": [5, 5, 5, 5, 5, 5]
                 },
                 {
+                    "id": 6,
                     "name": "Wall Hitter Horizontal",
                     "next": null,
                     "frameList": [null],
@@ -346,6 +856,7 @@
                     }
                 },
                 {
+                    "id": 7,
                     "name": "Wall Hitter Vertical",
                     "next": null,
                     "frameList": [null],
@@ -361,6 +872,7 @@
                     }
                 },
                 {
+                    "id": 8,
                     "name": "Enemy Spawner",
                     "frameList": [null],
                     "frameTimeList": [10],
@@ -393,166 +905,8 @@
                     "radius": 3
                 }
             }
-        },
-        {
-            "type": 0,
-            "name": "Light Tank",
-            "frameList": [
-                {
-                    "loadMode": "array",
-                    "spriteSheet": 0,
-                    "idStart": 0,
-                    "cells": {
-                        "rowStart": 4,
-                        "colStart": 8,
-                        "rowCount": 1,
-                        "colCount": 8
-                    },
-                    "center": {
-                        "x": 8,
-                        "y": 8
-                    }
-                },
-                {
-                    "loadMode": "array",
-                    "spriteSheet": 0,
-                    "idStart": 8,
-                    "cells": {
-                        "rowStart": 16,
-                        "colStart": 2,
-                        "rowCount": 1,
-                        "colCount": 4
-                    },
-                    "center": {
-                        "x": 8,
-                        "y": 8
-                    }
-                }
-            ],
-            "animList": [
-                {
-                    "name": "Idle Up",
-                    "frameList": [0],
-                    "frameTimeList": [10]
-                },
-                {
-                    "name": "Idle Left",
-                    "frameList": [2],
-                    "frameTimeList": [10]
-                },
-                {
-                    "name": "Idle Down",
-                    "frameList": [4],
-                    "frameTimeList": [10]
-                },
-                {
-                    "name": "Idle Right",
-                    "frameList": [6],
-                    "frameTimeList": [10]
-                },
-                {
-                    "name": "Move Up",
-                    "frameList": [0, 1],
-                    "frameTimeList": [4, 4]
-                },
-                {
-                    "name": "Move Left",
-                    "frameList": [2, 3],
-                    "frameTimeList": [4, 4]
-                },
-                {
-                    "name": "Move Down",
-                    "frameList": [4, 5],
-                    "frameTimeList": [4, 4]
-                },
-                {
-                    "name": "Move Right",
-                    "frameList": [6, 7],
-                    "frameTimeList": [4, 4]
-                },
-                {
-                    "name": "Spawn",
-                    "next": 0,
-                    "frameList": [8, 9, 10, 11, 10, 9, 8, 9, 10, 11, 10, 9, 8, 9, 10, 11],
-                    "frameTimeList": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
-                }
-            ],
-            "defaultCollision": {
-                "hit": {
-                    "shape": "RECT",
-                    "x1Relative": -15,
-                    "x2Relative": 15,
-                    "y1Relative": -15,
-                    "y2Relative": 15
-                },
-                "hurt": {
-                    "shape": "RECT",
-                    "x1Relative": -15,
-                    "x2Relative": 15,
-                    "y1Relative": -15,
-                    "y2Relative": 15
-                }
-            }
-        },
-        {
-            "type": 0,
-            "name": "Agile Tank",
-            "frameList": [],
-            "animList": []
-        },
-        {
-            "type": 0,
-            "name": "Power Tank",
-            "frameList": [],
-            "animList": []
-        },
-        {
-            "type": 0,
-            "name": "Heavy Tank",
-            "frameList": [],
-            "animList": []
-        },
-        {
-            "type": 0,
-            "name": "Eagle",
-            "frameList": [
-                {
-                    "loadMode": "array",
-                    "spriteSheet": 0,
-                    "idStart": 0,
-                    "cells": {
-                        "rowStart": 16,
-                        "colStart": 0,
-                        "rowCount": 1,
-                        "colCount": 2
-                    },
-                    "center": {
-                        "x": 8,
-                        "y": 8
-                    }
-                }
-            ],
-            "animList": [
-                {
-                    "name": "Idle",
-                    "frameList": [0],
-                    "frameTimeList": [10]
-                },
-                {
-                    "name": "Destroyed",
-                    "frameList": [1],
-                    "frameTimeList": [10]
-                }
-            ],
-            "defaultCollision": {
-                "hurt": {
-                    "shape": "RECT",
-                    "x1Relative": -15,
-                    "x2Relative": 15,
-                    "y1Relative": -15,
-                    "y2Relative": 15
-                }
-            }
         }
+
+
     ]
 }

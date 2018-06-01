@@ -14,9 +14,11 @@
     </div>
     <div class="dynamic-output" id="output"></div>
 
-    <script src="../dist/wesa.min.js"></script>
+    <script src="../src/wesa.js"></script>
 
     <script>
+
+        let scene = new wesa.Scene('Scene');
 
         // Initialize WESA
         wesa.core.init(document.getElementById('canvas'));
@@ -28,17 +30,16 @@
         // Load assets
         wesa.assets.load(function () {
 
-            // Create the scene
-            let scene = new wesa.Scene('Scene');
+            // Add sprite to scene
             scene.addSpriteToLayer(0, new wesa.Sprite({
-                object: wesa.assets.objectList[0],
+                object: wesa.assets.objectLib[0],
                 action: 0,
                 team: 0,
                 position: { x: 0, y: 0 },
                 scale: 4
             }));
 
-            // Run the scene
+            // Run scene
             let animate = function () {
                 requestAnimationFrame(animate);
                 scene.update();

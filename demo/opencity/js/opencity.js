@@ -9,13 +9,6 @@
                 Player: 1,
                 Enemy: 2
             },
-            TankType: {
-                Player: 0,
-                Light: 3,
-                Agile: 4,
-                Power: 5,
-                Heavy: 6
-            },
             TileType: {
                 Null: 0,
                 Steel: 1,
@@ -29,6 +22,16 @@
                 Tank: 0,
                 Stationary: 1,
                 Mobile: 2
+            },
+            Objects: {
+                LightEnemyTank: 1,
+                FastEnemyTank: 2,
+                PowerEnemyTank: 3,
+                ArmoredEnemyTank: 4,
+                PlayerTank: 10,
+                Eagle: 20,
+                StationaryObject: 100,
+                MobileObject: 101
             },
             CollisionMatrix: [
                 [true, true, false],
@@ -90,36 +93,37 @@
                 let ai = new wesa.AI();
                 ai.execute = function () {
                     let s = this.self;
+                    let armor = s.backref.armor;
                     let map = s.backref.map;
                     if (s.velocity.x < 0) {
-                        s.changeAction(5, {
+                        s.changeAction(armor * 10 + 5, {
                             isSmart: true,
                             isImmediate: true
                         });
                         s.position.y = snap(s.position.y, map.tileHeight, map.tileHeight / 4);
                     }
                     else if (s.velocity.x > 0) {
-                        s.changeAction(7, {
+                        s.changeAction(armor * 10 + 7, {
                             isSmart: true,
                             isImmediate: true
                         });
                         s.position.y = snap(s.position.y, map.tileHeight, map.tileHeight / 4);
                     }
                     else if (s.velocity.y < 0) {
-                        s.changeAction(6, {
+                        s.changeAction(armor * 10 + 6, {
                             isSmart: true,
                             isImmediate: true
                         });
                         s.position.x = snap(s.position.x, map.tileWidth, map.tileWidth / 4);
                     }
                     else if (s.velocity.y > 0) {
-                        s.changeAction(4, {
+                        s.changeAction(armor * 10 + 4, {
                             isSmart: true,
                             isImmediate: true
                         });
                         s.position.x = snap(s.position.x, map.tileWidth, map.tileWidth / 4);
                     }
-                    else if (s.action < 8) {
+                    else if (s.action < 40) {
                         s.changeAction(s.action % 4, {
                             isSmart: true,
                             isImmediate: true
@@ -128,7 +132,7 @@
                 };
                 return ai;
             },
-            LightTank: function () {
+            EnemyTank: function () {
                 let ai = new wesa.AI();
                 ai.tick = 2;
                 ai.reload = 30;
@@ -160,7 +164,7 @@
                             up = 0.2 * yPortion;
                             down = 0.8 * yPortion;
                         }
-                        if (self.action < 8) {
+                        if (self.action < 40) {
                             move(self.backref, [up, down, left, right]);
                         }
 
@@ -229,9 +233,14 @@
                                 hitter.backref.hit();
                             }
 
-                            // Kills tank
-                            if (hurter.object.type == OCConfig.ObjectType.Tank && hurter.action < 8) {
-                                hurter.backref.die();
+                            // Hits tank
+                            if (hurter.object.type == OCConfig.ObjectType.Tank && hurter.action < 40) {
+                                if (hurter.backref.armor <= 0) {
+                                    hurter.backref.die();
+                                }
+                                else {
+                                    hurter.backref.armor--;
+                                }
                             }
 
                         }
@@ -324,7 +333,7 @@
             let w = this.width, h = this.height;
             let tw = this.tileWidth, th = this.tileHeight;
             let player = new OCTank({
-                type: OCConfig.TankType.Player,
+                type: OCConfig.Objects.PlayerTank,
                 team: OCConfig.Team.Player,
                 position: { x: tw * (1 + this.playerSpawnPoint.col - w / 2), y: th * (1 + this.playerSpawnPoint.row - h / 2) },
                 speed: 1
@@ -337,24 +346,22 @@
         OCMap.prototype.spawnEnemy = function (enemyType, enemySpawnPoint) {
             let w = this.width, h = this.height;
             let tw = this.tileWidth, th = this.tileHeight;
-            let enemy = null;
+            let enemy = new OCTank({
+                type: enemyType,
+                team: OCConfig.Team.Enemy,
+                position: { x: tw * (1 + this.enemySpawnPoint[enemySpawnPoint].col - w / 2), y: th * (1 + this.enemySpawnPoint[enemySpawnPoint].row - h / 2) }
+            });
             switch (enemyType) {
-                case OCConfig.TankType.Light:
-                    enemy = new OCTank({
-                        type: enemyType,
-                        team: OCConfig.Team.Enemy,
-                        position: { x: tw * (1 + this.enemySpawnPoint[enemySpawnPoint].col - w / 2), y: th * (1 + this.enemySpawnPoint[enemySpawnPoint].row - h / 2) },
-                        speed: 1
-                    });
+                case OCConfig.Objects.LightEnemyTank:
                     break;
-                case OCConfig.TankType.Agile:
-
+                case OCConfig.Objects.FastEnemyTank:
+                    enemy.speed = 2;
                     break;
-                case OCConfig.TankType.Power:
-
+                case OCConfig.Objects.PowerEnemyTank:
+                    enemy.bulletSpeed = 8;
                     break;
-                case OCConfig.TankType.Heavy:
-
+                case OCConfig.Objects.ArmoredEnemyTank:
+                    enemy.armor = 3;
                     break;
                 default:
                     console.error('OpenCity: Unknown spawning enemy type.');
@@ -394,7 +401,7 @@
                     let brickAct = [5, 6, 6, 5];
                     for (let j = 0; j < brickPos.length; j++) {
                         let brickBit = new wesa.Sprite({
-                            object: wesa.assets.objectList[1],
+                            object: wesa.assets.storedObjects[OCConfig.Objects.StationaryObject],
                             action: brickAct[j],
                             team: 0,
                             position: { x: brickPos[j][0], y: brickPos[j][1] },
@@ -406,7 +413,7 @@
                 }
                 else if (tile == OCConfig.TileType.Steel) {
                     let steelBit = new wesa.Sprite({
-                        object: wesa.assets.objectList[1],
+                        object: wesa.assets.storedObjects[OCConfig.Objects.StationaryObject],
                         action: OCConfig.TileType.Steel,
                         team: 0,
                         position: { x: cx, y: cy },
@@ -417,7 +424,7 @@
                 }
                 else if (tile == OCConfig.TileType.Woods) {
                     this.scene.addSpriteToLayer(2, new wesa.Sprite({
-                        object: wesa.assets.objectList[1],
+                        object: wesa.assets.storedObjects[OCConfig.Objects.StationaryObject],
                         action: OCConfig.TileType.Woods,
                         team: 0,
                         position: { x: cx, y: cy },
@@ -426,7 +433,7 @@
                 }
                 else if (tile == OCConfig.TileType.Water) {
                     let waterBit = new wesa.Sprite({
-                        object: wesa.assets.objectList[1],
+                        object: wesa.assets.storedObjects[OCConfig.Objects.StationaryObject],
                         action: OCConfig.TileType.Water,
                         team: 0,
                         position: { x: cx, y: cy },
@@ -437,7 +444,7 @@
                 }
                 else if (tile == OCConfig.TileType.Ice) {
                     this.scene.addSpriteToLayer(0, new wesa.Sprite({
-                        object: wesa.assets.objectList[1],
+                        object: wesa.assets.storedObjects[OCConfig.Objects.StationaryObject],
                         action: OCConfig.TileType.Ice,
                         team: 0,
                         position: { x: cx, y: cy },
@@ -446,7 +453,7 @@
                 }
                 else if (tile == OCConfig.TileType.Solid) {
                     let solidBit = new wesa.Sprite({
-                        object: wesa.assets.objectList[1],
+                        object: wesa.assets.storedObjects[OCConfig.Objects.StationaryObject],
                         action: OCConfig.TileType.Solid,
                         team: 0,
                         position: { x: cx, y: cy },
@@ -463,7 +470,7 @@
             let wallColl = [[tw * w / 2, th], [tw * w / 2, th], [tw, th * h / 2], [tw, th * h / 2]];
             for (let i = 0; i < wallPos.length; i++) {
                 let wall = new wesa.Sprite({
-                    object: wesa.assets.objectList[1],
+                    object: wesa.assets.storedObjects[OCConfig.Objects.StationaryObject],
                     action: 7,
                     team: 0,
                     position: { x: wallPos[i][0], y: wallPos[i][1] },
@@ -494,7 +501,7 @@
             if (OCReference.enemies.length < 4) {
                 let i = Math.floor(Math.random() * this.enemySpawnPoint.length);
                 if (!OCReference.enemySpawners[i].isBlocked) {
-                    this.spawnEnemy(OCConfig.TankType.Light, i)
+                    this.spawnEnemy(OCConfig.Objects.ArmoredEnemyTank, i)
                 }
             }
         };
@@ -503,10 +510,12 @@
         function OCTank(desc) {
             let me = this;
             me.type = desc.type;
-            me.speed = desc.speed;
+            me.speed = (desc.hasOwnProperty('speed') ? desc.speed : 1);
+            me.bulletSpeed = (desc.hasOwnProperty('bulletSpeed') ? desc.bulletSpeed : 5);
+            me.armor = (desc.hasOwnProperty('armor') ? desc.armor : 0);
             me.sprite = new wesa.Sprite({
-                object: wesa.assets.objectList[me.type],
-                action: 8,
+                object: wesa.assets.storedObjects[me.type],
+                action: 40,
                 team: desc.team,
                 position: { x: desc.position.x, y: desc.position.y },
                 scale: 2
@@ -514,17 +523,11 @@
             me.sprite.backref = this;
             me.sprite.addAI(OCAI.Universal());
             switch (me.type) {
-                case OCConfig.TankType.Light:
-                    me.sprite.addAI(OCAI.LightTank());
-                    break;
-                case OCConfig.TankType.Agile:
-                    // TODO
-                    break;
-                case OCConfig.TankType.Power:
-                    // TODO
-                    break;
-                case OCConfig.TankType.Heavy:
-                    // TODO
+                case OCConfig.Objects.LightEnemyTank:
+                case OCConfig.Objects.FastEnemyTank:
+                case OCConfig.Objects.PowerEnemyTank:
+                case OCConfig.Objects.ArmoredEnemyTank:
+                    me.sprite.addAI(OCAI.EnemyTank());
                     break;
                 default:
                     break;
@@ -534,7 +537,7 @@
         }
 
         OCTank.prototype.takeControl = function (keyStatus) {
-            if (this.type == OCConfig.TankType.Player && this.sprite.action < 8) {
+            if (this.type == OCConfig.Objects.PlayerTank && this.sprite.action < 8) {
                 let s = this.sprite;
                 if (keyStatus.left && !keyStatus.right) {
                     s.velocity.x = -this.speed;
@@ -568,28 +571,28 @@
 
         OCTank.prototype.fire = function () {
             let s = this.sprite;
-            if (s.action >= 8) { return; }
-            let dir = s.action % 4;
+            if (s.action >= 40) { return; }
+            let dir = s.action % 10 % 4;
             let posOffset, act, v;
             if (dir == 0) {
                 act = 0;
                 posOffset = [0, 10];
-                v = [0, 5];
+                v = [0, this.bulletSpeed];
             }
             else if (dir == 1) {
                 act = 1;
                 posOffset = [-10, 0];
-                v = [-5, 0];
+                v = [-this.bulletSpeed, 0];
             }
             else if (dir == 2) {
                 act = 2;
                 posOffset = [0, -10];
-                v = [0, -5];
+                v = [0, -this.bulletSpeed];
             }
             else if (dir == 3) {
                 act = 3;
                 posOffset = [10, 0];
-                v = [5, 0];
+                v = [this.bulletSpeed, 0];
             }
             let bullet = new OCBullet({
                 action: act,
@@ -604,7 +607,7 @@
         OCTank.prototype.die = function () {
             let s = this.sprite;
             s.scene.addSpriteToLayer(3, new wesa.Sprite({
-                object: wesa.assets.objectList[2],
+                object: wesa.assets.storedObjects[OCConfig.Objects.MobileObject],
                 action: 5,
                 team: 0,
                 position: { x: s.position.x, y: s.position.y },
@@ -618,7 +621,7 @@
 
         function OCEagle(desc) {
             this.sprite = new wesa.Sprite({
-                object: wesa.assets.objectList[7],
+                object: wesa.assets.storedObjects[OCConfig.Objects.Eagle],
                 action: 0,
                 team: desc.team,
                 position: { x: desc.position.x, y: desc.position.y },
@@ -631,7 +634,7 @@
         OCEagle.prototype.die = function () {
             let s = this.sprite;
             s.scene.addSpriteToLayer(3, new wesa.Sprite({
-                object: wesa.assets.objectList[2],
+                object: wesa.assets.storedObjects[OCConfig.Objects.MobileObject],
                 action: 5,
                 team: 0,
                 position: { x: s.position.x, y: s.position.y },
@@ -647,7 +650,7 @@
 
         function OCEnemySpawner(desc) {
             this.sprite = new wesa.Sprite({
-                object: wesa.assets.objectList[2],
+                object: wesa.assets.storedObjects[OCConfig.Objects.MobileObject],
                 action: 8,
                 team: OCConfig.Team.Null,
                 position: { x: desc.position.x, y: desc.position.y },
@@ -662,7 +665,7 @@
 
         function OCBullet(desc) {
             this.sprite = new wesa.Sprite({
-                object: wesa.assets.objectList[2],
+                object: wesa.assets.storedObjects[OCConfig.Objects.MobileObject],
                 action: desc.action,
                 team: desc.team,
                 position: { x: desc.position.x, y: desc.position.y },
@@ -675,7 +678,7 @@
         OCBullet.prototype.hit = function () {
             let s = this.sprite;
             s.scene.addSpriteToLayer(3, new wesa.Sprite({
-                object: wesa.assets.objectList[2],
+                object: wesa.assets.storedObjects[OCConfig.Objects.MobileObject],
                 action: 4,
                 team: 0,
                 position: { x: s.position.x, y: s.position.y },

@@ -128,8 +128,8 @@
                 objectJsonUrl: null
             },
 
-            spriteSheetList: [],
-            objectList: [],
+            spriteSheets: [],
+            storedObjects: [],
 
             load: function (callback) {
 
@@ -174,72 +174,97 @@
                                 cellHeight: ssMeta.cellHeight
                             });
                             ss.loadTextureFromImage(wesaCore.handle.gl, loadedImages[i]);
-                            me.spriteSheetList.push(ss);
+                            me.spriteSheets.push(ss);
                         }
 
                         // Load Objects
                         for (let i = 0; i < parsed.objects.length; i++) {
                             let o = parsed.objects[i];
-                            let obj = new wesa.StoredObject({
-                                oid: i,
+                            let obj = new WESAStoredObject({
+                                oid: o.id,
                                 type: o.type,
                                 name: o.name
                             });
-                            let fArr = obj.frameList;
-                            for (let j = 0; j < o.frameList.length; j++) {
-                                let f = o.frameList[j];
-                                if (f.loadMode == 'array') {
-                                    for (let i = 0; i < f.cells.rowCount * f.cells.colCount; i++) {
-                                        let fid = f.idStart + i;
-                                        if (fArr[fid]) {
-                                            console.error('wesaAssets.load(): WESAFrame conflicts on WESAObject "' + obj.name + '". Frame #"' + fid + '".');
+
+
+                            if (o.hasOwnProperty('inherits')) {
+                                let parent = me.storedObjects[o.inherits];
+                                if (parent) {
+                                    if (parent.frameLib) {
+                                        obj.frameLib = parent.frameLib.slice();
+                                    }
+                                    if (parent.animations) {
+                                        obj.animations = parent.animations.slice();
+                                    }
+                                }
+                                else {
+                                    console.warn('wesaAssets.load(): Object "' + o.name + '" is inheriting from an undefined object.');
+                                }
+                            }
+
+
+                            if (o.frames) {
+                                obj.frameLib = [];
+                                for (let j = 0; j < o.frames.length; j++) {
+                                    let f = o.frames[j];
+                                    if (f.loadMode == 'array') {
+                                        for (let i = 0; i < f.cells.rowCount * f.cells.colCount; i++) {
+                                            let fid = f.idStart + i;
+                                            if (obj.frameLib[fid]) {
+                                                console.error('wesaAssets.load(): WESAFrame conflicts on WESAStoredObject "' + obj.name + '". Frame #"' + fid + '".');
+                                            }
+                                            else {
+                                                let row = f.cells.rowStart + Math.floor(i / f.cells.colCount);
+                                                let col = f.cells.colStart + i % f.cells.colCount;
+                                                obj.frameLib[fid] = new WESAFrame({
+                                                    spriteSheet: me.spriteSheets[f.spriteSheet],
+                                                    cell: { row: row, col: col, rowSpan: 1, colSpan: 1 },
+                                                    center: { x: f.center.x, y: f.center.y }
+                                                });
+                                            }
+                                        }
+                                    }
+                                    else if (f.loadMode == 'single') {
+                                        if (obj.frameLib[f.id]) {
+                                            console.error('wesaAssets.load(): WESAFrame conflicts on WESAStoredObject "' + obj.name + '". Frame #"' + f.id + '".');
                                         }
                                         else {
-                                            let row = f.cells.rowStart + Math.floor(i / f.cells.colCount);
-                                            let col = f.cells.colStart + i % f.cells.colCount;
-                                            fArr[fid] = new WESAFrame({
-                                                spriteSheet: me.spriteSheetList[f.spriteSheet],
-                                                cell: { row: row, col: col, rowSpan: 1, colSpan: 1 },
+                                            obj.frameLib[f.id] = new WESAFrame({
+                                                spriteSheet: me.spriteSheets[f.spriteSheet],
+                                                cell: { row: f.cell.row, col: f.cell.col, rowSpan: f.cell.rowSpan, colSpan: f.cell.colSpan },
                                                 center: { x: f.center.x, y: f.center.y }
                                             });
                                         }
                                     }
-                                }
-                                else if (f.loadMode == 'single') {
-                                    if (fArr[f.id]) {
-                                        console.error('wesaAssets.load(): WESAFrame conflicts on WESAObject "' + obj.name + '". Frame #"' + f.id + '".');
-                                    }
                                     else {
-                                        fArr[f.id] = new WESAFrame({
-                                            spriteSheet: me.spriteSheetList[f.spriteSheet],
-                                            cell: { row: f.cell.row, col: f.cell.col, rowSpan: f.cell.rowSpan, colSpan: f.cell.colSpan },
-                                            center: { x: f.center.x, y: f.center.y }
-                                        });
+                                        console.error('wesaAssets.load(): Missing frame loading mode when loading frames for "' + obj.name + '". Got "' + f.loadMode + '".');
                                     }
                                 }
-                                else {
-                                    console.error('wesaAssets.load(): Missing frame loading mode when loading frames for "' + obj.name + '". Got "' + f.loadMode + '".');
+                            }
+
+                            if (o.animations) {
+                                obj.animations = [];
+                                for (let j = 0; j < o.animations.length; j++) {
+                                    let a = o.animations[j];
+                                    let anim = new WESAAnimation({
+                                        aid: a.id,
+                                        name: a.name,
+                                        next: a.hasOwnProperty('next') ? a.next : a.id
+                                    });
+                                    if (a.hasOwnProperty('collision')) {
+                                        anim.collision.hit = a.collision.hasOwnProperty('hit') ? a.collision.hit : null;
+                                        anim.collision.hurt = a.collision.hasOwnProperty('hurt') ? a.collision.hurt : null;
+                                    }
+                                    else if (o.hasOwnProperty('defaultCollision')) {
+                                        anim.collision.hit = o.defaultCollision.hasOwnProperty('hit') ? o.defaultCollision.hit : null;
+                                        anim.collision.hurt = o.defaultCollision.hasOwnProperty('hurt') ? o.defaultCollision.hurt : null;
+                                    }
+                                    anim.setFrames(a.frameList.slice(), a.frameTimeList.slice());
+                                    obj.addAnimation(a.id, anim);
                                 }
                             }
-                            for (let j = 0; j < o.animList.length; j++) {
-                                let a = o.animList[j];
-                                let anim = new WESAAnimation({
-                                    aid: j,
-                                    name: a.name,
-                                    next: a.hasOwnProperty('next') ? a.next : j
-                                });
-                                if (a.hasOwnProperty('collision')) {
-                                    anim.collision.hit = a.collision.hasOwnProperty('hit') ? a.collision.hit : null;
-                                    anim.collision.hurt = a.collision.hasOwnProperty('hurt') ? a.collision.hurt : null;
-                                }
-                                else if (o.hasOwnProperty('defaultCollision')) {
-                                    anim.collision.hit = o.defaultCollision.hasOwnProperty('hit') ? o.defaultCollision.hit : null;
-                                    anim.collision.hurt = o.defaultCollision.hasOwnProperty('hurt') ? o.defaultCollision.hurt : null;
-                                }
-                                anim.setFrames(Array.from(a.frameList, x => (x == null ? null : fArr[x])), a.frameTimeList.slice());
-                                obj.addAnimation(j, anim);
-                            }
-                            me.objectList.push(obj);
+
+                            me.storedObjects[o.id] = obj;
                         }
                         callback();
                     }
@@ -471,7 +496,7 @@
         WESAAnimation.prototype.setFrames = function (frameArr, frameTimeArr) {
             var len = frameArr.length;
             var time = 0;
-            this.frameList = frameArr.slice();
+            this.frameList = frameArr;
             for (let i = 0; i < len; i++) {
                 time += frameTimeArr[i];
                 this.endTimeList[i] = time;
@@ -479,20 +504,20 @@
         };
 
 
-        function WESAObject(desc) {
+        function WESAStoredObject(desc) {
             this.oid = desc.oid;
             this.type = desc.type;
             this.name = desc.name;
-            this.frameList = [];
-            this.animList = [];
+            this.frameLib = null;
+            this.animations = null;
         }
 
-        WESAObject.prototype.addAnimation = function (slot, anim) {
-            this.animList[slot] = anim;
+        WESAStoredObject.prototype.addAnimation = function (slot, anim) {
+            this.animations[slot] = anim;
         };
 
-        WESAObject.prototype.addAnimationByArray = function (animArr) {
-            this.animList = animArr.slice();
+        WESAStoredObject.prototype.addAnimationByArray = function (animArr) {
+            this.animations = animArr.slice();
         };
 
 
@@ -531,11 +556,11 @@
         });
 
         WESASprite.prototype.getCurrentAnim = function () {
-            return this.object.animList[this.action];
+            return this.object.animations[this.action];
         };
 
         WESASprite.prototype.getCurrentFrame = function () {
-            return this.object.animList[this.action].frameList[this.frameNum];
+            return this.object.frameLib[this.getCurrentAnim().frameList[this.frameNum]];
         };
 
         WESASprite.prototype.changeAction = function (newAction, options) {
@@ -551,7 +576,7 @@
         };
 
         WESASprite.prototype.setTime = function (time) {
-            let endTimeList = this.object.animList[this.action].endTimeList;
+            let endTimeList = this.object.animations[this.action].endTimeList;
             let max = endTimeList[endTimeList.length - 1];
             if (time < 0) { time = 0; }
             if (time >= max) { time = max - 1; }
@@ -588,7 +613,7 @@
             for (let i = 0; i < this.aiList.length; i++) {
                 this.aiList[i].execute();
             }
-            let anim = this.object.animList[this.action];
+            let anim = this.object.animations[this.action];
             if (!anim) {
                 console.error('WESASprite: No animation for action #' + this.action + '. Object: "' + this.object.name + '"');
                 return;
@@ -714,7 +739,7 @@
                     gl.vertexAttribPointer(shader.attribLocations.textureCoord, 2, gl.FLOAT, false, 0, 0);
                     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer.indices);
                     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.batchData[ssid].indices), gl.STATIC_DRAW);
-                    gl.bindTexture(gl.TEXTURE_2D, wesaAssets.spriteSheetList[ssid].texture);
+                    gl.bindTexture(gl.TEXTURE_2D, wesaAssets.spriteSheets[ssid].texture);
                     gl.drawElements(gl.TRIANGLES, this.batchData[ssid].indices.length, gl.UNSIGNED_SHORT, 0);
                 }
             }
@@ -903,7 +928,7 @@
             SpriteSheet: WESASpriteSheet,
             Frame: WESAFrame,
             Animation: WESAAnimation,
-            StoredObject: WESAObject,
+            StoredObject: WESAStoredObject,
             Sprite: WESASprite,
             AI: WESAAI,
             Scene: WESAScene,
