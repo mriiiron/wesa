@@ -1,6 +1,11 @@
 @font-face {
-    font-family: 'Lato';
-    src: url(http://caiyi.us/vault/fonts/Lato/Lato-Regular.ttf);
+    font-family: 'Play';
+    src: url(http://caiyi.us/vault/fonts/Play/Play-Regular.ttf);
+}
+
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url(http://caiyi.us/vault/fonts/Press_Start_2P/PressStart2P-Regular.ttf);
 }
 
 html, body {
@@ -11,7 +16,7 @@ html, body {
 }
 
 body {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Play', sans-serif;
     color: #eee;
     display: flex;
     flex-direction: column;
@@ -19,13 +24,54 @@ body {
 
 .wrapper {
     margin: auto;
+    display: flex;
 }
 
-ul.maps {
+.main {
+
+}
+
+.side {
+    box-sizing: border-box;
+    padding-left: 30px;
+    width: 210px;
+}
+
+.side h4, .side p, .side ul {
+    margin-top: 0;
+}
+
+.side h4 {
+    margin-bottom: 10px;
+}
+
+.game-stats {
+    font-family: 'Press Start 2P', sans-serif;
+}
+
+.game-stats .game-over-display {
+    visibility: hidden;
+}
+
+.game-stats.game-over .game-over-display {
+    visibility: visible;
+}
+
+.game-stats .row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.side ul {
+    padding: 0;
+    list-style: none;
+}
+
+.side ul.maps {
     padding: 0;
 }
 
-ul.maps li {
+.side ul.maps li {
     display: inline-block;
     padding-bottom: 2px;
     margin-right: 5px;
@@ -33,19 +79,12 @@ ul.maps li {
     cursor: pointer;
 }
 
-ul.maps li:hover {
+.side ul.maps li:hover {
     border-bottom: 1px dashed white;
 }
 
-ul.maps li.active {
+.side ul.maps li.active {
     border-bottom: 1px dashed white;
-}
-
-.dynamic-output {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    color: white;
 }
 
 #canvas {

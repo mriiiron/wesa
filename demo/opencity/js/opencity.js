@@ -51,7 +51,10 @@
                 left: false,
                 right: false,
                 fire: false
-            }
+            },
+            playerRespawnCount: 2,
+            score: 0,
+            isGameOver: false
         };
 
         function snap(val, gridSize, tolerance) {
@@ -221,6 +224,7 @@
                         hitter.position.y = hitter.prevPosition.y;
                     }
 
+                    // Mobile hits
                     else if (hitter.team != hurter.team && hitter.object.type == OCConfig.ObjectType.Mobile) {
 
                         // Bullet (action < 4) hits
@@ -233,7 +237,7 @@
                                 hitter.backref.hit();
                             }
 
-                            // Hits tank
+                            // Hits tank or eagle
                             if (hurter.object.type == OCConfig.ObjectType.Tank && hurter.action < 40) {
                                 if (hurter.backref.armor <= 0) {
                                     hurter.backref.die();
@@ -261,6 +265,14 @@
                         }
 
                     }
+                }
+            },
+            gameOver: function () {
+                OCReference.isGameOver = true;
+                if (OCReference.player) {
+                    OCReference.player.sprite.velocity.x = 0;
+                    OCReference.player.sprite.velocity.y = 0;
+                    OCReference.player = null;
                 }
             }
         };
@@ -325,6 +337,7 @@
                 position: { x: tw * (1 + this.eagleSpawnPoint.col - w / 2), y: th * (1 + this.eagleSpawnPoint.row - h / 2) }
             });
             eagle.map = this;
+            eagle.armor = 0;
             this.scene.addSpriteToLayer(1, eagle.sprite);
             OCReference.eagle = eagle;
         };
@@ -499,9 +512,21 @@
 
         OCMap.prototype.trySpawnEnemy = function () {
             if (OCReference.enemies.length < 4) {
-                let i = Math.floor(Math.random() * this.enemySpawnPoint.length);
-                if (!OCReference.enemySpawners[i].isBlocked) {
-                    this.spawnEnemy(OCConfig.Objects.ArmoredEnemyTank, i)
+                let spawnPoint = Math.floor(Math.random() * this.enemySpawnPoint.length);
+                if (!OCReference.enemySpawners[spawnPoint].isBlocked) {
+                    let x = Math.random();
+                    if (x < 0.25) {
+                        this.spawnEnemy(OCConfig.Objects.LightEnemyTank, spawnPoint);
+                    }
+                    else if (x < 0.5) {
+                        this.spawnEnemy(OCConfig.Objects.FastEnemyTank, spawnPoint);
+                    }
+                    else if (x < 0.75) {
+                        this.spawnEnemy(OCConfig.Objects.PowerEnemyTank, spawnPoint);
+                    }
+                    else {
+                        this.spawnEnemy(OCConfig.Objects.ArmoredEnemyTank, spawnPoint);
+                    }
                 }
             }
         };
@@ -614,8 +639,54 @@
                 scale: 2
             }));
             s.kill();
-            let i = OCReference.enemies.indexOf(this);
-            if (i >= 0) { OCReference.enemies.splice(i, 1); }
+
+            let isEnemy = true;
+            let scoreAction = null;
+
+            switch (this.type) {
+                case OCConfig.Objects.PlayerTank:
+                    isEnemy = false;
+                    break;
+                case OCConfig.Objects.LightEnemyTank:
+                    scoreAction = 9;
+                    OCReference.score += 100;
+                    break;
+                case OCConfig.Objects.FastEnemyTank:
+                    scoreAction = 10;
+                    OCReference.score += 200;
+                    break;
+                case OCConfig.Objects.PowerEnemyTank:
+                    scoreAction = 11;
+                    OCReference.score += 300;
+                    break;
+                case OCConfig.Objects.ArmoredEnemyTank:
+                    scoreAction = 12;
+                    OCReference.score += 400;
+                    break;
+                default:
+                    break;
+            }
+
+            if (isEnemy) {
+                let i = OCReference.enemies.indexOf(this);
+                if (i >= 0) { OCReference.enemies.splice(i, 1); }
+                s.scene.addSpriteToLayer(2, new wesa.Sprite({
+                    object: wesa.assets.storedObjects[OCConfig.Objects.MobileObject],
+                    action: scoreAction,
+                    team: 0,
+                    position: { x: s.position.x, y: s.position.y },
+                    scale: 2
+                }));
+            }
+            else {
+                if (OCReference.playerRespawnCount > 0) {
+                    OCReference.player.map.spawnPlayer();
+                    OCReference.playerRespawnCount--;
+                }
+                else {
+                    OCFunctions.gameOver();
+                }
+            }
         }
 
 
@@ -645,6 +716,7 @@
                 isSmart: true,
                 isImmediate: true
             });
+            OCFunctions.gameOver();
         }
 
 

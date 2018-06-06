@@ -10,21 +10,72 @@
 <body>
 
     <div class="wrapper">
-        <div><canvas id="canvas" width="480" height="480"></canvas></div>
-        <ul class="maps">
-            <li class="active"><img src="./assets/stage_1.png" /></li>
-            <li><img src="./assets/stage_2.png" /></li>
-            <li><img src="./assets/stage_3.png" /></li>
-            <li><img src="./assets/stage_4.png" /></li>
-        </ul>
-        <p>Tip: Select map above. Arrow keys to move, Z to shoot, P to pause.</p>
+        <div class="main">
+            <div class="game-stats" id="game-stats">
+                <div class="row">
+                    <div>SCORE<br /><span id="score">0</span></div>
+                    <div style="text-align:center;" class="game-over-display">GAME<br />OVER</div>
+                    <div style="text-align:right;">TANKS<br /><span id="respawn-count">0</span></div>
+                </div>
+            </div>
+            <div><canvas id="canvas" width="480" height="480"></canvas></div>
+        </div>
+        <div class="side">
+            <h4>Controls:</h4>
+            <ul>
+                <li>Arrow Keys: Move</li>
+                <li>Z: Shoot</li>
+                <li>P: Pause</li>
+                <li>R: Game Reset</li>
+            </ul>
+            <h4>Select map:</h4>
+            <ul class="maps">
+                <li class="active"><img src="./assets/stage_1.png" /></li>
+                <li><img src="./assets/stage_2.png" /></li>
+                <li><img src="./assets/stage_3.png" /></li>
+                <li><img src="./assets/stage_4.png" /></li>
+            </ul>
+            <h4>Statistics:</h4>
+            <ul>
+                <li>Collision Checks: <span id="collision-checks"></span></li>
+                <li>Collision Detected: <span id="collision-detected"></span></li>
+            </ul>
+            <br />
+            <br />
+            <h4>OpenCity</h4>
+            <p>Powered by <a href="#">WesaJS</a><br /><a href="#">Source Code</a></p>
+        </div>
     </div>
-    <div class="dynamic-output"><p>OpenCity Stats</p><p id="output"></p></div>
+    <div class="bottom-right"><p>OpenCity Stats</p><p id="output"></p></div>
 
     <script src="../../src/wesa.js"></script>
     <script src="./js/opencity.js"></script>
 
     <script>
+
+        var scene = null;
+        var map = null;
+
+        function gameReset() {
+            scene.clear();
+            map.reset();
+            OC.ref.playerRespawnCount = 2;
+            OC.ref.score = 0;
+            OC.ref.isGameOver = false;
+        }
+
+        // Initialize map picker
+        let mapTags = document.querySelectorAll("ul.maps li");
+        for (let i = 0; i < mapTags.length; i++) {
+            mapTags[i].addEventListener("click", function (e) {
+                for (let j = 0; j < mapTags.length; j++) {
+                    mapTags[j].className = '';
+                }
+                e.currentTarget.className = 'active';
+                map.load(e.currentTarget.querySelector('img'));
+                gameReset();
+            });
+        }
 
         document.onkeydown = function (e) {
             switch (e.key) {
@@ -45,6 +96,9 @@
                     break;
                 case 'p':
                     wesa.core.pause();
+                    break;
+                case 'r':
+                    gameReset();
                     break;
                 default:
                     break;
@@ -87,10 +141,10 @@
         wesa.assets.load(function () {
 
             // Create the scene
-            let scene = new wesa.Scene('Scene');
+            scene = new wesa.Scene('Scene');
 
             // Create the map on the scene
-            let map = new OC.Map({
+            map = new OC.Map({
                 scene: scene,
                 tileWidth: 16,
                 tileHeight: 16
@@ -98,29 +152,29 @@
             map.load(document.querySelector('ul.maps li.active img'));
             map.reset();
 
-            // Initialize map picker
-            let mapTags = document.querySelectorAll("ul.maps li");
-            for (let i = 0; i < mapTags.length; i++) {
-                mapTags[i].addEventListener("click", function (e) {
-                    for (let j = 0; j < mapTags.length; j++) {
-                        mapTags[j].className = '';
-                    }
-                    e.currentTarget.className = 'active';
-                    scene.clear();
-                    map.load(e.currentTarget.querySelector('img'));
-                    map.reset();
-                });
+            function updateDisplay() {
+                document.querySelector('#collision-checks').innerText = wesa.stat.collisionChecks;
+                document.querySelector('#collision-detected').innerText = wesa.stat.collisionsDetected;
+                document.querySelector('#score').innerText = OC.ref.score;
+                document.querySelector('#respawn-count').innerText = OC.ref.playerRespawnCount;
+                let gameStats = document.querySelector('#game-stats');
+                if (OC.ref.isGameOver) {
+                    gameStats.className = 'game-stats game-over';
+                }
+                else {
+                    gameStats.className = 'game-stats';
+                }
             }
 
             // Run the scene
             let animate = function () {
                 requestAnimationFrame(animate);
-                OC.ref.player.takeControl(OC.ref.keyStatus);
+                if (OC.ref.player) { OC.ref.player.takeControl(OC.ref.keyStatus); }
                 scene.update();
                 OC.func.processCollision(scene.getCollisions({ collisionMatrix: OC.config.CollisionMatrix }));
                 map.trySpawnEnemy();
-                document.getElementById('output').innerHTML = 'Collision Checks: ' + wesa.stat.collisionChecks + '<br />Collisions Detected: ' + wesa.stat.collisionsDetected;
                 scene.render();
+                updateDisplay();
             }
             animate();
 

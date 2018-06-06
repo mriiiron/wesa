@@ -794,6 +794,21 @@
                         "x": 16,
                         "y": 16
                     }
+                },
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 10,
+                    "cells": {
+                        "rowStart": 16,
+                        "colStart": 7,
+                        "rowCount": 2,
+                        "colCount": 3
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
                 }
             ],
             "animations": [
@@ -884,6 +899,60 @@
                             "y1Relative": -15,
                             "y2Relative": 15
                         }
+                    }
+                },
+                {
+                    "id": 9,
+                    "name": "Score 100",
+                    "next": null,
+                    "frameList": [11],
+                    "frameTimeList": [90],
+                    "collision": {
+                        "hit": null,
+                        "hurt": null
+                    }
+                },
+                {
+                    "id": 10,
+                    "name": "Score 200",
+                    "next": null,
+                    "frameList": [12],
+                    "frameTimeList": [90],
+                    "collision": {
+                        "hit": null,
+                        "hurt": null
+                    }
+                },
+                {
+                    "id": 11,
+                    "name": "Score 300",
+                    "next": null,
+                    "frameList": [13],
+                    "frameTimeList": [90],
+                    "collision": {
+                        "hit": null,
+                        "hurt": null
+                    }
+                },
+                {
+                    "id": 12,
+                    "name": "Score 400",
+                    "next": null,
+                    "frameList": [14],
+                    "frameTimeList": [90],
+                    "collision": {
+                        "hit": null,
+                        "hurt": null
+                    }
+                },
+                {
+                    "id": 13,
+                    "name": "Score 500",
+                    "frameList": [15],
+                    "frameTimeList": [90],
+                    "collision": {
+                        "hit": null,
+                        "hurt": null
                     }
                 }
             ],
