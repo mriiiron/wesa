@@ -9,6 +9,7 @@
     ],
     "objects": [
         {
+            "id": 0,
             "type": 0,
             "name": "Bubble",
             "frameList": [
@@ -28,8 +29,9 @@
                     }
                 }
             ],
-            "animList": [
+            "animations": [
                 {
+                    "id": 0,
                     "name": "Floating",
                     "next": 0,
                     "frameList": [0],
@@ -38,11 +40,13 @@
             ]
         },
         {
+            "id": 1,
             "type": 0,
             "name": "Wall",
             "frameList": [],
-            "animList": [
+            "animations": [
                 {
+                    "id": 0,
                     "name": "Idle",
                     "next": 0,
                     "frameList": [null],

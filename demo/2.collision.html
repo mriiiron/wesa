@@ -14,7 +14,7 @@
     </div>
     <div class="dynamic-output" id="output"></div>
 
-    <script src="../dist/wesa.min.js"></script>
+    <script src="../src/wesa.js"></script>
 
     <script>
 
@@ -56,7 +56,7 @@
 
         function addBubble(scene, x, y, vx, vy) {
             let bubble = new wesa.Sprite({
-                object: wesa.assets.objectList[0],
+                object: wesa.assets.storedObjects[0],
                 action: 0,
                 team: 0,
                 position: { x: x, y: y },
@@ -80,7 +80,7 @@
 
         function addWall(scene, x, y, wallType) {
             let wall = new wesa.Sprite({
-                object: wesa.assets.objectList[1],
+                object: wesa.assets.storedObjects[1],
                 action: 0,
                 team: 0,
                 position: { x: x, y: y },

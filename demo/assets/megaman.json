@@ -9,9 +9,10 @@
     ],
     "objects": [
         {
+            "id": 0,
             "type": 0,
             "name": "Megaman",
-            "frameList": [
+            "frames": [
                 {
                     "loadMode": "array",
                     "spriteSheet": 0,
@@ -28,8 +29,9 @@
                     }
                 }
             ],
-            "animList": [
+            "animations": [
                 {
+                    "id": 0,
                     "name": "Running",
                     "next": 0,
                     "frameList": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
