@@ -62,10 +62,11 @@ wesa.assets.load(function () {
 
 ### More Demos
 
-* [Canvas Resizable](http://caiyi.us/wesa/demo/#1.resize.html)
-* [Collisions](http://caiyi.us/wesa/demo/#2.collision.html)
-* [Camera Control](http://caiyi.us/wesa/demo/#3.camera.html)
-* [OpenCity (Open-sourced Battle City)](http://caiyi.us/wesa/demo/#opencity/index.html)
+* Coming soon!
+
+### Gallery
+
+* [OpenCity](http://caiyi.us/open-city)
 
 ### History
 
@@ -77,9 +78,6 @@ WesaJS is a successor of my following college works:
 ### To-do
 
 - [x] Pausing
-- [ ] End Game Logic
-- [ ] Scoring
-- [ ] More Enemy Tank Types
 
 ### License
 
