@@ -9,9 +9,10 @@
     ],
     "objects": [
         {
+            "id": 0,
             "type": 0,
             "name": "Star",
-            "frameList": [
+            "frames": [
                 {
                     "loadMode": "single",
                     "spriteSheet": 0,
@@ -28,8 +29,9 @@
                     }
                 }
             ],
-            "animList": [
+            "animations": [
                 {
+                    "id": 0,
                     "name": "Blink",
                     "next": 0,
                     "frameList": [0, null],
@@ -38,9 +40,10 @@
             ]
         },
         {
+            "id": 1,
             "type": 0,
             "name": "Spacecraft",
-            "frameList": [
+            "frames": [
                 {
                     "loadMode": "single",
                     "spriteSheet": 0,
@@ -57,8 +60,9 @@
                     }
                 }
             ],
-            "animList": [
+            "animations": [
                 {
+                    "id": 0,
                     "name": "Flying",
                     "next": 0,
                     "frameList": [0],
@@ -67,9 +71,10 @@
             ]
         },
         {
+            "id": 2,
             "type": 0,
             "name": "Green Alien",
-            "frameList": [
+            "frames": [
                 {
                     "loadMode": "array",
                     "spriteSheet": 0,
@@ -86,8 +91,9 @@
                     }
                 }
             ],
-            "animList": [
+            "animations": [
                 {
+                    "id": 0,
                     "name": "Idle",
                     "next": 0,
                     "frameList": [0, 1, 4],

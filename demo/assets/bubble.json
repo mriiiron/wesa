@@ -12,7 +12,7 @@
             "id": 0,
             "type": 0,
             "name": "Bubble",
-            "frameList": [
+            "frames": [
                 {
                     "loadMode": "single",
                     "spriteSheet": 0,
@@ -43,7 +43,7 @@
             "id": 1,
             "type": 0,
             "name": "Wall",
-            "frameList": [],
+            "frames": [],
             "animations": [
                 {
                     "id": 0,

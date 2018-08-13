@@ -38,7 +38,7 @@
 
         function addStar(scene) {
             let star = new wesa.Sprite({
-                object: wesa.assets.objectList[0],
+                object: wesa.assets.storedObjects[0],
                 action: 0,
                 team: 0,
                 position: { x: getRandomIntInclusive(dim.left, dim.right), y: getRandomIntInclusive(dim.bottom, dim.top) },
@@ -53,7 +53,7 @@
 
         function addEnemy(scene, x, y, player) {
             let enemy = new wesa.Sprite({
-                object: wesa.assets.objectList[2],
+                object: wesa.assets.storedObjects[2],
                 action: 0,
                 team: 0,
                 position: { x: x, y: y },
@@ -117,7 +117,7 @@
 
             // Player
             player = new wesa.Sprite({
-                object: wesa.assets.objectList[1],
+                object: wesa.assets.storedObjects[1],
                 action: 0,
                 team: 0,
                 position: { x: 0, y: -250 },
