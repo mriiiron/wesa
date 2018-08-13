@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Hello WESA</title>
+    <link rel="stylesheet" type="text/css" href="../css/demo-iframe.css">
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <canvas id="canvas" width="640" height="480"></canvas>
+    </div>
+    <div class="dynamic-output" id="output">WESA Platformer Demo</div>
+
+    <script src="../../src/wesa.js"></script>
+
+    <script>
+
+        const canvas = document.getElementById('canvas');
+
+        // Initialize WESA
+        wesa.core.init(document.getElementById('canvas'));
+
+        // Adding assets ready for loading
+        // wesa.assets.source.spriteSheetUrlArray.push('./galaxian.png');
+        // wesa.assets.source.objectJsonUrl = './galaxian.json';
+
+        // Load assets
+        wesa.assets.load(function () {
+
+            // Create the scene
+            var scene = new wesa.Scene('Scene');
+
+            // Run the scene
+            var animate = function () {
+                requestAnimationFrame(animate);
+                scene.update();
+                scene.render();
+            }
+            animate();
+
+        });
+
+    </script>
+
+</body>
+
+</html>
