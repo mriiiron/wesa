@@ -15,33 +15,34 @@
     <div class="dynamic-output" id="output">WESA Platformer Demo</div>
 
     <script src="../../src/wesa.js"></script>
+    <script src="../../src/wesa.platform.js"></script>
 
     <script>
 
         const canvas = document.getElementById('canvas');
 
         // Initialize WESA
-        wesa.core.init(document.getElementById('canvas'));
+        // wesa.core.init(document.getElementById('canvas'));
 
         // Adding assets ready for loading
         // wesa.assets.source.spriteSheetUrlArray.push('./galaxian.png');
         // wesa.assets.source.objectJsonUrl = './galaxian.json';
 
         // Load assets
-        wesa.assets.load(function () {
-
-            // Create the scene
-            var scene = new wesa.Scene('Scene');
-
-            // Run the scene
-            var animate = function () {
-                requestAnimationFrame(animate);
-                scene.update();
-                scene.render();
-            }
-            animate();
-
-        });
+        // wesa.assets.load(function () {
+        //
+        //     // Create the scene
+        //     var scene = new wesa.Scene('Scene');
+        //
+        //     // Run the scene
+        //     var animate = function () {
+        //         requestAnimationFrame(animate);
+        //         scene.update();
+        //         scene.render();
+        //     }
+        //     animate();
+        //
+        // });
 
     </script>
 

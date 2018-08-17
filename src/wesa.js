@@ -1,7 +1,7 @@
 (function (window) {
     'use strict'
 
-    function WESACore () {
+    function WESACore() {
 
         // Private functions and types
 
