@@ -542,6 +542,10 @@
                 hit: null,
                 hurt: null
             };
+            this.flags = {
+                platformCollisionCheck: false
+            };
+            this.platform = null;
         }
 
         WESASprite.CollisionMode = Object.freeze({
@@ -750,6 +754,7 @@
         function WESAScene(name) {
             this.name = name;
             this.layerList = [];
+            this.platformList = [];
         }
 
         WESAScene.prototype.addSpriteToLayer = function (layerIndex, sprite) {
@@ -768,7 +773,7 @@
 
         WESAScene.prototype.getCollisions = function (options) {
             let listOfSpriteList = [];
-            if (options.layerIndexes) {
+            if (options.layerIndexes && Array.isArray(options.layerIndexes)) {
                 for (let i = 0; i < layerIndexes.length; i++) {
                     if (this.layerList[layerIndexes[i]]) {
                         listOfSpriteList.push(this.layerList[layerIndexes[i]].spriteList);

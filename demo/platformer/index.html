@@ -22,27 +22,47 @@
         const canvas = document.getElementById('canvas');
 
         // Initialize WESA
-        // wesa.core.init(document.getElementById('canvas'));
+        wesa.core.init(canvas);
 
         // Adding assets ready for loading
-        // wesa.assets.source.spriteSheetUrlArray.push('./galaxian.png');
-        // wesa.assets.source.objectJsonUrl = './galaxian.json';
+        wesa.assets.source.spriteSheetUrlArray.push('./jumper.png');
+        wesa.assets.source.objectJsonUrl = './jumper.json';
 
         // Load assets
-        // wesa.assets.load(function () {
-        //
-        //     // Create the scene
-        //     var scene = new wesa.Scene('Scene');
-        //
-        //     // Run the scene
-        //     var animate = function () {
-        //         requestAnimationFrame(animate);
-        //         scene.update();
-        //         scene.render();
-        //     }
-        //     animate();
-        //
-        // });
+        wesa.assets.load(function () {
+
+            // Create the scene
+            var scene = new wesa.Scene('Scene');
+
+            // Add test sprite
+            let jumper = new wesa.Sprite({
+                object: wesa.assets.storedObjects[0],
+                action: 0,
+                team: 0,
+                position: { x: 0, y: 0 },
+                scale: 2
+            });
+            jumper.flags.platformCollisionCheck = true;
+            jumper.velocity.y = -1;
+            scene.addSpriteToLayer(0, jumper);
+
+            // Add test platform
+            scene.addPlatform(new wesa.platform.Simple({
+                x1: -20,
+                x2: 20,
+                y: -20
+            }));
+
+            // Run the scene
+            var animate = function () {
+                requestAnimationFrame(animate);
+                scene.update();
+                scene.processPlatformCollisions();
+                scene.render();
+            }
+            animate();
+
+        });
 
     </script>
 

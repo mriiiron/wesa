@@ -1,0 +1,42 @@
+{
+    "spriteSheetsMeta": [
+        {
+            "rowCount": 2,
+            "colCount": 10,
+            "cellWidth": 16,
+            "cellHeight": 16
+        }
+    ],
+    "objects": [
+        {
+            "id": 0,
+            "type": 0,
+            "name": "Jumper",
+            "frames": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 0,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 0,
+                        "colStart": 0,
+                        "rowCount": 2,
+                        "colCount": 8
+                    },
+                    "center": {
+                        "x": 8,
+                        "y": 8
+                    }
+                }
+            ],
+            "animations": [
+                {
+                    "id": 0,
+                    "name": "Idle",
+                    "frameList": [0, 1, 2],
+                    "frameTimeList": [10, 10, 10]
+                }
+            ]
+        }
+    ]
+}
