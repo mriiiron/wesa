@@ -1,9 +1,17 @@
 {
     "spriteSheetsMeta": [
         {
+            "id": 0,
             "rowCount": 2,
             "colCount": 10,
             "cellWidth": 16,
+            "cellHeight": 16
+        },
+        {
+            "id": 1,
+            "rowCount": 2,
+            "colCount": 1,
+            "cellWidth": 32,
             "cellHeight": 16
         }
     ],
@@ -25,7 +33,7 @@
                     },
                     "center": {
                         "x": 8,
-                        "y": 8
+                        "y": 0
                     }
                 }
             ],
@@ -35,6 +43,42 @@
                     "name": "Idle",
                     "frameList": [0, 1, 2],
                     "frameTimeList": [10, 10, 10]
+                }
+            ]
+        },
+        {
+            "id": 1,
+            "type": 0,
+            "name": "Platform",
+            "frames": [
+                {
+                    "loadMode": "array",
+                    "spriteSheet": 1,
+                    "idStart": 0,
+                    "cells": {
+                        "rowStart": 0,
+                        "colStart": 0,
+                        "rowCount": 2,
+                        "colCount": 1
+                    },
+                    "center": {
+                        "x": 16,
+                        "y": 0
+                    }
+                }
+            ],
+            "animations": [
+                {
+                    "id": 0,
+                    "name": "Top",
+                    "frameList": [0],
+                    "frameTimeList": [10]
+                },
+                {
+                    "id": 1,
+                    "name": "Support",
+                    "frameList": [1],
+                    "frameTimeList": [10]
                 }
             ]
         }

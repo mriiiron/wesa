@@ -167,7 +167,7 @@
                         for (let i = 0; i < parsed.spriteSheetsMeta.length; i++) {
                             let ssMeta = parsed.spriteSheetsMeta[i];
                             let ss = new WESASpriteSheet({
-                                ssid: i,
+                                ssid: ssMeta.id,
                                 rowCount: ssMeta.rowCount,
                                 colCount: ssMeta.colCount,
                                 cellWidth: ssMeta.cellWidth,
@@ -524,7 +524,7 @@
         function WESASprite(desc) {
             this.object = desc.object;
             this.action = desc.action;
-            this.team = desc.team;
+            this.team = (desc.team === undefined ? 0 : desc.team);
             this.position = { x: desc.position.x, y: desc.position.y };
             this.scale = (typeof(desc.scale) == "number" ? { x: desc.scale, y: desc.scale } : { x: desc.scale.x, y: desc.scale.y });
             this.prevPosition = { x: 0, y: 0 };

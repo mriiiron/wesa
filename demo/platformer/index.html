@@ -10,12 +10,13 @@
 <body>
 
     <div class="wrapper">
-        <canvas id="canvas" width="640" height="480"></canvas>
+        <canvas id="canvas" width="320" height="240"></canvas>
     </div>
     <div class="dynamic-output" id="output">WESA Platformer Demo</div>
 
     <script src="../../src/wesa.js"></script>
     <script src="../../src/wesa.platform.js"></script>
+    <script src="./jumper.js"></script>
 
     <script>
 
@@ -26,6 +27,7 @@
 
         // Adding assets ready for loading
         wesa.assets.source.spriteSheetUrlArray.push('./jumper.png');
+        wesa.assets.source.spriteSheetUrlArray.push('./platform.png');
         wesa.assets.source.objectJsonUrl = './jumper.json';
 
         // Load assets
@@ -38,26 +40,30 @@
             let jumper = new wesa.Sprite({
                 object: wesa.assets.storedObjects[0],
                 action: 0,
-                team: 0,
                 position: { x: 0, y: 0 },
                 scale: 2
             });
             jumper.flags.platformCollisionCheck = true;
-            jumper.velocity.y = -1;
+            jumper.acceleration.y = -0.25;
             scene.addSpriteToLayer(0, jumper);
 
-            // Add test platform
-            scene.addPlatform(new wesa.platform.Simple({
-                x1: -20,
-                x2: 20,
-                y: -20
-            }));
+            // Add test pillar
+            let pillar = new Jumper.Pillar({
+                scene: scene,
+                x: 0,
+                height: 1
+            });
 
             // Run the scene
             var animate = function () {
                 requestAnimationFrame(animate);
                 scene.update();
-                scene.processPlatformCollisions();
+
+
+
+                Jumper.util.ProcessPlatformCollisions(scene.getPlatformCollisions());
+
+
                 scene.render();
             }
             animate();

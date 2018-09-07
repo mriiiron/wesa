@@ -9,9 +9,10 @@
     function WESAPlatform() {
 
         function WESASimplePlatform(desc) {
-            this.x1 = desc.x1;
-            this.x2 = desc.x2;
-            this.y = desc.y;
+            this.position = { x: desc.position.x, y: desc.position.y };
+            this.length = desc.length;
+            this.velocity = { x: 0, y: 0 };
+            this.acceleration = { x: 0, y: 0 };
         }
 
         return {
@@ -47,11 +48,11 @@
                 let s = allSprites[i], p = this.platformList[j];
                 if (!s.flags.platformCollisionCheck) { continue; }
                 if (s.position.y >= s.prevPosition.y) { continue; }
-                if (s.prevPosition.x >= p.x1 && s.prevPosition.x <= p.x2 && s.prevPosition.y > p.y && s.position.y <= p.y ) {
+                if (s.prevPosition.x >= p.position.x && s.prevPosition.x <= p.position.x + p.length && s.prevPosition.y > p.position.y && s.position.y <= p.position.y ) {
                     collisions.push({
                         sprite: s,
                         platform: p,
-                        collisionPoint: { x: s.prevPosition.x, y: p.y }
+                        collisionPoint: { x: s.prevPosition.x, y: p.position.y }
                     });
                 }
             }
@@ -59,18 +60,7 @@
         return collisions;
     };
 
-    wesa.Scene.prototype.processPlatformCollisions = function (options) {
-        let collisions = this.getPlatformCollisions(options);
-        for (let i = 0; i < collisions.length; i++) {
-            let c = collisions[i];
-            c.sprite.platform = c.platform;
-            c.sprite.position.x = c.collisionPoint.x;
-            c.sprite.position.y = c.collisionPoint.y;
-            c.sprite.velocity.x = 0;
-            c.sprite.velocity.y = 0;
-        }
-    };
-
+    
     if (typeof(wesa.platform) === 'undefined'){
         wesa.platform = WESAPlatform();
     }
