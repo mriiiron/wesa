@@ -20,6 +20,27 @@
 
     <script>
 
+        var player = null;
+
+        document.onkeydown = function (e) {
+            switch (e.key) {
+                case 'z':
+                    Jumper.keyStatus.jump = true;
+                    break;
+                default:
+                    break;
+             }
+        }
+        document.onkeyup = function (e) {
+            switch (e.key) {
+                case 'z':
+                    Jumper.keyStatus.jump = false;
+                    break;
+                default:
+                    break;
+             }
+        }
+
         const canvas = document.getElementById('canvas');
 
         // Initialize WESA
@@ -34,18 +55,12 @@
         wesa.assets.load(function () {
 
             // Create the scene
-            var scene = new wesa.Scene('Scene');
+            let scene = new wesa.Scene('Scene');
 
             // Add test sprite
-            let jumper = new wesa.Sprite({
-                object: wesa.assets.storedObjects[0],
-                action: 0,
-                position: { x: 0, y: 0 },
-                scale: 2
+            player = new Jumper.Jumper({
+                scene: scene
             });
-            jumper.flags.platformCollisionCheck = true;
-            jumper.acceleration.y = -0.25;
-            scene.addSpriteToLayer(0, jumper);
 
             // Add test pillar
             let pillar = new Jumper.Pillar({
@@ -58,12 +73,8 @@
             var animate = function () {
                 requestAnimationFrame(animate);
                 scene.update();
-
-
-
-                Jumper.util.ProcessPlatformCollisions(scene.getPlatformCollisions());
-
-
+                player.processInput(Jumper.keyStatus);
+                Jumper.util.processPlatformCollisions(scene.getPlatformCollisions());
                 scene.render();
             }
             animate();

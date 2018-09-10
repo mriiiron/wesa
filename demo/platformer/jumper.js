@@ -3,8 +3,12 @@
 
     function Jumper () {
 
+        const keyStatus = {
+            jump: false
+        };
+
         const util = {
-            ProcessPlatformCollisions: function (collisions) {
+            processPlatformCollisions: function (collisions) {
                 for (let i = 0; i < collisions.length; i++) {
                     let c = collisions[i];
                     c.sprite.platform = c.platform;
@@ -25,17 +29,63 @@
             });
             this.sprite.flags.platformCollisionCheck = true;
             this.gravity = -0.25;
-            this.scene.addSpriteToLayer(0, jumper);
+            this.jumpForce = 0;
+            let me = this;
+            let ai = new wesa.AI();
+            ai.execute = function () {
+                let s = this.self;
+                s.acceleration.y = (s.platform ? 0 : me.gravity);
+            };
+            this.sprite.addAI(ai);
+            this.scene.addSpriteToLayer(0, this.sprite);
+        }
 
+        Jumper.prototype.processInput = function (keyStatus) {
+            let s = this.sprite;
+            if (s.platform) {
+                if (keyStatus.jump) {
+                    if (this.jumpForce == 0) {
+                        this.jumpReady();
+                    }
+                    if (this.jumpForce < 8) {
+                        this.jumpForce += 0.15;
+                    }
+                }
+                else {
+                    if (this.jumpForce > 2) {
+                        this.jump();
+                    }
+                    else if (this.jumpForce > 0) {
+                        this.jumpCancel();
+                    }
+                    this.jumpForce = 0;
+                }
 
-            // TODO: Add AI, set Y acceleration while not on platform by gravity
+            }
+        };
 
+        Jumper.prototype.jumpReady = function () {
+            this.sprite.changeAction(1, {
+                isSmart: true,
+                isImmediate: true
+            });
+        };
 
+        Jumper.prototype.jumpCancel = function () {
+            this.sprite.changeAction(0, {
+                isSmart: true,
+                isImmediate: true
+            });
         }
 
         Jumper.prototype.jump = function () {
-            this.sprite.platform = null;
-            this.velocity.y = -5;
+            let s = this.sprite;
+            s.platform = null;
+            s.velocity.y = this.jumpForce;
+            this.sprite.changeAction(0, {
+                isSmart: true,
+                isImmediate: true
+            });
         };
 
 
@@ -83,7 +133,9 @@
 
 
         return {
+            keyStatus: keyStatus,
             util: util,
+            Jumper: Jumper,
             Pillar: Pillar
         }
 
