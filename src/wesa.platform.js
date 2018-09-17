@@ -13,6 +13,18 @@
             this.length = desc.length;
             this.velocity = { x: 0, y: 0 };
             this.acceleration = { x: 0, y: 0 };
+            this.deadFlag = false;
+        }
+
+        WESASimplePlatform.prototype.update = function () {
+            this.position.x += this.velocity.x;
+            this.position.y += this.velocity.y;
+            this.velocity.x += this.acceleration.x;
+            this.velocity.y += this.acceleration.y;
+        }
+
+        WESASimplePlatform.prototype.kill = function () {
+            this.deadFlag = true;
         }
 
         return {

@@ -20,7 +20,7 @@
 
     <script>
 
-        var player = null;
+        var scene = null;
 
         document.onkeydown = function (e) {
             switch (e.key) {
@@ -31,6 +31,7 @@
                     break;
              }
         }
+
         document.onkeyup = function (e) {
             switch (e.key) {
                 case 'z':
@@ -55,25 +56,30 @@
         wesa.assets.load(function () {
 
             // Create the scene
-            let scene = new wesa.Scene('Scene');
+            scene = new wesa.Scene('Scene');
 
             // Add test sprite
-            player = new Jumper.Jumper({
-                scene: scene
+            Jumper.gameObjects.player = new Jumper.Jumper({
+                scene: scene,
+                x: -100,
+                y: -40
             });
 
-            // Add test pillar
-            let pillar = new Jumper.Pillar({
+            // Add pillars
+            Jumper.gameObjects.pillars = new Jumper.Pillars({
                 scene: scene,
-                x: 0,
-                height: 1
+                xStart: -80,
+                interval: 120,
+                pillarSpeed: -2
             });
 
             // Run the scene
             var animate = function () {
                 requestAnimationFrame(animate);
+
+                Jumper.gameObjects.pillars.update();
                 scene.update();
-                player.processInput(Jumper.keyStatus);
+                Jumper.gameObjects.player.processInput(Jumper.keyStatus);
                 Jumper.util.processPlatformCollisions(scene.getPlatformCollisions());
                 scene.render();
             }

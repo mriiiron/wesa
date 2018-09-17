@@ -46,8 +46,33 @@
                 },
                 {
                     "id": 1,
-                    "name": "Jump_Hold",
+                    "name": "Jump Hold",
                     "frameList": [3],
+                    "frameTimeList": [10]
+                },
+                {
+                    "id": 2,
+                    "next": 0,
+                    "name": "Landing",
+                    "frameList": [4, 5, 6, 7],
+                    "frameTimeList": [4, 4, 4, 4]
+                },
+                {
+                    "id": 3,
+                    "name": "Jump 1",
+                    "frameList": [12],
+                    "frameTimeList": [10]
+                },
+                {
+                    "id": 4,
+                    "name": "Jump 2",
+                    "frameList": [13],
+                    "frameTimeList": [10]
+                },
+                {
+                    "id": 5,
+                    "name": "Jump 3",
+                    "frameList": [14],
                     "frameTimeList": [10]
                 }
             ]
@@ -69,7 +94,7 @@
                     },
                     "center": {
                         "x": 16,
-                        "y": 0
+                        "y": 16
                     }
                 }
             ],

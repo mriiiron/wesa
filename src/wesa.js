@@ -895,11 +895,27 @@
 
         WESAScene.prototype.update = function () {
             if (wesaStat.paused) { return; }
+
+            // Update sprites. This is handled within each layer
             for (let i = 0; i < this.layerList.length; i++) {
                 if (this.layerList[i]) {
                     this.layerList[i].update();
                 }
             }
+
+            // Update platforms
+            let pList = this.platformList;
+            for (let i = 0; i < pList.length; i++) {
+                if (!pList[i].deadFlag) {
+                    pList[i].update();
+                }
+            }
+            for (let i = pList.length - 1; i >= 0; i--) {
+                if (pList[i].deadFlag) {
+                    pList.splice(i, 1);
+                }
+            }
+
         };
 
         WESAScene.prototype.render = function () {
