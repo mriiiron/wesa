@@ -62,21 +62,23 @@
             Jumper.gameObjects.player = new Jumper.Jumper({
                 scene: scene,
                 x: -100,
-                y: -40
+                y: -20
             });
 
             // Add pillars
             Jumper.gameObjects.pillars = new Jumper.Pillars({
                 scene: scene,
-                xStart: -80,
-                interval: 120,
-                pillarSpeed: -2
+                xStart: -50,
+                minInterval: 120,
+                maxInterval: 180,
+                minPlatformY: -80,
+                maxPlatformY: 0,
+                pillarSpeed: -3
             });
 
             // Run the scene
             var animate = function () {
                 requestAnimationFrame(animate);
-
                 Jumper.gameObjects.pillars.update();
                 scene.update();
                 Jumper.gameObjects.player.processInput(Jumper.keyStatus);

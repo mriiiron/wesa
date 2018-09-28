@@ -49,6 +49,7 @@
             this.jumpForce = 0;
             let me = this;
             let ai = new wesa.AI();
+            let borderBottom = -140;
             ai.execute = function () {
                 let s = this.self;
                 if (s.platform == null) {
@@ -71,6 +72,12 @@
                             isImmediate: true
                         });
                     }
+                    if (s.position.y < borderBottom) {
+                        
+
+                        // Game Over
+
+                    }
                 }
                 else {
                     s.acceleration.y = 0;
@@ -87,8 +94,8 @@
                     if (this.jumpForce == 0) {
                         this.jumpReady();
                     }
-                    if (this.jumpForce < 8) {
-                        this.jumpForce += 0.15;
+                    if (this.jumpForce < 10) {
+                        this.jumpForce += 0.2;
                     }
                 }
                 else {
@@ -190,21 +197,27 @@
         function Pillars(desc) {
             this.scene = desc.scene;
             this.xStart = desc.xStart;
-            this.interval = desc.interval;
+            this.minInterval = desc.minInterval;
+            this.maxInterval = desc.maxInterval;
+            this.minPlatformY = desc.minPlatformY;
+            this.maxPlatformY = desc.maxPlatformY;
             this.pillarSpeed = desc.pillarSpeed;
             this.lastPillar = null;
             this.isMoving = false;
             this.items = [];
             this.borderLeft = -200;
             this.borderRight = 200;
-            this.maxPlatformY = 0;
-            this.minPlatformY = -80;
             this.firstPlatformY = -50;
+            this.nextInterval = 0;
             this.init();
         }
 
         Pillars.prototype.randomPlatformY = function () {
             return this.minPlatformY + Math.random() * (this.maxPlatformY - this.minPlatformY);
+        };
+
+        Pillars.prototype.randomInterval = function () {
+            return this.minInterval + Math.random() * (this.maxInterval - this.minInterval);
         };
 
         Pillars.prototype.init = function () {
@@ -218,23 +231,21 @@
                 });
                 this.items.push(newPillar);
                 this.lastPillar = newPillar;
-                x += this.interval;
+                x += this.randomInterval();
                 isFirst = false;
             }
+            this.nextInterval = this.randomInterval();
         };
 
         Pillars.prototype.update = function () {
             this.isMoving = (gameObjects.player.sprite.platform ? 0 : this.pillarSpeed);
             for (let i = 0; i < this.items.length; i++) {
                 let pillar = this.items[i];
-
-
                 if (pillar.x() < this.borderLeft) {
                     pillar.destroy();
                     this.items.shift();
                 }
-
-                if (this.borderRight - this.lastPillar.x() >= this.interval) {
+                if (this.borderRight - this.lastPillar.x() >= this.nextInterval) {
                     let newPillar = new Pillar({
                         scene: this.scene,
                         x: this.borderRight,
@@ -242,10 +253,8 @@
                     });
                     this.items.push(newPillar);
                     this.lastPillar = newPillar;
+                    this.nextInterval = this.randomInterval();
                 }
-
-
-
                 pillar.vx = (this.isMoving ? this.pillarSpeed : 0);
                 pillar.update();
             }
