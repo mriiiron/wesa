@@ -58,7 +58,7 @@ wesa.assets.load(function () {
 });
 ```
 
-[See full demo](http://caiyi.us/wesa)
+[See full demo](http://caiyi.tech/wesa)
 
 ### More Demos
 
@@ -66,7 +66,7 @@ wesa.assets.load(function () {
 
 ### Gallery
 
-* [OpenCity](http://caiyi.us/open-city)
+* [OpenCity](http://caiyi.tech/open-city)
 
 ### History
 
